@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7fd53d3-98bc-4921-b39b-bc13d23794d2" name="Changes" comment="Set up Exception Handling" />
+    <list default="true" id="a7fd53d3-98bc-4921-b39b-bc13d23794d2" name="Changes" comment="Set up Exception Handling">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,6 +21,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/../.." value="tranzy_api" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -48,7 +56,7 @@
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "K:/Projects/FIICode-2025",
+    "last_opened_file_path": "C:/Users/georg/Desktop/FIICode-2025",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -88,6 +96,7 @@
       <workItem from="1740298311997" duration="3416000" />
       <workItem from="1740325509270" duration="2570000" />
       <workItem from="1740518345105" duration="255000" />
+      <workItem from="1740603056052" duration="280000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented Auth + DbConnection">
       <option name="closed" value="true" />
