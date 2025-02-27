@@ -1,23 +1,13 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from typing import List
-from app.auth.exceptions import UserNotFoundException, UserAlreadyExistsException, InvalidCredentialsException
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+
+from app.auth.exceptions import WrongRoleException
+from fastapi import logger
 
 
-def user_not_found_exception_handler(request: Request, exc: UserNotFoundException):
-    return JSONResponse(status_code=exc.status_code, content={"message": str(exc.detail)})
-
-
-def user_already_exists_exception_handler(request: Request, exc: UserAlreadyExistsException):
-    return JSONResponse(status_code=exc.status_code, content={"message": str(exc.detail)})
-
-class BasicResponse(BaseModel):
-    message: List[str]
-    status: bool
-
-def invalid_credentials_exception_handler(request: Request, exc: InvalidCredentialsException):
+def wrong_role_exception_handler(request: Request, exc: WrongRoleException):
+    logger.logger.error(f"WrongRoleException: {exc}")
     return JSONResponse(status_code=exc.status_code, content={"message": str(exc.detail)})
 
 
@@ -30,9 +20,7 @@ def validation_exception_handler(request: Request, exc: RequestValidationError):
 
 def register_auth_exception_handlers(app: FastAPI):
     exception_handlers = {
-        UserNotFoundException: user_not_found_exception_handler,
-        UserAlreadyExistsException: user_already_exists_exception_handler,
-        InvalidCredentialsException: invalid_credentials_exception_handler,
+        WrongRoleException: wrong_role_exception_handler,
         RequestValidationError: validation_exception_handler
     }
 

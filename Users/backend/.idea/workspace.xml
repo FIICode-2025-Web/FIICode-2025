@@ -5,8 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a7fd53d3-98bc-4921-b39b-bc13d23794d2" name="Changes" comment="Set up Exception Handling">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../AuthService/.idea/AuthService.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../Authorities/backend/.idea/backend.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../.idea/FIICode-2025.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/FIICode-2025.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/alembic/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/alembic/env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/alembic/versions/fb14399f94c3_initial_migration.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/auth/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/auth/exceptions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/auth/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/auth/handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/auth/jwt/jwt_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/auth/jwt/jwt_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/auth/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/auth/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/auth/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/auth/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/auth/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/auth/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/auth/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/auth/service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/backend.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/alembic/env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/versions/fb14399f94c3_initial_migration.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/exceptions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/jwt/jwt_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/jwt/jwt_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/schemas.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/auth/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/auth/service.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,7 +60,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/GeorgeDenis/FastAPIAuth.git&quot;,
+    &quot;url&quot;: &quot;https://github.com/FIICode-2025-Web/FIICode-2025.git&quot;,
     &quot;accountId&quot;: &quot;274858a6-767e-4501-900f-919130713f6a&quot;
   }
 }</component>
@@ -54,9 +78,10 @@
     "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "auth-service",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/georg/Desktop/FIICode-2025",
+    "last_opened_file_path": "K:/Projects/FIICode-2025",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -66,6 +91,9 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="K:\Projects\FIICode-2025\Users\backend" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="K:\Projects\FastApiAuth\app\auth\jwt" />
       <recent name="K:\Projects\FastApiAuth\app\auth" />
@@ -97,6 +125,9 @@
       <workItem from="1740325509270" duration="2570000" />
       <workItem from="1740518345105" duration="255000" />
       <workItem from="1740603056052" duration="280000" />
+      <workItem from="1740675280452" duration="513000" />
+      <workItem from="1740675842709" duration="3000000" />
+      <workItem from="1740686767275" duration="2582000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented Auth + DbConnection">
       <option name="closed" value="true" />
