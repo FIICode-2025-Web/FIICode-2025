@@ -25,4 +25,3 @@ register_auth_exception_handlers(app)
 @app.get("/", dependencies=[Depends(jwtBearer())], tags=["test"])
 def greet():
     return {"Hello": "World"}
-
