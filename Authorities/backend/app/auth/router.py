@@ -10,7 +10,3 @@ auth_router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 db_dependency = Annotated[Session, Depends(get_db)]
-
-@auth_router.get("/")
-def greet2():
-    return {"Hello": "World"}

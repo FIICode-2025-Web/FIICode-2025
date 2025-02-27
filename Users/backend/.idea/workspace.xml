@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7fd53d3-98bc-4921-b39b-bc13d23794d2" name="Changes" comment="Set up Exception Handling">
-      <change beforePath="$PROJECT_DIR$/../../AuthService/.idea/AuthService.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../../AuthService/.idea/AuthService.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../AuthService/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../AuthService/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../AuthService/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../AuthService/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/auth/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/auth/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-    </list>
+    <list default="true" id="a7fd53d3-98bc-4921-b39b-bc13d23794d2" name="Changes" comment="Global token verification instead of setting it on endpoints" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -108,7 +101,7 @@
       <workItem from="1740675280452" duration="513000" />
       <workItem from="1740675842709" duration="3000000" />
       <workItem from="1740686767275" duration="2582000" />
-      <workItem from="1740692666189" duration="15000" />
+      <workItem from="1740692666189" duration="99000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented Auth + DbConnection">
       <option name="closed" value="true" />
@@ -150,7 +143,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740327450886</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Global token verification instead of setting it on endpoints">
+      <option name="closed" value="true" />
+      <created>1740692724558</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1740692724558</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -162,7 +163,8 @@
     <MESSAGE value="Added Alembic Migrations System" />
     <MESSAGE value="Set up CORS" />
     <MESSAGE value="Set up Exception Handling" />
-    <option name="LAST_COMMIT_MESSAGE" value="Set up Exception Handling" />
+    <MESSAGE value="Global token verification instead of setting it on endpoints" />
+    <option name="LAST_COMMIT_MESSAGE" value="Global token verification instead of setting it on endpoints" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/FastApiAuth$main.coverage" NAME="main Coverage Results" MODIFIED="1740170562519" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

@@ -8,7 +8,6 @@ from app.auth.schemas import UserSchema, UserLoginSchema, GetUserSchema
 from app.database import get_db
 from .service import authenticate_user, register_account, find_user_by_email
 from app.auth.jwt.jwt_dependency import get_current_user
-
 auth_router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')

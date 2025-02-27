@@ -30,10 +30,7 @@ def register_account(user: UserSchema, user_role: int, db: Session):
 
 
 def find_user_by_email(email: str, db: Session):
-    user = db.query(Users).filter(Users.email == email).first()
-    if not user:
-        raise UserNotFoundException()
-    return user
+    return db.query(Users).filter(Users.email == email).first()
 
 
 def create_user(user: UserSchema, role: int, db: Session):

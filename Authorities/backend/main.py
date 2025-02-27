@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.auth.jwt.jwt_bearer import jwtBearer
 from app.auth.router import auth_router
 from app.auth.handlers import register_auth_exception_handlers
+import app.tranzy.models as models
+from app.database import engine
 
 app = FastAPI(dependencies=[Depends(jwtBearer())])
 
@@ -20,6 +22,8 @@ app.add_middleware(
 )
 app.include_router(auth_router)
 register_auth_exception_handlers(app)
+
+models.Base.metadata.create_all(bind=engine)
 
 
 @app.get("/", tags=["test"])
