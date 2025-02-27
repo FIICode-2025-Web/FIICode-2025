@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
+
+from app.auth.handlers import register_auth_exception_handlers
 from app.auth.jwt.jwt_bearer import jwtBearer
 from app.auth.router import auth_router
-from app.auth.handlers import register_auth_exception_handlers
 
 app = FastAPI()
 

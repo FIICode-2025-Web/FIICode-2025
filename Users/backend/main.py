@@ -1,11 +1,11 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
+
+from app.auth.handlers import register_auth_exception_handlers
 from app.auth.jwt.jwt_bearer import jwtBearer
 from app.auth.router import auth_router
-from app.auth.handlers import register_auth_exception_handlers
 
-app = FastAPI()
+app = FastAPI(dependencies=[Depends(jwtBearer())])
 
 origins = [
     "http://localhost:5173"
@@ -22,7 +22,6 @@ app.include_router(auth_router)
 register_auth_exception_handlers(app)
 
 
-@app.get("/", dependencies=[Depends(jwtBearer())], tags=["test"])
+@app.get("/", tags=["test"])
 def greet():
     return {"Hello": "World"}
-
