@@ -45,8 +45,8 @@ export function SignUp() {
   };
 
   const validatePassword = (password) => {
-    if(password.length < 7){
-      toast.error("Password must be at least 7 characters long");
+    if(password.length < 8){
+      toast.error("Password must be at least 8 characters long");
       return false;
     }
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{7,}$/;
