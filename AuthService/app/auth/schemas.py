@@ -40,6 +40,32 @@ class UserLoginSchema(BaseModel):
 
         }
 
+class AuthorityRegisterSchema(BaseModel):
+    name: str = Field(default=None)
+    email: EmailStr = Field(default=None)
+    password: str = Field(default=None)
+    code: str = Field(default=None)
+
+    @field_validator("password")
+    @classmethod
+    def validate_password(cls, password):
+        pattern = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+        if not re.match(pattern, password):
+            raise ValueError(
+                "Password must be at least 8 characters long, contain 1 uppercase letter, 1 number, and 1 special character.")
+        return password
+
+    class Config:
+        the_schema = {
+            "user_demo": {
+                "name": "George",
+                "email": "george@yahoo.com",
+                "password": "123",
+                "code": 123456
+            }
+
+        }
+
 
 class GetUserSchema(BaseModel):
     id: int = Field(default=None)

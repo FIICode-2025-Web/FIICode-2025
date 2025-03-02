@@ -4,9 +4,9 @@ from fastapi import Body, Depends, APIRouter
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from app.auth.schemas import UserSchema, UserLoginSchema, GetUserSchema
+from app.auth.schemas import UserSchema, UserLoginSchema, GetUserSchema, AuthorityRegisterSchema
 from app.database import get_db
-from .service import authenticate_user, register_account, find_user_by_email
+from .service import authenticate_user, register_account,register_authority, find_user_by_email
 from app.auth.jwt.jwt_dependency import get_current_user
 auth_router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
@@ -28,8 +28,8 @@ def user_login(db: db_dependency, user: UserLoginSchema = Body(default=None)):
 
 
 @auth_router.post("/authority/signup")
-def authority_signup(db: db_dependency, user: UserSchema = Body(default=None)):
-    return register_account(user, authority_role, db)
+def authority_signup(db: db_dependency, user: AuthorityRegisterSchema = Body(default=None)):
+    return register_authority(user, authority_role, db)
 
 
 @auth_router.post("/authority/login")

@@ -1,8 +1,5 @@
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from typing import TypeVar
-
-bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 T = TypeVar('T')
 

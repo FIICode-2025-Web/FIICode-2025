@@ -6,9 +6,11 @@ from app.auth.jwt.jwt_bearer import jwtBearer
 from app.auth.router import auth_router
 from app.auth.handlers import register_auth_exception_handlers
 import app.tranzy_client.models as models
+import app.authorities.models as authorities_models
 from app.tranzy_client.router import tranzy_client_router
+from app.authorities.router import authorities_routes
 from app.tranzy.router import tranzy_router
-from app.database import engine
+from app.database import engine, Base
 
 app = FastAPI(dependencies=[Depends(jwtBearer())])
 
@@ -26,9 +28,12 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(tranzy_client_router)
 app.include_router(tranzy_router)
+app.include_router(authorities_routes)
 register_auth_exception_handlers(app)
 
-models.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
+
+
 
 
 @app.get("/", tags=["test"])
