@@ -1,0 +1,4 @@
+.bg-custom {
+    @apply bg-cover bg-center;
+    background-image: url('../img/auth-bg.png');
+  }
