@@ -34,18 +34,15 @@ export function SignIn() {
         navigate('/');
       }
     } catch (error) {
-      let errorMessage = "Login failed";
+      let errorMessage = "Registration failed";
       if (axios.isAxiosError(error) && error.response) {
+        console.error("Server response:", error.response);
         if (error.response.data) {
-          if(error.response.data.validationsErrors)
-            errorMessage += ": " + error.response.data.validationsErrors[0];
-          else
-            errorMessage += ": " + error.response.data;
+          errorMessage += ": " + error.response.data.message;
         }
       } else if (error instanceof Error) {
         errorMessage += ": " + error.message;
       }
-
       toast.error(errorMessage);
     }
   }

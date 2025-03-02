@@ -35,7 +35,7 @@ export function SignUp() {
       if (axios.isAxiosError(error) && error.response) {
         console.error("Server response:", error.response);
         if (error.response.data) {
-          errorMessage += ": " + error.response.data;
+          errorMessage += ": " + error.response.data.message;
         }
       } else if (error instanceof Error) {
         errorMessage += ": " + error.message;
