@@ -34,7 +34,7 @@ export function SignIn() {
         navigate('/');
       }
     } catch (error) {
-      let errorMessage = "Registration failed";
+      let errorMessage = "Login failed";
       if (axios.isAxiosError(error) && error.response) {
         console.error("Server response:", error.response);
         if (error.response.data) {
