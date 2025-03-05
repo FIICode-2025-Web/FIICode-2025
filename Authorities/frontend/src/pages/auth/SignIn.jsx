@@ -29,7 +29,7 @@ export function SignIn() {
       });
 
       if(response.status === 200) {
-        localStorage.setItem("token", response.data);
+        localStorage.setItem("token", response.data.token);
         toast.success("Login Successful");
         navigate('/');
       }
