@@ -31,7 +31,7 @@ export function SignIn() {
       if(response.status === 200) {
         localStorage.setItem("token", response.data);
         toast.success("Login Successful");
-        navigate('/');
+        navigate('/dashboard/home');
       }
     } catch (error) {
       let errorMessage = "Login failed";
