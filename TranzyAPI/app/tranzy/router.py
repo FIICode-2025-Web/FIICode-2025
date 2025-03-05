@@ -21,6 +21,10 @@ def get_vehicles():
 def get_vehicles_by_route_id(route_id: str):
     return tranzy_service.get_tranzy_vehicles_by_route_id(route_id)
 
+@tranzy_router.get("/shapes")
+def get_shapes(db: db_dependency):
+    return tranzy_service.get_shapes(db)
+
 @tranzy_router.get("/shapes/{shape_id}")
 def get_shape_by_id(shape_id: str, db: db_dependency):
     return tranzy_service.get_shapes_by_shape_id(shape_id, db)
@@ -37,3 +41,4 @@ def get_routes(db: db_dependency):
 @tranzy_router.get("/shapes/route/{route_id}")
 def get_shapes_for_route(route_id: str, db: db_dependency):
     return tranzy_service.get_shape_for_route_id(route_id, db)
+

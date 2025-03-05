@@ -32,6 +32,9 @@ class TranzyService:
         return vehicles
 
     # ------------------------------- Shapes
+    def get_shapes(self, db: Session):
+        return db.query(TranzyShapes).all()
+
     def get_shapes_by_shape_id(self, shape_id: str, db: Session):
         return db.query(TranzyShapes).filter(TranzyShapes.shape_id == shape_id).all()
 

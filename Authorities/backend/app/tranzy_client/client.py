@@ -38,7 +38,7 @@ class TranzyClient:
         response = requests.get("https://api.tranzy.ai/v1/opendata/stops",
                                 headers={"X-API-KEY": TRANZY_KEY, "X-Agency-Id": "1"}
                                 )
-        tranzy_service.delete_all(TranzyRoutes, db)
+        tranzy_service.delete_all(TranzyStops, db)
         for stop in response.json():
             stop_model = TranzyStops(
                 stop_id=stop.get("stop_id"),
