@@ -1,7 +1,7 @@
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from typing import TypeVar
-from app.tranzy.models import TranzyShapes, TranzyRoutes, TranzyTrips
+from app.tranzy.models import TranzyShapes, TranzyRoutes, TranzyTrips, TranzyStops
 import requests
 from decouple import config
 
@@ -55,6 +55,12 @@ class TranzyService:
             shapes[index] = db.query(TranzyShapes).filter(TranzyShapes.shape_id == trip.shape_id).all()
 
         return shapes
+
+    def get_stops(self, db):
+        return db.query(TranzyStops).all()
+
+    def get_trips(self, db):
+        return db.query(TranzyTrips).all()
 
     # ------------------------------- Routes
     def get_routes(self, db: Session):
