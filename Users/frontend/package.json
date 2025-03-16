@@ -25,6 +25,7 @@
     "canvas-confetti": "^1.9.2",
     "dayjs": "^1.11.10",
     "leaflet": "^1.9.4",
+    "lucide-react": "^0.482.0",
     "prop-types": "15.8.1",
     "react": "18.2.0",
     "react-apexcharts": "1.4.1",

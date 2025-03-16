@@ -3,7 +3,6 @@ import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import Navbar from "../../../layouts/Navbar";
 import DashboardNavbar from "../../../layouts/DashboardNavbar";
 import SearchableSelect from "./Components/SearchableSelect";
 
@@ -118,20 +117,25 @@ export function Home() {
     fetchShapeByRoute(selectedRouteId);
   };
 
+
+  const clearShape = () => {
+    setShape([]);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-center flex-col">
-      <DashboardNavbar/>
-      <h2 className="text-3xl font-semibold my-6 text-gray-800">
-        Caută ruta dorită
-      </h2>
+        <DashboardNavbar />
+        <h2 className="text-3xl font-semibold my-6 text-gray-800">
+          Caută ruta dorită
+        </h2>
 
-         <MapContainer center={position} zoom={13} style={{ height: "550px", width: "70%" }}>
+        <MapContainer center={position} zoom={13} style={{ height: "550px", width: "70%" }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-          
+
           {shape.length > 0 && <Polyline positions={shape} color="blue" />}
 
           {getStopsInShape().map((stop) => (
@@ -140,7 +144,13 @@ export function Home() {
             </Marker>
           ))}
         </MapContainer>
-        <SearchableSelect routes={routes} selectedRoute={selectedRoute} handleRouteChange={handleRouteChange} />
+
+        <SearchableSelect
+          routes={routes}
+          selectedRoute={selectedRoute}
+          handleRouteChange={handleRouteChange}
+          clearShape={clearShape}
+        />
       </div>
     </div>
   );
