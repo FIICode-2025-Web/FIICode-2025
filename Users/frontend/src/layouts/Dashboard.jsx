@@ -5,8 +5,7 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-white">
-
-      <div className="p-4 xl:ml-80">
+      <div>
         <Routes>
           {routes.map(
             ({ layout, pages }) =>

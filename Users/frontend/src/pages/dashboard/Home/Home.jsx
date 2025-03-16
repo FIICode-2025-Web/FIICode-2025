@@ -3,6 +3,9 @@ import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import Navbar from "../../../layouts/Navbar";
+import DashboardNavbar from "../../../layouts/DashboardNavbar";
+import SearchableSelect from "./Components/SearchableSelect";
 
 const defaultIcon = L.icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
@@ -117,29 +120,28 @@ export function Home() {
 
   return (
     <div>
-      <select value={selectedRoute} onChange={handleRouteChange}>
-        <option value="">Select a route</option>
-        {routes.map((route) => (
-          <option key={route.route_short_name} value={route.route_short_name}>
-            {route.label}
-          </option>
-        ))}
-      </select>
+      <div className="flex items-center justify-center flex-col">
+      <DashboardNavbar/>
+      <h2 className="text-3xl font-semibold my-6 text-gray-800">
+        Caută ruta dorită
+      </h2>
 
-      <MapContainer center={position} zoom={13} style={{ height: "500px", width: "100%" }}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        
-        {shape.length > 0 && <Polyline positions={shape} color="blue" />}
+         <MapContainer center={position} zoom={13} style={{ height: "550px", width: "70%" }}>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          
+          {shape.length > 0 && <Polyline positions={shape} color="blue" />}
 
-        {getStopsInShape().map((stop) => (
-          <Marker key={stop.stop_id} position={[stop.stop_lat, stop.stop_lon]} icon={defaultIcon}>
-            <Popup>{stop.stop_name}</Popup>
-          </Marker>
-        ))}
-      </MapContainer>
+          {getStopsInShape().map((stop) => (
+            <Marker key={stop.stop_id} position={[stop.stop_lat, stop.stop_lon]} icon={defaultIcon}>
+              <Popup>{stop.stop_name}</Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+        <SearchableSelect routes={routes} selectedRoute={selectedRoute} handleRouteChange={handleRouteChange} />
+      </div>
     </div>
   );
 }
