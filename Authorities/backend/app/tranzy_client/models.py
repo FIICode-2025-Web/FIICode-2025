@@ -39,6 +39,14 @@ class TranzyStops(Base):
     location_type = Column(Integer)
     stop_code = Column(String)
 
+class TranzyStopTimes(Base):
+    __tablename__ = 'tranzy_stop_times'
+
+    stop_times_id = Column(Integer, primary_key=True, index=True)
+    trip_id = Column(Integer)
+    stop_id = Column(Integer)
+    stop_sequence = Column(Integer)
+
 class TranzyTrips(Base):
     __tablename__ = 'tranzy_trips'
 

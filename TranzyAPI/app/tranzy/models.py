@@ -17,6 +17,7 @@ class TranzyVehicles(Base):
     bike_accessible = Column(String)
     wheelchair_accessible = Column(String)
 
+
 class TranzyRoutes(Base):
     __tablename__ = 'tranzy_routes'
 
@@ -27,6 +28,7 @@ class TranzyRoutes(Base):
     route_color = Column(String)
     route_type = Column(Integer)
     route_desc = Column(String)
+
 
 class TranzyStops(Base):
     __tablename__ = 'tranzy_stops'
@@ -39,6 +41,16 @@ class TranzyStops(Base):
     location_type = Column(Integer)
     stop_code = Column(String)
 
+
+class TranzyStopTimes(Base):
+    __tablename__ = 'tranzy_stop_times'
+
+    stop_times_id = Column(Integer, primary_key=True, index=True)
+    trip_id = Column(Integer)
+    stop_id = Column(Integer)
+    stop_sequence = Column(Integer)
+
+
 class TranzyTrips(Base):
     __tablename__ = 'tranzy_trips'
 
@@ -48,6 +60,7 @@ class TranzyTrips(Base):
     direction_id = Column(Integer)
     block_id = Column(Integer)
     shape_id = Column(String)
+
 
 class TranzyShapes(Base):
     __tablename__ = 'tranzy_shapes'
@@ -60,4 +73,3 @@ class TranzyShapes(Base):
 
     class Config:
         orm_mode = True
-

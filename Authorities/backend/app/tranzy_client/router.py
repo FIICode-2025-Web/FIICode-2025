@@ -25,6 +25,10 @@ def get_routes(db: db_dependency):
 def get_stops(db: db_dependency):
     return tranzy_client.get_tranzy_stops(db)
 
+@tranzy_client_router.get("/stop_times")
+def get_stop_times(db: db_dependency):
+    return tranzy_client.get_tranzy_stop_times(db)
+
 @tranzy_client_router.get("/trips")
 def get_trips(db: db_dependency):
     return tranzy_client.get_tranzy_trips(db)

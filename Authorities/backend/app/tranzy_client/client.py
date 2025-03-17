@@ -2,7 +2,7 @@ import requests
 from decouple import config
 from app.tranzy_client.service import TranzyService
 from sqlalchemy.orm import Session
-from app.tranzy_client.models import TranzyRoutes, TranzyStops, TranzyTrips, TranzyShapes
+from app.tranzy_client.models import TranzyRoutes, TranzyStops, TranzyTrips, TranzyShapes, TranzyStopTimes
 
 TRANZY_KEY = config("tranzy_key")
 
@@ -50,6 +50,21 @@ class TranzyClient:
                 stop_code=stop.get("stop_code")
             )
             tranzy_service.save_entity(stop_model, db)
+        return response.json()
+
+    def get_tranzy_stop_times(self,db: Session):
+        response = requests.get("https://api.tranzy.ai/v1/opendata/stop_times",
+                                headers={"X-API-KEY": TRANZY_KEY, "X-Agency-Id": "1"}
+                                )
+        tranzy_service.delete_all(TranzyStopTimes, db)
+        for stop_time in response.json():
+            stop_time_model = TranzyStopTimes(
+                stop_times_id=stop_time.get("stop_times_id"),
+                trip_id=stop_time.get("trip_id"),
+                stop_id=stop_time.get("stop_id"),
+                stop_sequence=stop_time.get("stop_sequence")
+            )
+            tranzy_service.save_entity(stop_time_model, db)
         return response.json()
 
     def get_tranzy_trips(self,db: Session):
