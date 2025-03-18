@@ -1,7 +1,7 @@
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from typing import TypeVar
-from app.tranzy.models import TranzyShapes, TranzyRoutes, TranzyTrips, TranzyStops
+from app.tranzy.models import TranzyShapes, TranzyRoutes, TranzyTrips, TranzyStops, TranzyStopTimes
 import requests
 from decouple import config
 
@@ -56,9 +56,41 @@ class TranzyService:
 
         return shapes
 
+    # ------------------------------- Stops
     def get_stops(self, db):
         return db.query(TranzyStops).all()
 
+    def get_stops_by_route_id(self, route_id: str, direction_id: int, db: Session):
+        route = db.query(TranzyRoutes).filter(TranzyRoutes.route_id == route_id).first()
+        trip = db.query(TranzyTrips).filter(
+            TranzyTrips.route_id == route.route_id, TranzyTrips.direction_id == direction_id).first()
+
+        stop_times = db.query(TranzyStopTimes).filter(TranzyStopTimes.trip_id == trip.trip_id).all()
+        stops = []
+        for stop_time in stop_times:
+            stops.append(db.query(TranzyStops).filter(TranzyStops.stop_id == stop_time.stop_id).first())
+        return stops
+
+    def get_stop_by_route_short_name(self, route_short_name: str, direction_id: int, db: Session):
+        route = db.query(TranzyRoutes).filter(TranzyRoutes.route_short_name == route_short_name).first()
+        trip = db.query(TranzyTrips).filter(
+            TranzyTrips.route_id == route.route_id, TranzyTrips.direction_id == direction_id).first()
+        if not trip:
+            if direction_id == 0:
+                trip = db.query(TranzyTrips).filter(
+                    TranzyTrips.route_id == route.route_id, TranzyTrips.direction_id == 1).first()
+            else:
+                trip = db.query(TranzyTrips).filter(
+                    TranzyTrips.route_id == route.route_id, TranzyTrips.direction_id == 0).first()
+        stop_times = db.query(TranzyStopTimes).filter(TranzyStopTimes.trip_id == trip.trip_id).all()
+        stops = []
+        for stop_time in stop_times:
+            stops.append(db.query(TranzyStops).filter(TranzyStops.stop_id == stop_time.stop_id).first())
+        return stops
+
+    # ------------------------------- Stop Times
+
+    # ------------------------------- Trips
     def get_trips(self, db):
         return db.query(TranzyTrips).all()
 

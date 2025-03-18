@@ -22,20 +22,21 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c; // Distance in kilometers
 };
 
 export function Home() {
   const [stops, setStops] = useState([]);
+  const [direction, setDirection] = useState(0);
   const [routes, setRoutes] = useState([]);
   const [shape, setShape] = useState([]);
   const [shapeId, setShapeId] = useState("");
   const [selectedRoute, setSelectedRoute] = useState("");
-  const position = [47.165517, 27.580742]; 
+  const position = [47.165517, 27.580742];
   const proximityThreshold = 0.1;
 
   useEffect(() => {
@@ -50,6 +51,7 @@ export function Home() {
           ...route,
           label: `${route.route_short_name} - ${route.route_long_name}`,
         }));
+        console.log(routesData);
         setRoutes(routesData);
       } catch (error) {
         console.error("Error fetching routes:", error);
@@ -67,7 +69,7 @@ export function Home() {
       }
     };
     fetchRoutes();
-    fetchStops();
+    // fetchStops();
   }, []);
 
   const fetchShape = async (id) => {
@@ -110,17 +112,40 @@ export function Home() {
     });
   };
 
+  const fetchStopsForRouteShortName = async (routeShortName) => {
+    const token = localStorage.getItem("token");
+    console.log("Route short name: " + routeShortName);
+    console.log("Direction: " + direction);
+    try {
+      const response = await axios.get(`http://127.0.0.1:8003/api/v1/tranzy/stops/route/stop-times/${routeShortName}/${direction}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response);
+      setStops(response.data);
+    } catch (error) {
+      console.error("Error fetching stops for route short name:", error);
+    }
+  }
+
   const handleRouteChange = (event) => {
     const selectedRouteId = event.target.value;
     setSelectedRoute(selectedRouteId);
     console.log("Selected route: " + selectedRouteId);
     fetchShapeByRoute(selectedRouteId);
+    fetchStopsForRouteShortName(selectedRouteId);
   };
 
 
   const clearShape = () => {
     setShape([]);
   };
+  const handleDirection = () => {
+    if (direction === 0) {
+      setDirection(1);
+    } else {
+      setDirection(0);
+    }
+  }
 
   return (
     <div>
@@ -151,6 +176,7 @@ export function Home() {
           handleRouteChange={handleRouteChange}
           clearShape={clearShape}
         />
+        <button className="w-20 h-10 bg-blue-500 rounded-sm" onClick={handleDirection}>Tur/Retur</button>
       </div>
     </div>
   );

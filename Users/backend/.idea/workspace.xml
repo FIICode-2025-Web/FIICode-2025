@@ -5,9 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a7fd53d3-98bc-4921-b39b-bc13d23794d2" name="Changes" comment="Global token verification instead of setting it on endpoints">
-      <change afterPath="$PROJECT_DIR$/../../Authorities/backend/app/tranzy_client/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Authorities/backend/app/tranzy_client/schemas.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/tranzy_client/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/tranzy_client/client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/tranzy_client/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/tranzy_client/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Authorities/backend/app/tranzy_client/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Authorities/backend/app/tranzy_client/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TranzyAPI/app/tranzy/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../TranzyAPI/app/tranzy/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TranzyAPI/app/tranzy/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../TranzyAPI/app/tranzy/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TranzyAPI/app/tranzy/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../TranzyAPI/app/tranzy/service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/dashboard/Home/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/dashboard/Home/Home.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,6 +114,7 @@
       <workItem from="1740693824475" duration="76000" />
       <workItem from="1740727604439" duration="1671000" />
       <workItem from="1740842518297" duration="2360000" />
+      <workItem from="1742231971275" duration="589000" />
     </task>
     <task id="LOCAL-00001" summary="Implemented Auth + DbConnection">
       <option name="closed" value="true" />
