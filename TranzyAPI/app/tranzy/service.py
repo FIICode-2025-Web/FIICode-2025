@@ -18,7 +18,12 @@ class TranzyService:
         response = requests.get("https://api.tranzy.ai/v1/opendata/vehicles",
                                 headers={"X-API-KEY": TRANZY_KEY, "X-Agency-Id": "1"}
                                 )
-        return response.json()
+        vehicles = []
+        for vehicle in response.json():
+            vehicle = self.process_vehicle(vehicle)
+            vehicles.append(vehicle)
+
+        return vehicles
 
     def get_tranzy_vehicles_by_route_id(self, route_id: str):
         response = requests.get("https://api.tranzy.ai/v1/opendata/vehicles",
@@ -27,9 +32,38 @@ class TranzyService:
         vehicles = []
         for vehicle in response.json():
             if str(vehicle["route_id"]) == route_id:
+                vehicle = self.process_vehicle(vehicle)
                 vehicles.append(vehicle)
 
         return vehicles
+
+    def get_tranzy_vehicles_by_route_short_name(self, route_short_name: str, direction_id: int, db: Session):
+        response = requests.get("https://api.tranzy.ai/v1/opendata/vehicles",
+                                headers={"X-API-KEY": TRANZY_KEY, "X-Agency-Id": "1"}
+                                )
+        route = db.query(TranzyRoutes).filter(TranzyRoutes.route_short_name == route_short_name).first()
+        trip = db.query(TranzyTrips).filter(
+            TranzyTrips.route_id == route.route_id, TranzyTrips.direction_id == direction_id).first()
+        if not trip:
+            if direction_id == 0:
+                trip = db.query(TranzyTrips).filter(
+                    TranzyTrips.route_id == route.route_id, TranzyTrips.direction_id == 1).first()
+            else:
+                trip = db.query(TranzyTrips).filter(
+                    TranzyTrips.route_id == route.route_id, TranzyTrips.direction_id == 0).first()
+        vehicles = []
+        for vehicle in response.json():
+            if vehicle["route_id"] == route.route_id and "trip_id" in vehicle and vehicle["trip_id"] is not None:
+                vehicle = self.process_vehicle(vehicle)
+                if vehicle["trip_id"] == str(trip.trip_id):
+                    vehicles.append(vehicle)
+
+        return vehicles
+
+    def process_vehicle(self, vehicle):
+        processed_trip_id = "".join(vehicle["trip_id"].split("_"))
+        vehicle["trip_id"] = processed_trip_id
+        return vehicle
 
     # ------------------------------- Shapes
     def get_shapes_by_shape_id(self, shape_id: str, db: Session):

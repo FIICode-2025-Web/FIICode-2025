@@ -23,6 +23,10 @@ def get_vehicles():
 def get_vehicles_by_route_id(route_id: str):
     return tranzy_service.get_tranzy_vehicles_by_route_id(route_id)
 
+@tranzy_router.get("/vehicles/route/route-short-name/{route_short_name}/{direction_id}")
+def get_vehicles_by_route_id(route_short_name: str,direction_id: int, db: db_dependency):
+    return tranzy_service.get_tranzy_vehicles_by_route_short_name(route_short_name,direction_id, db)
+
 
 # ------------------------------- Shapes
 @tranzy_router.get("/shapes/{shape_id}")
