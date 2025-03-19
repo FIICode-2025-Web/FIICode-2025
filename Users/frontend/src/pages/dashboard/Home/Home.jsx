@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, CircleMarker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import DashboardNavbar from "../../../layouts/DashboardNavbar";
 import SearchableSelect from "./Components/SearchableSelect";
-
+import busImage from "../../../../public/img/front-of-bus.png";
 const defaultIcon = L.icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
   iconSize: [25, 41],
@@ -13,6 +13,29 @@ const defaultIcon = L.icon({
   popupAnchor: [1, -34],
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
+
+const busIcon = L.divIcon({
+  html: `
+    <div style="
+      background: white;
+      padding: 3px;
+      border-radius: 50%;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+    ">
+      <img src="${busImage}" style="width: 18px; height: 18px;" />
+    </div>
+  `,
+  className: "",
+  iconSize: [30, 30],
+  iconAnchor: [15, 15],
+  popupAnchor: [0, -15]
+});
+
 
 // Function to calculate the distance between two coordinates using the Haversine formula
 const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -36,6 +59,7 @@ export function Home() {
   const [shape, setShape] = useState([]);
   const [shapeId, setShapeId] = useState("");
   const [selectedRoute, setSelectedRoute] = useState("");
+  const [vehicles, setVehicles] = useState([]);
   const position = [47.165517, 27.580742];
   const proximityThreshold = 0.1;
 
@@ -51,7 +75,6 @@ export function Home() {
           ...route,
           label: `${route.route_short_name} - ${route.route_long_name}`,
         }));
-        console.log(routesData);
         setRoutes(routesData);
       } catch (error) {
         console.error("Error fetching routes:", error);
@@ -114,16 +137,29 @@ export function Home() {
 
   const fetchStopsForRouteShortName = async (routeShortName) => {
     const token = localStorage.getItem("token");
-    console.log("Route short name: " + routeShortName);
-    console.log("Direction: " + direction);
     try {
       const response = await axios.get(`http://127.0.0.1:8003/api/v1/tranzy/stops/route/stop-times/${routeShortName}/${direction}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(response);
       setStops(response.data);
     } catch (error) {
       console.error("Error fetching stops for route short name:", error);
+    }
+  }
+
+  const fetchLiveVehiclesPositions = async (selectedRouteId) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(`http://127.0.0.1:8003/api/v1/tranzy/vehicles/route/route-short-name/${selectedRouteId}/${direction}
+      `, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response);
+      setVehicles(response.data);
+
+    }
+    catch (error) {
+      console.error("Error fetching live vehicles positions:", error);
     }
   }
 
@@ -133,17 +169,23 @@ export function Home() {
     console.log("Selected route: " + selectedRouteId);
     fetchShapeByRoute(selectedRouteId);
     fetchStopsForRouteShortName(selectedRouteId);
+    fetchLiveVehiclesPositions(selectedRouteId);
   };
 
 
   const clearShape = () => {
     setShape([]);
+    setVehicles([]);
   };
   const handleDirection = () => {
     if (direction === 0) {
       setDirection(1);
+      fetchShapeByRoute(selectedRoute);
+      fetchStopsForRouteShortName(selectedRoute);
     } else {
       setDirection(0);
+      fetchShapeByRoute(selectedRoute);
+      fetchStopsForRouteShortName(selectedRoute);
     }
   }
 
@@ -164,8 +206,14 @@ export function Home() {
           {shape.length > 0 && <Polyline positions={shape} color="blue" />}
 
           {getStopsInShape().map((stop) => (
-            <Marker key={stop.stop_id} position={[stop.stop_lat, stop.stop_lon]} icon={defaultIcon}>
+            <CircleMarker key={stop.stop_id} center={[stop.stop_lat, stop.stop_lon]} icon={defaultIcon} radius={6} fillColor="blue"
+              fillOpacity={0.8} >
               <Popup>{stop.stop_name}</Popup>
+            </CircleMarker>
+          ))}
+          {vehicles.map((vehicle) => (
+            <Marker key={vehicle.vehicle_id} position={[vehicle.latitude, vehicle.longitude]} icon={busIcon}>
+              <Popup>{vehicle.wheelchair_accessible}</Popup>
             </Marker>
           ))}
         </MapContainer>
@@ -176,7 +224,15 @@ export function Home() {
           handleRouteChange={handleRouteChange}
           clearShape={clearShape}
         />
-        <button className="w-20 h-10 bg-blue-500 rounded-sm" onClick={handleDirection}>Tur/Retur</button>
+        <button className="w-20 h-10 bg-blue-500 rounded-sm" onClick={handleDirection}>
+          <span className={`${direction === 0 ? 'text-white' : 'text-black'}`}>
+            Tur
+          </span>
+          /
+          <span className={`${direction === 1 ? 'text-white' : 'text-black'}`}>
+            Retur
+          </span>
+        </button>
       </div>
     </div>
   );
