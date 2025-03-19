@@ -6,6 +6,8 @@ import L from "leaflet";
 import DashboardNavbar from "../../../layouts/DashboardNavbar";
 import SearchableSelect from "./Components/SearchableSelect";
 import busImage from "../../../../public/img/front-of-bus.png";
+import tramImage from "../../../../public/img/tram.png";
+
 const defaultIcon = L.icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
   iconSize: [25, 41],
@@ -35,6 +37,44 @@ const busIcon = L.divIcon({
   iconAnchor: [15, 15],
   popupAnchor: [0, -15]
 });
+
+const tramIcon = L.divIcon({
+  html: `
+    <div style="
+      background: white;
+      padding: 3px;
+      border-radius: 50%;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+    ">
+      <img src="${tramImage}" style="width: 18px; height: 18px;" />
+    </div>
+  `,
+  className: "",
+  iconSize: [30, 30],
+  iconAnchor: [15, 15],
+  popupAnchor: [0, -15]
+});
+
+const handleWheelchairAccessible = (wheelchair_accessible) => {
+  if (wheelchair_accessible === "WHEELCHAIR_ACCESSIBLE") {
+    return "Da";
+  } else {
+    return "Nu";
+  }
+};
+
+const handleBikeAccessible = (bike_accessible) => {
+  if (bike_accessible === "BIKE_ACCESSIBLE") {
+    return "Da";
+  } else {
+    return "Nu";
+  }
+};
 
 
 // Function to calculate the distance between two coordinates using the Haversine formula
@@ -189,6 +229,14 @@ export function Home() {
     }
   }
 
+  const handleVehicleIcon = (vehicle_type) => {
+    if (vehicle_type === 0) {
+      return tramIcon;
+    } else {
+      return busIcon;
+    }
+  }
+
   return (
     <div>
       <div className="flex items-center justify-center flex-col">
@@ -212,10 +260,23 @@ export function Home() {
             </CircleMarker>
           ))}
           {vehicles.map((vehicle) => (
-            <Marker key={vehicle.vehicle_id} position={[vehicle.latitude, vehicle.longitude]} icon={busIcon}>
-              <Popup>{vehicle.wheelchair_accessible}</Popup>
+            <Marker
+              key={vehicle.vehicle_id}
+              position={[vehicle.latitude, vehicle.longitude]}
+              icon={handleVehicleIcon(vehicle.vehicle_type)}
+            >
+              <Popup >
+                <div>
+                  ♿: {handleWheelchairAccessible(vehicle.wheelchair_accessible)}
+                  <br />
+                  🚲: {handleBikeAccessible(vehicle.bike_accessible)}
+                  <br />
+                  Viteza: {vehicle.speed} km/h
+                </div>
+              </Popup>
             </Marker>
           ))}
+
         </MapContainer>
 
         <SearchableSelect
