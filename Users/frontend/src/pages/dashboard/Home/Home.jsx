@@ -116,6 +116,8 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
   return R * c; // Distance in kilometers
 };
 
+
+
 export function Home() {
   const [stops, setStops] = useState([]);
   const [direction, setDirection] = useState(0);
@@ -125,6 +127,7 @@ export function Home() {
   const [selectedRoute, setSelectedRoute] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [scooters, setScooters] = useState([]);
+  const [userLocation, setUserLocation] = useState([]);
   const position = [47.165517, 27.580742];
   const proximityThreshold = 0.1;
 
@@ -157,8 +160,15 @@ export function Home() {
       }
     };
     fetchRoutes();
+    getUserCurrentLocation();
     // fetchStops();
   }, []);
+
+  const getUserCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setUserLocation([position.coords.latitude, position.coords.longitude]);
+    });
+  }
 
   const fetchShape = async (id) => {
     const token = localStorage.getItem("token");
@@ -229,7 +239,8 @@ export function Home() {
   }
 
   const fetchScootersPosition = async () => {
-    setScooters([]);
+    clearShape();
+    clearScooters();
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get("http://127.0.0.1:8003/api/v1/scooter/", {
@@ -242,6 +253,7 @@ export function Home() {
   }
 
   const handleRouteChange = (event) => {
+    clearScooters();
     const selectedRouteId = event.target.value;
     setSelectedRoute(selectedRouteId);
     console.log("Selected route: " + selectedRouteId);
@@ -255,7 +267,13 @@ export function Home() {
     setShape([]);
     setVehicles([]);
   };
+
+  const clearScooters = () => {
+    setScooters([]);
+  };
+
   const handleDirection = () => {
+    clearScooters();
     if (direction === 0) {
       setDirection(1);
       fetchShapeByRoute(selectedRoute);
@@ -301,6 +319,16 @@ export function Home() {
 
           {shape.length > 0 && <Polyline positions={shape} color="blue" />}
 
+          {userLocation.length > 0 && (
+            <Marker position={userLocation} icon={defaultIcon}>
+              <Popup>
+                <div className="flex flex-col space-y-0 leading-tight text-sm">
+                  <p className="m-0 p-0 text-center font-bold">Locația ta</p>
+                </div>
+              </Popup>
+            </Marker>
+          )}
+
           {getStopsInShape().map((stop) => (
             <CircleMarker key={stop.stop_id} center={[stop.stop_lat, stop.stop_lon]} icon={defaultIcon} radius={6} fillColor="blue"
               fillOpacity={0.8} >
@@ -338,7 +366,7 @@ export function Home() {
                   <Button
                     variant="text"
                     color="blue-gray"
-                    className="flex mt-4 items-center justify-center text-primary text-sm h-8 normal-case bg-gray-300"
+                    className="flex items-center justify-center text-primary text-sm h-8 normal-case bg-gray-300"
                   >
                     Rezervă
                   </Button>
@@ -349,25 +377,34 @@ export function Home() {
           }
 
         </MapContainer>
+        <div className="flex items-center justify-center gap-4 mt-4">
+          <SearchableSelect
+            routes={routes}
+            selectedRoute={selectedRoute}
+            handleRouteChange={handleRouteChange}
+            clearShape={clearShape}
+          />
+          <Button
+            variant="text"
+            color="blue-gray"
+            className="flex items-center justify-center text-primary text-sm h-8 normal-case bg-gray-300" onClick={handleDirection}>
+            <span className={`${direction === 0 ? 'text-white' : 'text-black'}`}>
+              Tur
+            </span>
+            /
+            <span className={`${direction === 1 ? 'text-white' : 'text-black'}`}>
+              Retur
+            </span>
+          </Button>
+        </div>
 
-        <SearchableSelect
-          routes={routes}
-          selectedRoute={selectedRoute}
-          handleRouteChange={handleRouteChange}
-          clearShape={clearShape}
-        />
-        <button className="w-20 h-10 bg-blue-500 rounded-sm" onClick={handleDirection}>
-          <span className={`${direction === 0 ? 'text-white' : 'text-black'}`}>
-            Tur
-          </span>
-          /
-          <span className={`${direction === 1 ? 'text-white' : 'text-black'}`}>
-            Retur
-          </span>
-        </button>
-        <button onClick={fetchScootersPosition}>
+        <Button
+          variant="text"
+          color="blue-gray"
+          className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
+          onClick={fetchScootersPosition}>
           Scooter
-        </button>
+        </Button>
       </div>
     </div>
   );
