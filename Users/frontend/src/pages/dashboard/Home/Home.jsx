@@ -84,6 +84,9 @@ const scooterIcon = L.divIcon({
   popupAnchor: [0, -15]
 });
 
+
+
+
 const handleWheelchairAccessible = (wheelchair_accessible) => {
   if (wheelchair_accessible === "WHEELCHAIR_ACCESSIBLE") {
     return "Da";
@@ -128,8 +131,19 @@ export function Home() {
   const [vehicles, setVehicles] = useState([]);
   const [scooters, setScooters] = useState([]);
   const [userLocation, setUserLocation] = useState([]);
+  const [routeUserScooter, setRouteUserScooter] = useState([]);
   const position = [47.165517, 27.580742];
   const proximityThreshold = 0.1;
+
+
+  const distanceLabelIcon = L.divIcon({
+    html: `<div style="background: white; padding: 2px 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; text-align: center">
+             ${routeUserScooter.distance_meters} m
+           </div>`,
+    className: 'custom-distance-label',
+    iconSize: [100, 30],
+    iconAnchor: [50, 15]
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -252,6 +266,30 @@ export function Home() {
     }
   }
 
+  const fetchDistanceBetweenUserAndScooters = async (scooterLatitude, scooterLongitude) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8003/api/v1/scooter/route",
+        {
+          latitude_A: userLocation[0],
+          longitude_A: userLocation[1],
+          latitude_B: scooterLatitude,
+          longitude_B: scooterLongitude
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      setRouteUserScooter(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching live scooters positions:", error);
+    }
+  };
+
+
   const handleRouteChange = (event) => {
     clearScooters();
     const selectedRouteId = event.target.value;
@@ -367,6 +405,7 @@ export function Home() {
                     variant="text"
                     color="blue-gray"
                     className="flex items-center justify-center text-primary text-sm h-8 normal-case bg-gray-300"
+                    onClick={() => fetchDistanceBetweenUserAndScooters(scooter.latitude, scooter.longitude)}
                   >
                     Rezervă
                   </Button>
@@ -375,6 +414,20 @@ export function Home() {
             </Marker>
           ))
           }
+          {routeUserScooter.route && routeUserScooter.route.length > 0 && (
+            <Polyline
+              positions={routeUserScooter.route.map(coord => [coord[1], coord[0]])}
+              pathOptions={{ color: 'red', dashArray: '8 8' }}
+            />
+          )}
+          {routeUserScooter.route && routeUserScooter.route.length > 0 && (
+            <Marker
+              position={[routeUserScooter.route[0][1] - 0.0005, routeUserScooter.route[0][0]]}
+              icon={distanceLabelIcon}
+            />
+          )}
+
+
 
         </MapContainer>
         <div className="flex items-center justify-center gap-4 mt-4">

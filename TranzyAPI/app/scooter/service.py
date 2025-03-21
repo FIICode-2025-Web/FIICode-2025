@@ -1,12 +1,16 @@
+from app.scooter.schemas import CoordinateSchema
 from app.tranzy.models import TranzyStops
 from app.scooter.models import Scooters
 import random
 from sqlalchemy.orm import Session
 from math import radians, sin, cos, acos
 import datetime
+import openrouteservice
+from decouple import config
 
 CENTRAL_LAT = 47.146797
 CENTRAL_LON = 27.61115017
+OPENROUTESERVICEKEY = config("open_route_service_key")
 
 
 class ScooterService:
@@ -50,7 +54,6 @@ class ScooterService:
             scooters.append(scooter)
             self.save_entity(Scooters(**scooter), db)
 
-
         return scooters
 
     def calculate_distance(self, lat1, lon1, lat2, lon2):
@@ -68,3 +71,25 @@ class ScooterService:
     def save_entity(self, scooter, db: Session):
         db.add(scooter)
         db.commit()
+
+    def get_route_between_locations(self, coordinates: CoordinateSchema):
+        client = openrouteservice.Client(key=OPENROUTESERVICEKEY)
+        coords = [
+            (coordinates.longitude_A, coordinates.latitude_A),
+            (coordinates.longitude_B, coordinates.latitude_B)
+        ]
+
+        route = client.directions(
+            coords,
+            profile='foot-walking',
+            format='geojson',
+            instructions=False
+        )
+        geometry = route['features'][0]['geometry']['coordinates']
+        distance_m = route['features'][0]['properties']['summary']['distance']
+
+        return {
+            "route": geometry,
+            "distance_meters": distance_m
+        }
+
