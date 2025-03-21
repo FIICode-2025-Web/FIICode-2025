@@ -3,10 +3,12 @@ import axios from "axios";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, CircleMarker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { Navbar, Typography, Button, IconButton, Breadcrumbs } from "@material-tailwind/react";
 import DashboardNavbar from "../../../layouts/DashboardNavbar";
 import SearchableSelect from "./Components/SearchableSelect";
 import busImage from "../../../../public/img/front-of-bus.png";
 import tramImage from "../../../../public/img/tram.png";
+import scooterImage from "../../../../public/img/scooter.png";
 
 const defaultIcon = L.icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
@@ -60,6 +62,28 @@ const tramIcon = L.divIcon({
   popupAnchor: [0, -15]
 });
 
+const scooterIcon = L.divIcon({
+  html: `
+    <div style="
+      background: #50C878;
+      padding: 3px;
+      border-radius: 50%;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+    ">
+      <img src="${scooterImage}" style="width: 18px; height: 18px;" />
+    </div>
+  `,
+  className: "",
+  iconSize: [30, 30],
+  iconAnchor: [15, 15],
+  popupAnchor: [0, -15]
+});
+
 const handleWheelchairAccessible = (wheelchair_accessible) => {
   if (wheelchair_accessible === "WHEELCHAIR_ACCESSIBLE") {
     return "Da";
@@ -100,6 +124,7 @@ export function Home() {
   const [shapeId, setShapeId] = useState("");
   const [selectedRoute, setSelectedRoute] = useState("");
   const [vehicles, setVehicles] = useState([]);
+  const [scooters, setScooters] = useState([]);
   const position = [47.165517, 27.580742];
   const proximityThreshold = 0.1;
 
@@ -188,18 +213,31 @@ export function Home() {
   }
 
   const fetchLiveVehiclesPositions = async (selectedRouteId) => {
+    setVehicles([]);
     const token = localStorage.getItem("token");
     try {
       const response = await axios.get(`http://127.0.0.1:8003/api/v1/tranzy/vehicles/route/route-short-name/${selectedRouteId}/${direction}
       `, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(response);
       setVehicles(response.data);
 
     }
     catch (error) {
       console.error("Error fetching live vehicles positions:", error);
+    }
+  }
+
+  const fetchScootersPosition = async () => {
+    setScooters([]);
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get("http://127.0.0.1:8003/api/v1/scooter/", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setScooters(response.data);
+    } catch (error) {
+      console.error("Error fetching live scooters positions:", error);
     }
   }
 
@@ -222,10 +260,13 @@ export function Home() {
       setDirection(1);
       fetchShapeByRoute(selectedRoute);
       fetchStopsForRouteShortName(selectedRoute);
+      fetchLiveVehiclesPositions(selectedRoute);
+
     } else {
       setDirection(0);
       fetchShapeByRoute(selectedRoute);
       fetchStopsForRouteShortName(selectedRoute);
+      fetchLiveVehiclesPositions(selectedRoute);
     }
   }
 
@@ -240,7 +281,7 @@ export function Home() {
   const getTimestampBetweenPositions = (tinestamp) => {
     var startTime = new Date(tinestamp);
     var endTime = new Date();
-    var difference = (endTime.getTime() - startTime.getTime()) / 1000 ;
+    var difference = (endTime.getTime() - startTime.getTime()) / 1000;
     return difference.toFixed(0);
   }
 
@@ -283,6 +324,29 @@ export function Home() {
               </Popup>
             </Marker>
           ))}
+          {scooters.map((scooter) => (
+            <Marker
+              key={scooter.id}
+              position={[scooter.latitude, scooter.longitude]}
+              icon={scooterIcon}
+            >
+              <Popup>
+                <div className="flex flex-col space-y-0 text-sm">
+                  <p className="m-0 p-0 text-center">Trotinetă</p>
+                  <p className="m-0 p-0">Baterie: {scooter.battery_level}%</p>
+                  <p className="m-0 p-0">Interval de: {Math.floor(scooter.battery_level * 45 / 100)} km</p>
+                  <Button
+                    variant="text"
+                    color="blue-gray"
+                    className="flex mt-4 items-center justify-center text-primary text-sm h-8 normal-case bg-gray-300"
+                  >
+                    Rezervă
+                  </Button>
+                </div>
+              </Popup>
+            </Marker>
+          ))
+          }
 
         </MapContainer>
 
@@ -300,6 +364,9 @@ export function Home() {
           <span className={`${direction === 1 ? 'text-white' : 'text-black'}`}>
             Retur
           </span>
+        </button>
+        <button onClick={fetchScootersPosition}>
+          Scooter
         </button>
       </div>
     </div>
