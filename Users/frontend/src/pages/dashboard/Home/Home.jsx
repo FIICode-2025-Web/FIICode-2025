@@ -1,14 +1,23 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { MapContainer, TileLayer, Marker, Popup, Polyline, CircleMarker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { Navbar, Typography, Button, IconButton, Breadcrumbs } from "@material-tailwind/react";
+import { Button } from "@material-tailwind/react";
+import MapWrapper from "./Components/MapWrapper";
+import { DistanceMarker } from "./Components/DistanceMarker";
 import DashboardNavbar from "../../../layouts/DashboardNavbar";
 import SearchableSelect from "./Components/SearchableSelect";
 import busImage from "../../../../public/img/front-of-bus.png";
 import tramImage from "../../../../public/img/tram.png";
 import scooterImage from "../../../../public/img/scooter.png";
+import UserMarker from "./Components/UserMarker";
+import VehicleMarkers from "./Components/VehicleMarkers";
+import ScooterMarkers from "./Components/ScooterMarkers";
+import StopsMarkers from "./Components/StopsMarker";
+import DirectionButton from "./Components/DirectionButton";
+import ShapePolyline from "./Components/ShapePolyline";
+import RoutePolyline from "./Components/RoutePolyline";
+import { handleBikeAccessible, handleWheelchairAccessible, getDistance } from "./utils/helpers";
 
 const defaultIcon = L.icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
@@ -84,42 +93,6 @@ const scooterIcon = L.divIcon({
   popupAnchor: [0, -15]
 });
 
-
-
-
-const handleWheelchairAccessible = (wheelchair_accessible) => {
-  if (wheelchair_accessible === "WHEELCHAIR_ACCESSIBLE") {
-    return "Da";
-  } else {
-    return "Nu";
-  }
-};
-
-const handleBikeAccessible = (bike_accessible) => {
-  if (bike_accessible === "BIKE_ACCESSIBLE") {
-    return "Da";
-  } else {
-    return "Nu";
-  }
-};
-
-
-const getDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-    Math.cos((lat2 * Math.PI) / 180) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
-
-
-
 export function Home() {
   const [stops, setStops] = useState([]);
   const [direction, setDirection] = useState(0);
@@ -134,36 +107,17 @@ export function Home() {
   const position = [47.165517, 27.580742];
   const proximityThreshold = 0.1;
 
-
-  const distanceLabelIcon = L.divIcon({
-    html: `
-      <div style="
-        background: white;
-        padding: 4px 8px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 12px;
-        text-align: center;
-        position: relative;
-      ">
-        <button onclick="document.dispatchEvent(new CustomEvent('close-distance-label'))" 
-                style="position: absolute; top: 2px; right: 4px; border: none; background: transparent; font-size: 14px; cursor: pointer;">✕</button>
-        ${routeUserScooter.distance_meters} m
-      </div>`,
-    className: '',
-    iconSize: [120, 40],
-    iconAnchor: [60, 20]
-  });
-
   const handleCloseRouteUserScooter = () => {
     setRouteUserScooter([]);
   }
 
   useEffect(() => {
-    const closeListener = () => handleCloseRouteUserScooter();
-    document.addEventListener("close-distance-label", closeListener);
-    return () => document.removeEventListener("close-distance-label", closeListener);
-  }, []);
+    if (!selectedRoute) return;
+
+    fetchShapeByRoute(selectedRoute);
+    fetchStopsForRouteShortName(selectedRoute);
+    fetchLiveVehiclesPositions(selectedRoute);
+  }, [direction]);
 
 
   useEffect(() => {
@@ -314,7 +268,6 @@ export function Home() {
     clearScooters();
     const selectedRouteId = event.target.value;
     setSelectedRoute(selectedRouteId);
-    console.log("Selected route: " + selectedRouteId);
     fetchShapeByRoute(selectedRouteId);
     fetchStopsForRouteShortName(selectedRouteId);
     fetchLiveVehiclesPositions(selectedRouteId);
@@ -331,20 +284,12 @@ export function Home() {
   };
 
   const handleDirection = () => {
+    const newDirection = direction === 0 ? 1 : 0;
+    setDirection(newDirection);
     clearScooters();
-    if (direction === 0) {
-      setDirection(1);
-      fetchShapeByRoute(selectedRoute);
-      fetchStopsForRouteShortName(selectedRoute);
-      fetchLiveVehiclesPositions(selectedRoute);
+  };
 
-    } else {
-      setDirection(0);
-      fetchShapeByRoute(selectedRoute);
-      fetchStopsForRouteShortName(selectedRoute);
-      fetchLiveVehiclesPositions(selectedRoute);
-    }
-  }
+
 
   const handleVehicleIcon = (vehicle_type) => {
     if (vehicle_type === 0) {
@@ -369,94 +314,44 @@ export function Home() {
           Caută ruta dorită
         </h2>
 
-        <MapContainer center={position} zoom={13} style={{ height: "550px", width: "70%" }}>
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
+        <MapWrapper center={position}>
 
-          {shape.length > 0 && <Polyline positions={shape} color="blue" />}
+          {shape.length > 0 && <ShapePolyline shape={shape} />}
 
           {userLocation.length > 0 && (
-            <Marker position={userLocation} icon={defaultIcon}>
-              <Popup close>
-                <div className="flex flex-col space-y-0 leading-tight text-sm">
-                  <p className="m-0 p-0 text-center font-bold">Locația ta</p>
-                </div>
-              </Popup>
-            </Marker>
+            <UserMarker userLocation={userLocation} icon={defaultIcon} />
           )}
 
-          {getStopsInShape().map((stop) => (
-            <CircleMarker key={stop.stop_id} center={[stop.stop_lat, stop.stop_lon]} icon={defaultIcon} radius={6} fillColor="blue"
-              fillOpacity={0.8} >
-              <Popup>{stop.stop_name}</Popup>
-            </CircleMarker>
-          ))}
-          {vehicles.map((vehicle) => (
-            <Marker
-              key={vehicle.vehicle_id}
-              position={[vehicle.latitude, vehicle.longitude]}
-              icon={handleVehicleIcon(vehicle.vehicle_type)}
-            >
-              <Popup>
-                <div className="flex flex-col space-y-0 leading-tight text-sm">
-                  <p className="m-0 p-0 text-center font-bold"># Parc: {vehicle.label}</p>
-                  <p className="m-0 p-0">♿: {handleWheelchairAccessible(vehicle.wheelchair_accessible)}</p>
-                  <p className="m-0 p-0">🚲: {handleBikeAccessible(vehicle.bike_accessible)}</p>
-                  <p className="m-0 p-0">Viteza: {vehicle.speed} km/h</p>
-                  <p>De acum: {getTimestampBetweenPositions(vehicle.timestamp)} secunde</p>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-          {scooters.map((scooter) => (
-            <Marker
-              key={scooter.id}
-              position={[scooter.latitude, scooter.longitude]}
-              icon={scooterIcon}
-              eventHandlers={
-                {
-                  popupclose: () => {
-                    handleCloseRouteUserScooter();
-                  }
-                }
-              }
-            >
-              <Popup >
-                <div className="flex flex-col space-y-0 text-sm">
-                  <p className="m-0 p-0 text-center">Trotinetă</p>
-                  <p className="m-0 p-0">Baterie: {scooter.battery_level}%</p>
-                  <p className="m-0 p-0">Interval de: {Math.floor(scooter.battery_level * 45 / 100)} km</p>
-                  <p className="m-0 p-0">1,50 Ron pentru a debloca</p>
-                  <p className="m-0 p-0">0,95 Ron/minut</p>
-                  <Button
-                    variant="text"
-                    color="blue-gray"
-                    className="flex items-center justify-center text-primary text-sm h-8 normal-case bg-gray-300"
-                    onClick={() => fetchDistanceBetweenUserAndScooters(scooter.latitude, scooter.longitude)}
-                  >
-                    Rezervă
-                  </Button>
-                </div>
-              </Popup>
-            </Marker>
-          ))
+          <StopsMarkers stops={getStopsInShape()} />
+
+          {vehicles.length > 0 &&
+            <VehicleMarkers
+              vehicles={vehicles}
+              handleVehicleIcon={handleVehicleIcon}
+              handleWheelchairAccessible={handleWheelchairAccessible}
+              handleBikeAccessible={handleBikeAccessible}
+              getTimestampBetweenPositions={getTimestampBetweenPositions}
+            />}
+          {scooters.length > 0 &&
+            <ScooterMarkers
+              scooters={scooters}
+              scooterIcon={scooterIcon}
+              fetchDistance={fetchDistanceBetweenUserAndScooters}
+              onPopupClose={handleCloseRouteUserScooter}
+            />
           }
           {routeUserScooter.route && routeUserScooter.route.length > 0 && (
-            <Polyline
-              positions={routeUserScooter.route.map(coord => [coord[1], coord[0]])}
-              pathOptions={{ color: 'red', dashArray: '8 8' }}
-            />
+            <RoutePolyline route={routeUserScooter.route} />
           )}
           {routeUserScooter.route && routeUserScooter.route.length > 0 && (
-            <Marker
-              position={[routeUserScooter.route[0][1] - 0.0005, routeUserScooter.route[0][0]]}
-              icon={distanceLabelIcon}
+            <DistanceMarker
+              position={[routeUserScooter.route[0][1] - 0.0009, routeUserScooter.route[0][0]]}
+              distance={routeUserScooter.distance_meters}
+              onClose={handleCloseRouteUserScooter}
             />
           )}
 
-        </MapContainer>
+        </MapWrapper>
         <div className="flex items-center justify-center gap-4 mt-4">
           <SearchableSelect
             routes={routes}
@@ -464,18 +359,7 @@ export function Home() {
             handleRouteChange={handleRouteChange}
             clearShape={clearShape}
           />
-          <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center justify-center text-primary text-sm h-8 normal-case bg-gray-300" onClick={handleDirection}>
-            <span className={`${direction === 0 ? 'text-white' : 'text-black'}`}>
-              Tur
-            </span>
-            /
-            <span className={`${direction === 1 ? 'text-white' : 'text-black'}`}>
-              Retur
-            </span>
-          </Button>
+          <DirectionButton direction={direction} handleDirection={handleDirection} />
         </div>
 
         <Button
