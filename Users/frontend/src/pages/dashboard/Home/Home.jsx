@@ -104,9 +104,8 @@ const handleBikeAccessible = (bike_accessible) => {
 };
 
 
-// Function to calculate the distance between two coordinates using the Haversine formula
 const getDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371; // Radius of the Earth in kilometers
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -116,7 +115,7 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
     Math.sin(dLon / 2) *
     Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in kilometers
+  return R * c;
 };
 
 
@@ -137,13 +136,35 @@ export function Home() {
 
 
   const distanceLabelIcon = L.divIcon({
-    html: `<div style="background: white; padding: 2px 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 12px; text-align: center">
-             ${routeUserScooter.distance_meters} m
-           </div>`,
-    className: 'custom-distance-label',
-    iconSize: [100, 30],
-    iconAnchor: [50, 15]
+    html: `
+      <div style="
+        background: white;
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 12px;
+        text-align: center;
+        position: relative;
+      ">
+        <button onclick="document.dispatchEvent(new CustomEvent('close-distance-label'))" 
+                style="position: absolute; top: 2px; right: 4px; border: none; background: transparent; font-size: 14px; cursor: pointer;">✕</button>
+        ${routeUserScooter.distance_meters} m
+      </div>`,
+    className: '',
+    iconSize: [120, 40],
+    iconAnchor: [60, 20]
   });
+
+  const handleCloseRouteUserScooter = () => {
+    setRouteUserScooter([]);
+  }
+
+  useEffect(() => {
+    const closeListener = () => handleCloseRouteUserScooter();
+    document.addEventListener("close-distance-label", closeListener);
+    return () => document.removeEventListener("close-distance-label", closeListener);
+  }, []);
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -283,7 +304,6 @@ export function Home() {
         }
       );
       setRouteUserScooter(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching live scooters positions:", error);
     }
@@ -359,7 +379,7 @@ export function Home() {
 
           {userLocation.length > 0 && (
             <Marker position={userLocation} icon={defaultIcon}>
-              <Popup>
+              <Popup close>
                 <div className="flex flex-col space-y-0 leading-tight text-sm">
                   <p className="m-0 p-0 text-center font-bold">Locația ta</p>
                 </div>
@@ -395,12 +415,21 @@ export function Home() {
               key={scooter.id}
               position={[scooter.latitude, scooter.longitude]}
               icon={scooterIcon}
+              eventHandlers={
+                {
+                  popupclose: () => {
+                    handleCloseRouteUserScooter();
+                  }
+                }
+              }
             >
-              <Popup>
+              <Popup >
                 <div className="flex flex-col space-y-0 text-sm">
                   <p className="m-0 p-0 text-center">Trotinetă</p>
                   <p className="m-0 p-0">Baterie: {scooter.battery_level}%</p>
                   <p className="m-0 p-0">Interval de: {Math.floor(scooter.battery_level * 45 / 100)} km</p>
+                  <p className="m-0 p-0">1,50 Ron pentru a debloca</p>
+                  <p className="m-0 p-0">0,95 Ron/minut</p>
                   <Button
                     variant="text"
                     color="blue-gray"
@@ -426,8 +455,6 @@ export function Home() {
               icon={distanceLabelIcon}
             />
           )}
-
-
 
         </MapContainer>
         <div className="flex items-center justify-center gap-4 mt-4">
@@ -459,7 +486,7 @@ export function Home() {
           Scooter
         </Button>
       </div>
-    </div>
+    </div >
   );
 }
 
