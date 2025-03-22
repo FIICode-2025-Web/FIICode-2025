@@ -7,6 +7,7 @@ import MapWrapper from "./Components/MapWrapper";
 import { DistanceMarker } from "./Components/DistanceMarker";
 import DashboardNavbar from "../../../layouts/DashboardNavbar";
 import SearchableSelect from "./Components/SearchableSelect";
+import SearchableStation from "./Components/SearchableStation";
 import busImage from "../../../../public/img/front-of-bus.png";
 import tramImage from "../../../../public/img/tram.png";
 import scooterImage from "../../../../public/img/scooter.png";
@@ -18,6 +19,7 @@ import DirectionButton from "./Components/DirectionButton";
 import ShapePolyline from "./Components/ShapePolyline";
 import RoutePolyline from "./Components/RoutePolyline";
 import { handleBikeAccessible, handleWheelchairAccessible, getDistance } from "./utils/helpers";
+import { Marker } from "react-leaflet";
 
 const defaultIcon = L.icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
@@ -29,17 +31,7 @@ const defaultIcon = L.icon({
 
 const busIcon = L.divIcon({
   html: `
-    <div style="
-      background: white;
-      padding: 3px;
-      border-radius: 50%;
-      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-    ">
+    <div style="background: white;padding: 3px;border-radius: 50%;box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);display: flex;align-items: center;justify-content: center;width: 30px;height: 30px;">
       <img src="${busImage}" style="width: 18px; height: 18px;" />
     </div>
   `,
@@ -51,17 +43,7 @@ const busIcon = L.divIcon({
 
 const tramIcon = L.divIcon({
   html: `
-    <div style="
-      background: white;
-      padding: 3px;
-      border-radius: 50%;
-      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-    ">
+    <div style="background: white;padding: 3px;border-radius: 50%;box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);display: flex;align-items: center;justify-content: center;width: 30px;height: 30px;">
       <img src="${tramImage}" style="width: 18px; height: 18px;" />
     </div>
   `,
@@ -73,17 +55,7 @@ const tramIcon = L.divIcon({
 
 const scooterIcon = L.divIcon({
   html: `
-    <div style="
-      background: #50C878;
-      padding: 3px;
-      border-radius: 50%;
-      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-    ">
+    <div style="background: #50C878;padding: 3px;border-radius: 50%;box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);display: flex;align-items: center;justify-content: center;width: 30px;height: 30px;">
       <img src="${scooterImage}" style="width: 18px; height: 18px;" />
     </div>
   `,
@@ -95,6 +67,7 @@ const scooterIcon = L.divIcon({
 
 export function Home() {
   const [stops, setStops] = useState([]);
+  const [stations, setStations] = useState([]);
   const [direction, setDirection] = useState(0);
   const [routes, setRoutes] = useState([]);
   const [shape, setShape] = useState([]);
@@ -104,11 +77,17 @@ export function Home() {
   const [scooters, setScooters] = useState([]);
   const [userLocation, setUserLocation] = useState([]);
   const [routeUserScooter, setRouteUserScooter] = useState([]);
+  const [routeUserStation, setRouteUserStation] = useState([]);
+  const [selectedStartingStation, setSelectedStartingStation] = useState(null);
   const position = [47.165517, 27.580742];
   const proximityThreshold = 0.1;
 
   const handleCloseRouteUserScooter = () => {
     setRouteUserScooter([]);
+  }
+
+  const handleCloseRouteUserStation = () => {
+    setRouteUserStation([]);
   }
 
   useEffect(() => {
@@ -118,7 +97,6 @@ export function Home() {
     fetchStopsForRouteShortName(selectedRoute);
     fetchLiveVehiclesPositions(selectedRoute);
   }, [direction]);
-
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -150,8 +128,27 @@ export function Home() {
     };
     fetchRoutes();
     getUserCurrentLocation();
+    fetchStations();
     // fetchStops();
   }, []);
+
+  const fetchStations = async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await axios.get("http://127.0.0.1:8003/api/v1/tranzy/stops", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const uniqueStops = response.data.filter(
+        (stop, index, self) =>
+          index === self.findIndex((s) => s.stop_name === stop.stop_name)
+      );
+      setStations(uniqueStops);
+
+    } catch (error) {
+      console.error("Error fetching stops:", error);
+    }
+  };
 
   const getUserCurrentLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -241,28 +238,37 @@ export function Home() {
     }
   }
 
-  const fetchDistanceBetweenUserAndScooters = async (scooterLatitude, scooterLongitude) => {
+  const fetchDistanceBetweenTwoPoints = async (point_A_lat, point_A_long, point_B_lat, point_B_long) => {
     const token = localStorage.getItem("token");
 
     try {
       const response = await axios.post(
         "http://127.0.0.1:8003/api/v1/scooter/route",
         {
-          latitude_A: userLocation[0],
-          longitude_A: userLocation[1],
-          latitude_B: scooterLatitude,
-          longitude_B: scooterLongitude
+          latitude_A: point_A_lat,
+          longitude_A: point_A_long,
+          latitude_B: point_B_lat,
+          longitude_B: point_B_long
         },
         {
           headers: { Authorization: `Bearer ${token}` }
         }
       );
-      setRouteUserScooter(response.data);
+      return response.data;
     } catch (error) {
       console.error("Error fetching live scooters positions:", error);
     }
   };
 
+  const fetchDistanceBetweenUserAndScooters = async (scooterLatitude, scooterLongitude) => {
+    const distance = await fetchDistanceBetweenTwoPoints(userLocation[0], userLocation[1], scooterLatitude, scooterLongitude);
+    setRouteUserScooter(distance);
+  };
+
+  const fetchDistanceBetweenUserAndStations = async (stationLatitude, stationLongitude) => {
+    const distance = await fetchDistanceBetweenTwoPoints(userLocation[0], userLocation[1], stationLatitude, stationLongitude);
+    setRouteUserStation(distance);
+  };
 
   const handleRouteChange = (event) => {
     clearScooters();
@@ -273,6 +279,10 @@ export function Home() {
     fetchLiveVehiclesPositions(selectedRouteId);
   };
 
+  const handleSelectStartingStation = (station) => {
+    setSelectedStartingStation(station);
+    fetchDistanceBetweenUserAndStations(station.stop_lat, station.stop_lon);
+  };
 
   const clearShape = () => {
     setShape([]);
@@ -288,8 +298,6 @@ export function Home() {
     setDirection(newDirection);
     clearScooters();
   };
-
-
 
   const handleVehicleIcon = (vehicle_type) => {
     if (vehicle_type === 0) {
@@ -332,6 +340,7 @@ export function Home() {
               handleBikeAccessible={handleBikeAccessible}
               getTimestampBetweenPositions={getTimestampBetweenPositions}
             />}
+
           {scooters.length > 0 &&
             <ScooterMarkers
               scooters={scooters}
@@ -340,9 +349,34 @@ export function Home() {
               onPopupClose={handleCloseRouteUserScooter}
             />
           }
+
+          {/* Route between User and Scooter*/}
           {routeUserScooter.route && routeUserScooter.route.length > 0 && (
             <RoutePolyline route={routeUserScooter.route} />
           )}
+
+          {/* Route between User and Station*/}
+          {routeUserStation.route && routeUserStation.route.length > 0 && (
+            <RoutePolyline route={routeUserStation.route} />
+          )}
+
+          {
+            routeUserStation.distance_meters && selectedStartingStation && (
+              <>
+                <DistanceMarker
+                  position={[userLocation[0] - 0.0009, userLocation[1]]}
+                  distance={routeUserStation.distance_meters}
+                  onClose={handleCloseRouteUserStation}
+                />
+                <Marker
+                  position={[selectedStartingStation.stop_lat, selectedStartingStation.stop_lon]}
+                  icon={defaultIcon}
+                />
+              </>
+            )
+          }
+
+
           {routeUserScooter.route && routeUserScooter.route.length > 0 && (
             <DistanceMarker
               position={[routeUserScooter.route[0][1] - 0.0009, routeUserScooter.route[0][0]]}
@@ -360,15 +394,17 @@ export function Home() {
             clearShape={clearShape}
           />
           <DirectionButton direction={direction} handleDirection={handleDirection} />
+
+          <Button
+            variant="text"
+            color="blue-gray"
+            className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
+            onClick={fetchScootersPosition}>
+            Scooter
+          </Button>
+          <SearchableStation stations={stations} selectStation={handleSelectStartingStation} onClear={handleCloseRouteUserStation} />
         </div>
 
-        <Button
-          variant="text"
-          color="blue-gray"
-          className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
-          onClick={fetchScootersPosition}>
-          Scooter
-        </Button>
       </div>
     </div >
   );
