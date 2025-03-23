@@ -80,7 +80,7 @@ export function Home() {
   const [routeUserStation, setRouteUserStation] = useState([]);
   const [selectedStartingStation, setSelectedStartingStation] = useState(null);
   const position = [47.165517, 27.580742];
-  const proximityThreshold = 0.1;
+  const proximityThreshold = 0.5;
 
   const handleCloseRouteUserScooter = () => {
     setRouteUserScooter([]);
@@ -350,12 +350,10 @@ export function Home() {
             />
           }
 
-          {/* Route between User and Scooter*/}
           {routeUserScooter.route && routeUserScooter.route.length > 0 && (
             <RoutePolyline route={routeUserScooter.route} />
           )}
 
-          {/* Route between User and Station*/}
           {routeUserStation.route && routeUserStation.route.length > 0 && (
             <RoutePolyline route={routeUserStation.route} />
           )}

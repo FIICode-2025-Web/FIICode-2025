@@ -1,16 +1,30 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { XCircle } from "lucide-react";
 
 const SearchableStation = ({ stations, selectStation, onClear }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   const filteredStations = stations.filter(station =>
     station.stop_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative w-80 my-10">
+    <div className="relative w-80 my-10" ref={dropdownRef}>
       <div className="relative">
         <input
           type="text"
