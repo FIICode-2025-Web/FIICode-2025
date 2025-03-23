@@ -81,6 +81,7 @@ export function Home() {
   const [selectedStartingStation, setSelectedStartingStation] = useState(null);
   const position = [47.165517, 27.580742];
   const proximityThreshold = 0.5;
+  const [showScooters, setShowScooters] = useState(false);
 
   const handleCloseRouteUserScooter = () => {
     setRouteUserScooter([]);
@@ -88,6 +89,7 @@ export function Home() {
 
   const handleCloseRouteUserStation = () => {
     setRouteUserStation([]);
+    setSelectedStartingStation(null);
   }
 
   useEffect(() => {
@@ -314,6 +316,23 @@ export function Home() {
     return difference.toFixed(0);
   }
 
+  const toggleScooters = async () => {
+    if (showScooters) {
+      setScooters([]);
+    } else {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await axios.get("http://127.0.0.1:8003/api/v1/scooter/", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setScooters(response.data);
+      } catch (error) {
+        console.error("Error fetching live scooters positions:", error);
+      }
+    }
+    setShowScooters(!showScooters);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-center flex-col">
@@ -359,7 +378,7 @@ export function Home() {
           )}
 
           {
-            routeUserStation.distance_meters && selectedStartingStation && (
+            selectedStartingStation && routeUserStation.distance_meters && (
               <>
                 <DistanceMarker
                   position={[userLocation[0] - 0.0009, userLocation[1]]}
@@ -397,8 +416,8 @@ export function Home() {
             variant="text"
             color="blue-gray"
             className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
-            onClick={fetchScootersPosition}>
-            Scooter
+            onClick={toggleScooters}>
+            {showScooters ? "Hide Scooters" : "Show Scooters"}
           </Button>
           <SearchableStation stations={stations} selectStation={handleSelectStartingStation} onClear={handleCloseRouteUserStation} />
         </div>
