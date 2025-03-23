@@ -82,6 +82,9 @@ export function Home() {
   const position = [47.165517, 27.580742];
   const proximityThreshold = 0.5;
   const [showScooters, setShowScooters] = useState(false);
+  const [isOptionSelected, setIsOptionSelected] = useState(false);
+
+
 
   const handleCloseRouteUserScooter = () => {
     setRouteUserScooter([]);
@@ -276,9 +279,17 @@ export function Home() {
     clearScooters();
     const selectedRouteId = event.target.value;
     setSelectedRoute(selectedRouteId);
+    setIsOptionSelected(!!selectedRouteId);
     fetchShapeByRoute(selectedRouteId);
     fetchStopsForRouteShortName(selectedRouteId);
     fetchLiveVehiclesPositions(selectedRouteId);
+  };
+
+  const handleDropdownBlur = (event) => {
+    if (!event.relatedTarget || !event.relatedTarget.closest('.dropdown-container')) {
+      setIsOptionSelected(false);
+      setSelectedRoute("");
+    }
   };
 
   const handleSelectStartingStation = (station) => {
@@ -289,6 +300,7 @@ export function Home() {
   const clearShape = () => {
     setShape([]);
     setVehicles([]);
+    setIsOptionSelected(false);
   };
 
   const clearScooters = () => {
@@ -404,13 +416,17 @@ export function Home() {
 
         </MapWrapper>
         <div className="flex items-center justify-center gap-4 mt-4">
-          <SearchableSelect
-            routes={routes}
-            selectedRoute={selectedRoute}
-            handleRouteChange={handleRouteChange}
-            clearShape={clearShape}
-          />
-          <DirectionButton direction={direction} handleDirection={handleDirection} />
+          <div className="dropdown-container" onBlur={handleDropdownBlur}>
+            <SearchableSelect
+              routes={routes}
+              selectedRoute={selectedRoute}
+              handleRouteChange={handleRouteChange}
+              clearShape={clearShape}
+            />
+          </div>
+          {isOptionSelected && (
+            <DirectionButton direction={direction} handleDirection={handleDirection} />
+          )}
 
           <Button
             variant="text"
