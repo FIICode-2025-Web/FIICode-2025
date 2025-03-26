@@ -11,27 +11,30 @@ const ScooterMarkers = ({ scooters, scooterIcon, fetchDistance, onPopupClose }) 
                 {
                     popupclose: () => {
                         onPopupClose();
+                    },
+                    popupopen: () => {
+                        fetchDistance(scooter.latitude, scooter.longitude);
                     }
                 }
             }
         >
-            <Popup >
-                <div className="flex flex-col space-y-0 text-sm">
-                    <p className="m-0 p-0 text-center">Trotinetă</p>
-                    <p className="m-0 p-0">Baterie: {scooter.battery_level}%</p>
-                    <p className="m-0 p-0">Interval de: {Math.floor(scooter.battery_level * 45 / 100)} km</p>
-                    <p className="m-0 p-0">1,50 Ron pentru a debloca</p>
-                    <p className="m-0 p-0">0,95 Ron/minut</p>
-                    <Button
-                        variant="text"
-                        color="blue-gray"
-                        className="flex items-center justify-center text-primary text-sm h-8 normal-case bg-gray-300"
-                        onClick={() => fetchDistance(scooter.latitude, scooter.longitude)}
+            <Popup>
+                <div className="flex flex-col items-start text-sm p-2 space-y-1 leading-snug text-gray-800">
+                    <h3 className="text-base font-semibold text-center w-full text-green-600">🛴 Trotinetă</h3>
+                    <p>🔋 Baterie: <span className="font-medium">{scooter.battery_level}%</span></p>
+                    <p>📏 Interval estimat: <span className="font-medium">{Math.floor(scooter.battery_level * 45 / 100)} km</span></p>
+                    <p>🔓 Deblocare: <span className="font-medium">1,50 RON</span></p>
+                    <p>⏱️ Tarif: <span className="font-medium">0,95 RON / minut</span></p>
+
+                    <button
+                        className="mt-2 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-2 rounded text-sm"
+                    // onClick={() => fetchDistance(scooter.latitude, scooter.longitude)}
                     >
                         Rezervă
-                    </Button>
+                    </button>
                 </div>
             </Popup>
+
         </Marker>
     ))
 }
