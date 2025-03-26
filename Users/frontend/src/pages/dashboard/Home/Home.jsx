@@ -11,6 +11,7 @@ import SearchableStation from "./Components/SearchableStation";
 import busImage from "../../../../public/img/front-of-bus.png";
 import tramImage from "../../../../public/img/tram.png";
 import scooterImage from "../../../../public/img/scooter.png";
+import rideSharingImage from "../../../../public/img/ridesharing.png";
 import UserMarker from "./Components/UserMarker";
 import VehicleMarkers from "./Components/VehicleMarkers";
 import ScooterMarkers from "./Components/ScooterMarkers";
@@ -20,6 +21,7 @@ import ShapePolyline from "./Components/ShapePolyline";
 import RoutePolyline from "./Components/RoutePolyline";
 import { handleBikeAccessible, handleWheelchairAccessible, getDistance } from "./utils/helpers";
 import { Marker } from "react-leaflet";
+import CarMarkers from "./Components/CarMarkers";
 
 const defaultIcon = L.icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
@@ -65,6 +67,18 @@ const scooterIcon = L.divIcon({
   popupAnchor: [0, -15]
 });
 
+const ridesharingIcon = L.divIcon({
+  html: `
+    <div style="background: #50C878;padding: 3px;border-radius: 50%;box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);display: flex;align-items: center;justify-content: center;width: 30px;height: 30px;">
+      <img src="${rideSharingImage}" style="width: 18px; height: 18px;" />
+    </div>
+  `,
+  className: "",
+  iconSize: [30, 30],
+  iconAnchor: [15, 15],
+  popupAnchor: [0, -15]
+});
+
 export function Home() {
   const [stops, setStops] = useState([]);
   const [stations, setStations] = useState([]);
@@ -75,6 +89,7 @@ export function Home() {
   const [selectedRoute, setSelectedRoute] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [scooters, setScooters] = useState([]);
+  const [cars, setCars] = useState([]);
   const [userLocation, setUserLocation] = useState([]);
   const [routeUserScooter, setRouteUserScooter] = useState([]);
   const [routeUserStation, setRouteUserStation] = useState([]);
@@ -82,6 +97,7 @@ export function Home() {
   const position = [47.165517, 27.580742];
   const proximityThreshold = 0.5;
   const [showScooters, setShowScooters] = useState(false);
+  const [showCars, setShowCars] = useState(false);
   const [isOptionSelected, setIsOptionSelected] = useState(false);
 
 
@@ -243,12 +259,26 @@ export function Home() {
     }
   }
 
+  const fetchCarsPosition = async () => {
+    // clearShape();
+    // clearScooters();
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get("http://127.0.0.1:8003/api/v1/ridesharing/", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCars(response.data);
+    } catch (error) {
+      console.error("Error fetching live cars positions:", error);
+    }
+  }
+
   const fetchDistanceBetweenTwoPoints = async (point_A_lat, point_A_long, point_B_lat, point_B_long) => {
     const token = localStorage.getItem("token");
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8003/api/v1/scooter/route",
+        "http://127.0.0.1:8003/api/v1/tranzy/route_between_two_points",
         {
           latitude_A: point_A_lat,
           longitude_A: point_A_long,
@@ -345,6 +375,15 @@ export function Home() {
     setShowScooters(!showScooters);
   };
 
+  const toggleCars = async () => {
+    if (showCars) {
+      setCars([]);
+    } else {
+      fetchCarsPosition();
+    }
+    setShowCars(!showCars);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-center flex-col">
@@ -376,6 +415,15 @@ export function Home() {
             <ScooterMarkers
               scooters={scooters}
               scooterIcon={scooterIcon}
+              fetchDistance={fetchDistanceBetweenUserAndScooters}
+              onPopupClose={handleCloseRouteUserScooter}
+            />
+          }
+          {
+            cars.length > 0 &&
+            <CarMarkers
+              cars={cars}
+              carIcon={ridesharingIcon}
               fetchDistance={fetchDistanceBetweenUserAndScooters}
               onPopupClose={handleCloseRouteUserScooter}
             />
@@ -434,6 +482,13 @@ export function Home() {
             className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
             onClick={toggleScooters}>
             {showScooters ? "Hide Scooters" : "Show Scooters"}
+          </Button>
+          <Button
+            variant="text"
+            color="blue-gray"
+            className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
+            onClick={toggleCars}>
+            {showCars ? "Hide Cars" : "Show Cars"}
           </Button>
           <SearchableStation stations={stations} selectStation={handleSelectStartingStation} onClear={handleCloseRouteUserStation} />
         </div>
