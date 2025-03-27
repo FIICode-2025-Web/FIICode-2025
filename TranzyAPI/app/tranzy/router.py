@@ -4,6 +4,7 @@ from fastapi import Depends, APIRouter
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.scooter.schemas import CoordinateSchema
 from app.tranzy.service import TranzyService
 
 tranzy_router = APIRouter(prefix="/api/v1/tranzy", tags=["tranzy"])
@@ -23,9 +24,10 @@ def get_vehicles():
 def get_vehicles_by_route_id(route_id: str):
     return tranzy_service.get_tranzy_vehicles_by_route_id(route_id)
 
+
 @tranzy_router.get("/vehicles/route/route-short-name/{route_short_name}/{direction_id}")
-def get_vehicles_by_route_id(route_short_name: str,direction_id: int, db: db_dependency):
-    return tranzy_service.get_tranzy_vehicles_by_route_short_name(route_short_name,direction_id, db)
+def get_vehicles_by_route_id(route_short_name: str, direction_id: int, db: db_dependency):
+    return tranzy_service.get_tranzy_vehicles_by_route_short_name(route_short_name, direction_id, db)
 
 
 # ------------------------------- Shapes
@@ -73,3 +75,9 @@ def get_stop_by_route_short_name(route_short_name: str, direction_id: int, db: d
 @tranzy_router.get("/trips")
 def get_trips(db: db_dependency):
     return tranzy_service.get_trips(db)
+
+
+# ------------------------------- General
+@tranzy_router.post("/route_between_two_points")
+def get_route(coordinates: CoordinateSchema):
+    return tranzy_service.get_route_between_locations(coordinates)

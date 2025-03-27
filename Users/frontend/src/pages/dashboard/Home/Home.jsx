@@ -11,6 +11,7 @@ import SearchableStation from "./Components/SearchableStation";
 import busImage from "../../../../public/img/front-of-bus.png";
 import tramImage from "../../../../public/img/tram.png";
 import scooterImage from "../../../../public/img/scooter.png";
+import rideSharingImage from "../../../../public/img/ridesharing.png";
 import UserMarker from "./Components/UserMarker";
 import VehicleMarkers from "./Components/VehicleMarkers";
 import ScooterMarkers from "./Components/ScooterMarkers";
@@ -21,6 +22,7 @@ import RoutePolyline from "./Components/RoutePolyline";
 import { handleBikeAccessible, handleWheelchairAccessible, getDistance } from "./utils/helpers";
 import { Marker } from "react-leaflet";
 import "../../../../public/css/backgrounds.css";
+import CarMarkers from "./Components/CarMarkers";
 
 const defaultIcon = L.icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
@@ -66,6 +68,18 @@ const scooterIcon = L.divIcon({
   popupAnchor: [0, -15]
 });
 
+const ridesharingIcon = L.divIcon({
+  html: `
+    <div style="background: #50C878;padding: 3px;border-radius: 50%;box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);display: flex;align-items: center;justify-content: center;width: 30px;height: 30px;">
+      <img src="${rideSharingImage}" style="width: 18px; height: 18px;" />
+    </div>
+  `,
+  className: "",
+  iconSize: [30, 30],
+  iconAnchor: [15, 15],
+  popupAnchor: [0, -15]
+});
+
 export function Home() {
   const [stops, setStops] = useState([]);
   const [stations, setStations] = useState([]);
@@ -76,6 +90,7 @@ export function Home() {
   const [selectedRoute, setSelectedRoute] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [scooters, setScooters] = useState([]);
+  const [cars, setCars] = useState([]);
   const [userLocation, setUserLocation] = useState([]);
   const [routeUserScooter, setRouteUserScooter] = useState([]);
   const [routeUserStation, setRouteUserStation] = useState([]);
@@ -83,6 +98,7 @@ export function Home() {
   const position = [47.165517, 27.580742];
   const proximityThreshold = 0.5;
   const [showScooters, setShowScooters] = useState(false);
+  const [showCars, setShowCars] = useState(false);
   const [isOptionSelected, setIsOptionSelected] = useState(false);
 
 
@@ -244,12 +260,26 @@ export function Home() {
     }
   }
 
+  const fetchCarsPosition = async () => {
+    // clearShape();
+    // clearScooters();
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.get("http://127.0.0.1:8003/api/v1/ridesharing/", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCars(response.data);
+    } catch (error) {
+      console.error("Error fetching live cars positions:", error);
+    }
+  }
+
   const fetchDistanceBetweenTwoPoints = async (point_A_lat, point_A_long, point_B_lat, point_B_long) => {
     const token = localStorage.getItem("token");
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8003/api/v1/scooter/route",
+        "http://127.0.0.1:8003/api/v1/tranzy/route_between_two_points",
         {
           latitude_A: point_A_lat,
           longitude_A: point_A_long,
@@ -346,6 +376,15 @@ export function Home() {
     setShowScooters(!showScooters);
   };
 
+  const toggleCars = async () => {
+    if (showCars) {
+      setCars([]);
+    } else {
+      fetchCarsPosition();
+    }
+    setShowCars(!showCars);
+  };
+
   return (
     <div className="bg-main">
       <div className="flex items-center justify-center flex-col-reverse">
@@ -378,10 +417,10 @@ export function Home() {
                 Transport Public
               </span>
               <div className="w-full h-[1px] bg-gray-400 opacity-50"></div>
-              
+
               <div className="grid grid-cols-2 gap-12 mx-2">
                 <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
-                    <div className=" w-6 h-6 img-scooter hover:cursor-pointer hover:opacity-90" onClick={toggleScooters}></div>
+                  <div className=" w-6 h-6 img-scooter hover:cursor-pointer hover:opacity-90" onClick={toggleScooters}></div>
                 </div>
                 <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
                   <div className=" w-6 h-6 img-tram hover:cursor-pointer hover:opacity-90"></div>
@@ -391,15 +430,88 @@ export function Home() {
                 Ridesharing
               </span>
             </div>
+          </div>
+        </div>
 
-            {/* <Button
-              variant="text"
-              color="blue-gray"
-              className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
-              onClick={toggleScooters}>
-              {showScooters ? "Hide Scooters" : "Show Scooters"}
-            </Button>
-            <SearchableStation stations={stations} selectStation={handleSelectStartingStation} onClear={handleCloseRouteUserStation} /> */}
+        <MapWrapper center={position}>
+
+          {shape.length > 0 && <ShapePolyline shape={shape} />}
+
+          {userLocation.length > 0 && (
+            <UserMarker userLocation={userLocation} icon={defaultIcon} />
+          )}
+
+          <StopsMarkers stops={getStopsInShape()} />
+
+          {vehicles.length > 0 &&
+            <VehicleMarkers
+              vehicles={vehicles}
+              handleVehicleIcon={handleVehicleIcon}
+              handleWheelchairAccessible={handleWheelchairAccessible}
+              handleBikeAccessible={handleBikeAccessible}
+              getTimestampBetweenPositions={getTimestampBetweenPositions}
+            />}
+
+          {scooters.length > 0 &&
+            <ScooterMarkers
+              scooters={scooters}
+              scooterIcon={scooterIcon}
+              fetchDistance={fetchDistanceBetweenUserAndScooters}
+              onPopupClose={handleCloseRouteUserScooter}
+            />
+          }
+          {
+            cars.length > 0 &&
+            <CarMarkers
+              cars={cars}
+              carIcon={ridesharingIcon}
+              fetchDistance={fetchDistanceBetweenUserAndScooters}
+              onPopupClose={handleCloseRouteUserScooter}
+            />
+          }
+
+          {routeUserScooter.route && routeUserScooter.route.length > 0 && (
+            <RoutePolyline route={routeUserScooter.route} />
+          )}
+
+          {routeUserStation.route && routeUserStation.route.length > 0 && (
+            <RoutePolyline route={routeUserStation.route} />
+          )}
+
+          {
+            selectedStartingStation && routeUserStation.distance_meters && (
+              <>
+                <DistanceMarker
+                  position={[userLocation[0] - 0.0009, userLocation[1]]}
+                  distance={routeUserStation.distance_meters}
+                  onClose={handleCloseRouteUserStation}
+                />
+                <Marker
+                  position={[selectedStartingStation.stop_lat, selectedStartingStation.stop_lon]}
+                  icon={defaultIcon}
+                />
+              </>
+            )
+          }
+
+
+          {routeUserScooter.route && routeUserScooter.route.length > 0 && (
+            <DistanceMarker
+              position={[routeUserScooter.route[0][1] - 0.0009, routeUserScooter.route[0][0]]}
+              distance={routeUserScooter.distance_meters}
+              onClose={handleCloseRouteUserScooter}
+            />
+          )}
+
+        </MapWrapper>
+        <div className="flex items-center justify-center gap-4 mt-4">
+          <div className="dropdown-container" onBlur={handleDropdownBlur}>
+            <SearchableSelect
+              routes={routes}
+              selectedRoute={selectedRoute}
+              handleRouteChange={handleRouteChange}
+              clearShape={clearShape}
+            />
           </div>
           <MapWrapper center={position}>
 
@@ -463,6 +575,21 @@ export function Home() {
             )}
 
           </MapWrapper>
+          <Button
+            variant="text"
+            color="blue-gray"
+            className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
+            onClick={toggleScooters}>
+            {showScooters ? "Hide Scooters" : "Show Scooters"}
+          </Button>
+          <Button
+            variant="text"
+            color="blue-gray"
+            className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
+            onClick={toggleCars}>
+            {showCars ? "Hide Cars" : "Show Cars"}
+          </Button>
+          <SearchableStation stations={stations} selectStation={handleSelectStartingStation} onClear={handleCloseRouteUserStation} />
         </div>
       </div>
     </div >
