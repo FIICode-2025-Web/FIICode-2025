@@ -20,6 +20,7 @@ import ShapePolyline from "./Components/ShapePolyline";
 import RoutePolyline from "./Components/RoutePolyline";
 import { handleBikeAccessible, handleWheelchairAccessible, getDistance } from "./utils/helpers";
 import { Marker } from "react-leaflet";
+import "../../../../public/css/backgrounds.css";
 
 const defaultIcon = L.icon({
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
@@ -83,7 +84,6 @@ export function Home() {
   const proximityThreshold = 0.5;
   const [showScooters, setShowScooters] = useState(false);
   const [isOptionSelected, setIsOptionSelected] = useState(false);
-
 
 
   const handleCloseRouteUserScooter = () => {
@@ -193,6 +193,7 @@ export function Home() {
   };
 
   const getStopsInShape = () => {
+    console.log("AFKLSFK: " + stops)
     return stops.filter((stop) => {
       return shape.some(([lat, lon]) => {
         const distance = getDistance(stop.stop_lat, stop.stop_lon, lat, lon);
@@ -346,98 +347,123 @@ export function Home() {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-center flex-col">
-        <DashboardNavbar />
-        <h2 className="text-3xl font-semibold my-6 text-gray-800">
-          Caută ruta dorită
-        </h2>
+    <div className="bg-main">
+      <div className="flex items-center justify-center flex-col-reverse">
+        <div className="flex justify-center w-screen p-28">
+          <div className="flex items-center justify-center gap-4 mr-6 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-12">
+            <span className="text-[2.5rem] font-semibold my-6 text-gray-300">
+              Caută ruta dorită
+            </span>
+            <div className="dropdown-container" onBlur={handleDropdownBlur}>
+              <SearchableSelect
+                routes={routes}
+                selectedRoute={selectedRoute}
+                handleRouteChange={handleRouteChange}
+                clearShape={clearShape}
+              />
+            </div>
+            {isOptionSelected && (
+              <DirectionButton direction={direction} handleDirection={handleDirection} />
+            )}
+            <div className="flex items-center justify-center gap-4 mr-6 flex-col p-12">
+              <div className="grid grid-cols-2 gap-12 mx-2">
+                <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
+                  <div className=" w-6 h-6 img-bus hover:cursor-pointer hover:"></div>
+                </div>
+                <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
+                  <div className=" w-6 h-6 img-tram hover:cursor-pointer hover:opacity-90"></div>
+                </div>
+              </div>
+              <span className="text-[1rem] font-semibold text-gray-400">
+                Transport Public
+              </span>
+              <div className="w-full h-[1px] bg-gray-400 opacity-50"></div>
+              
+              <div className="grid grid-cols-2 gap-12 mx-2">
+                <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
+                    <div className=" w-6 h-6 img-scooter hover:cursor-pointer hover:opacity-90" onClick={toggleScooters}></div>
+                </div>
+                <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
+                  <div className=" w-6 h-6 img-tram hover:cursor-pointer hover:opacity-90"></div>
+                </div>
+              </div>
+              <span className="text-[1rem] font-semibold text-gray-400">
+                Ridesharing
+              </span>
+            </div>
 
-        <MapWrapper center={position}>
-
-          {shape.length > 0 && <ShapePolyline shape={shape} />}
-
-          {userLocation.length > 0 && (
-            <UserMarker userLocation={userLocation} icon={defaultIcon} />
-          )}
-
-          <StopsMarkers stops={getStopsInShape()} />
-
-          {vehicles.length > 0 &&
-            <VehicleMarkers
-              vehicles={vehicles}
-              handleVehicleIcon={handleVehicleIcon}
-              handleWheelchairAccessible={handleWheelchairAccessible}
-              handleBikeAccessible={handleBikeAccessible}
-              getTimestampBetweenPositions={getTimestampBetweenPositions}
-            />}
-
-          {scooters.length > 0 &&
-            <ScooterMarkers
-              scooters={scooters}
-              scooterIcon={scooterIcon}
-              fetchDistance={fetchDistanceBetweenUserAndScooters}
-              onPopupClose={handleCloseRouteUserScooter}
-            />
-          }
-
-          {routeUserScooter.route && routeUserScooter.route.length > 0 && (
-            <RoutePolyline route={routeUserScooter.route} />
-          )}
-
-          {routeUserStation.route && routeUserStation.route.length > 0 && (
-            <RoutePolyline route={routeUserStation.route} />
-          )}
-
-          {
-            selectedStartingStation && routeUserStation.distance_meters && (
-              <>
-                <DistanceMarker
-                  position={[userLocation[0] - 0.0009, userLocation[1]]}
-                  distance={routeUserStation.distance_meters}
-                  onClose={handleCloseRouteUserStation}
-                />
-                <Marker
-                  position={[selectedStartingStation.stop_lat, selectedStartingStation.stop_lon]}
-                  icon={defaultIcon}
-                />
-              </>
-            )
-          }
-
-
-          {routeUserScooter.route && routeUserScooter.route.length > 0 && (
-            <DistanceMarker
-              position={[routeUserScooter.route[0][1] - 0.0009, routeUserScooter.route[0][0]]}
-              distance={routeUserScooter.distance_meters}
-              onClose={handleCloseRouteUserScooter}
-            />
-          )}
-
-        </MapWrapper>
-        <div className="flex items-center justify-center gap-4 mt-4">
-          <div className="dropdown-container" onBlur={handleDropdownBlur}>
-            <SearchableSelect
-              routes={routes}
-              selectedRoute={selectedRoute}
-              handleRouteChange={handleRouteChange}
-              clearShape={clearShape}
-            />
+            {/* <Button
+              variant="text"
+              color="blue-gray"
+              className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
+              onClick={toggleScooters}>
+              {showScooters ? "Hide Scooters" : "Show Scooters"}
+            </Button>
+            <SearchableStation stations={stations} selectStation={handleSelectStartingStation} onClear={handleCloseRouteUserStation} /> */}
           </div>
-          {isOptionSelected && (
-            <DirectionButton direction={direction} handleDirection={handleDirection} />
-          )}
+          <MapWrapper center={position}>
 
-          <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
-            onClick={toggleScooters}>
-            {showScooters ? "Hide Scooters" : "Show Scooters"}
-          </Button>
-          <SearchableStation stations={stations} selectStation={handleSelectStartingStation} onClear={handleCloseRouteUserStation} />
+            {shape.length > 0 && <ShapePolyline shape={shape} />}
+
+            {userLocation.length > 0 && (
+              <UserMarker userLocation={userLocation} icon={defaultIcon} />
+            )}
+
+            <StopsMarkers stops={getStopsInShape()} />
+
+            {vehicles.length > 0 &&
+              <VehicleMarkers
+                vehicles={vehicles}
+                handleVehicleIcon={handleVehicleIcon}
+                handleWheelchairAccessible={handleWheelchairAccessible}
+                handleBikeAccessible={handleBikeAccessible}
+                getTimestampBetweenPositions={getTimestampBetweenPositions}
+              />}
+
+            {scooters.length > 0 &&
+              <ScooterMarkers
+                scooters={scooters}
+                scooterIcon={scooterIcon}
+                fetchDistance={fetchDistanceBetweenUserAndScooters}
+                onPopupClose={handleCloseRouteUserScooter}
+              />
+            }
+
+            {routeUserScooter.route && routeUserScooter.route.length > 0 && (
+              <RoutePolyline route={routeUserScooter.route} />
+            )}
+
+            {routeUserStation.route && routeUserStation.route.length > 0 && (
+              <RoutePolyline route={routeUserStation.route} />
+            )}
+
+            {
+              selectedStartingStation && routeUserStation.distance_meters && (
+                <>
+                  <DistanceMarker
+                    position={[userLocation[0] - 0.0009, userLocation[1]]}
+                    distance={routeUserStation.distance_meters}
+                    onClose={handleCloseRouteUserStation}
+                  />
+                  <Marker
+                    position={[selectedStartingStation.stop_lat, selectedStartingStation.stop_lon]}
+                    icon={defaultIcon}
+                  />
+                </>
+              )
+            }
+
+
+            {routeUserScooter.route && routeUserScooter.route.length > 0 && (
+              <DistanceMarker
+                position={[routeUserScooter.route[0][1] - 0.0009, routeUserScooter.route[0][0]]}
+                distance={routeUserScooter.distance_meters}
+                onClose={handleCloseRouteUserScooter}
+              />
+            )}
+
+          </MapWrapper>
         </div>
-
       </div>
     </div >
   );

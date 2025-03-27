@@ -1,4 +1,27 @@
 .bg-custom {
-    @apply bg-cover bg-center;
-    background-image: url('../img/auth-bg.png');
-  }
+  @apply bg-cover bg-center;
+  background-image: url('../img/auth-bg.png');
+}
+
+.bg-main {
+  @apply bg-cover bg-center;
+  background-image: url('../img/mainbg.jpg');
+}
+
+.img-bus {
+  @apply bg-cover bg-center;
+  background-image: url('../img/buses.png');
+  filter: invert(1);
+}
+
+.img-tram {
+  @apply bg-cover bg-center;
+  background-image: url('../img/public-transport.png');
+  filter: invert(1);
+}
+
+.img-scooter {
+  @apply bg-cover bg-center;
+  background-image: url('../img/scooter.png');
+  filter: invert(1);
+}

@@ -10,7 +10,7 @@ const DirectionButton = ({ direction, handleDirection }) => {
             <span className={`${direction === 0 ? 'text-white' : 'text-black'}`}>
                 Tur
             </span>
-            /
+            / 
             <span className={`${direction === 1 ? 'text-white' : 'text-black'}`}>
                 Retur
             </span>

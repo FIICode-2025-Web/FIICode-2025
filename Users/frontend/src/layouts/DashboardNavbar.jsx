@@ -12,7 +12,7 @@ export function DashboardNavbar() {
   return (
     <Navbar
       color={"primary"}
-      className={"rounded-xl  transition-all px-6 py-1"}
+      className={"rounded-xl transition-all px-6 py-1"}
       fullWidth
     >
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">

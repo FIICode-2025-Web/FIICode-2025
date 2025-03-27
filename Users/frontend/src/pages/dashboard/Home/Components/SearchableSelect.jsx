@@ -5,7 +5,7 @@ const SearchableSelect = ({ routes, selectedRoute, handleRouteChange, clearShape
   const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
-  
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -24,15 +24,15 @@ const SearchableSelect = ({ routes, selectedRoute, handleRouteChange, clearShape
   );
 
   return (
-    <div className="relative w-80 my-10" ref={dropdownRef}>
+    <div className="relative w-80" ref={dropdownRef}>
       <div className="relative">
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onFocus={() => setShowDropdown(true)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
-          placeholder="Search a route..."
+          className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
+          placeholder="Caută o rută"
         />
         {searchTerm && (
           <button
@@ -64,7 +64,7 @@ const SearchableSelect = ({ routes, selectedRoute, handleRouteChange, clearShape
               </li>
             ))
           ) : (
-            <li className="px-4 py-2 text-gray-500">No results found</li>
+            <li className="px-4 py-2 text-gray-500">Niciun rezultat.</li>
           )}
         </ul>
       )}
