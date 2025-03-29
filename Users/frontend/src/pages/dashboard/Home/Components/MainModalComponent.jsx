@@ -34,7 +34,7 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
                         <div className="w-6 h-6 img-scooter hover:cursor-pointer" onClick={toggleScooters}></div>
                     </div>
                     <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
-                        <div className="w-6 h-6 img-car hover:cursor-pointer" onClick={toggleCars}></div>
+                        <div className="w-6 h-6 img-ridesharing hover:cursor-pointer" onClick={toggleCars}></div>
                     </div>
                 </div>
             )}

@@ -25,3 +25,9 @@
   background-image: url('../img/scooter.png');
   filter: invert(1);
 }
+
+.img-ridesharing{
+  @apply bg-cover bg-center;
+  background-image: url('../img/ridesharing.png');
+  filter: invert(1);
+}

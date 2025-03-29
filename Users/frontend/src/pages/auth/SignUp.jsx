@@ -81,8 +81,8 @@ export function SignUp() {
   }
   return (
     <section className="bg-green-200 flex gap-4 text-surface-mid-dark">
-      <div className="w-full h-screen flex flex-col items-end justify-center bg-custom">
-        <div className="bg-white bg-opacity-80 w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
+      <div className="w-full h-screen flex flex-col items-end justify-center bg-main">
+        <div className="bg-white w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
         <div className="text-center">
              <Typography variant="h2" className="font-bold mb-1">Join Us Today</Typography>
              <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal text-surface-light-dark">Enter your email, name and password to register.</Typography>
