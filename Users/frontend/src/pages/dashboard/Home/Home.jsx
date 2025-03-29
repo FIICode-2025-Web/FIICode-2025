@@ -1,84 +1,21 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-import { Button } from "@material-tailwind/react";
 import MapWrapper from "./Components/MapWrapper";
 import { DistanceMarker } from "./Components/DistanceMarker";
-import DashboardNavbar from "../../../layouts/DashboardNavbar";
-import SearchableSelect from "./Components/SearchableSelect";
-import SearchableStation from "./Components/SearchableStation";
-import busImage from "../../../../public/img/front-of-bus.png";
-import tramImage from "../../../../public/img/tram.png";
-import scooterImage from "../../../../public/img/scooter.png";
-import rideSharingImage from "../../../../public/img/ridesharing.png";
 import UserMarker from "./Components/UserMarker";
 import VehicleMarkers from "./Components/VehicleMarkers";
 import ScooterMarkers from "./Components/ScooterMarkers";
 import StopsMarkers from "./Components/StopsMarker";
-import DirectionButton from "./Components/DirectionButton";
 import ShapePolyline from "./Components/ShapePolyline";
 import RoutePolyline from "./Components/RoutePolyline";
 import { handleBikeAccessible, handleWheelchairAccessible, getDistance } from "./utils/helpers";
 import { Marker } from "react-leaflet";
 import "../../../../public/css/backgrounds.css";
 import CarMarkers from "./Components/CarMarkers";
+import MainModalComponent from "./Components/MainModalComponent";
+import { defaultIcon, busIcon, tramIcon, scooterIcon, ridesharingIcon } from "./utils/icons";
 
-const defaultIcon = L.icon({
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
-
-const busIcon = L.divIcon({
-  html: `
-    <div style="background: white;padding: 3px;border-radius: 50%;box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);display: flex;align-items: center;justify-content: center;width: 30px;height: 30px;">
-      <img src="${busImage}" style="width: 18px; height: 18px;" />
-    </div>
-  `,
-  className: "",
-  iconSize: [30, 30],
-  iconAnchor: [15, 15],
-  popupAnchor: [0, -15]
-});
-
-const tramIcon = L.divIcon({
-  html: `
-    <div style="background: white;padding: 3px;border-radius: 50%;box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);display: flex;align-items: center;justify-content: center;width: 30px;height: 30px;">
-      <img src="${tramImage}" style="width: 18px; height: 18px;" />
-    </div>
-  `,
-  className: "",
-  iconSize: [30, 30],
-  iconAnchor: [15, 15],
-  popupAnchor: [0, -15]
-});
-
-const scooterIcon = L.divIcon({
-  html: `
-    <div style="background: #50C878;padding: 3px;border-radius: 50%;box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);display: flex;align-items: center;justify-content: center;width: 30px;height: 30px;">
-      <img src="${scooterImage}" style="width: 18px; height: 18px;" />
-    </div>
-  `,
-  className: "",
-  iconSize: [30, 30],
-  iconAnchor: [15, 15],
-  popupAnchor: [0, -15]
-});
-
-const ridesharingIcon = L.divIcon({
-  html: `
-    <div style="background: #50C878;padding: 3px;border-radius: 50%;box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);display: flex;align-items: center;justify-content: center;width: 30px;height: 30px;">
-      <img src="${rideSharingImage}" style="width: 18px; height: 18px;" />
-    </div>
-  `,
-  className: "",
-  iconSize: [30, 30],
-  iconAnchor: [15, 15],
-  popupAnchor: [0, -15]
-});
 
 export function Home() {
   const [stops, setStops] = useState([]);
@@ -387,51 +324,14 @@ export function Home() {
 
   return (
     <div className="bg-main">
-      <div className="flex items-center justify-center flex-col-reverse">
+      <div className="flex items-center justify-center flex-row">
         <div className="flex justify-center w-screen p-28">
-          <div className="flex items-center justify-center gap-4 mr-6 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-12">
-            <span className="text-[2.5rem] font-semibold my-6 text-gray-300">
-              Caută ruta dorită
-            </span>
-            <div className="dropdown-container" onBlur={handleDropdownBlur}>
-              <SearchableSelect
-                routes={routes}
-                selectedRoute={selectedRoute}
+            <MainModalComponent toggleCars={toggleCars} toggleScooters={toggleScooters} 
+                selectedRoute={selectedRoute} routes={routes}
                 handleRouteChange={handleRouteChange}
-                clearShape={clearShape}
-              />
-            </div>
-            {isOptionSelected && (
-              <DirectionButton direction={direction} handleDirection={handleDirection} />
-            )}
-            <div className="flex items-center justify-center gap-4 mr-6 flex-col p-12">
-              <div className="grid grid-cols-2 gap-12 mx-2">
-                <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
-                  <div className=" w-6 h-6 img-bus hover:cursor-pointer hover:"></div>
-                </div>
-                <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
-                  <div className=" w-6 h-6 img-tram hover:cursor-pointer hover:opacity-90"></div>
-                </div>
-              </div>
-              <span className="text-[1rem] font-semibold text-gray-400">
-                Transport Public
-              </span>
-              <div className="w-full h-[1px] bg-gray-400 opacity-50"></div>
-
-              <div className="grid grid-cols-2 gap-12 mx-2">
-                <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
-                  <div className=" w-6 h-6 img-scooter hover:cursor-pointer hover:opacity-90" onClick={toggleScooters}></div>
-                </div>
-                <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
-                  <div className=" w-6 h-6 img-tram hover:cursor-pointer hover:opacity-90"></div>
-                </div>
-              </div>
-              <span className="text-[1rem] font-semibold text-gray-400">
-                Ridesharing
-              </span>
-            </div>
-          </div>
-        </div>
+                clearShape={clearShape} isOptionSelected={isOptionSelected}
+                direction={direction} handleDirection={handleDirection}/>
+            
 
         <MapWrapper center={position}>
 
@@ -502,94 +402,9 @@ export function Home() {
               onClose={handleCloseRouteUserScooter}
             />
           )}
-
         </MapWrapper>
+        </div>
         <div className="flex items-center justify-center gap-4 mt-4">
-          <div className="dropdown-container" onBlur={handleDropdownBlur}>
-            <SearchableSelect
-              routes={routes}
-              selectedRoute={selectedRoute}
-              handleRouteChange={handleRouteChange}
-              clearShape={clearShape}
-            />
-          </div>
-          <MapWrapper center={position}>
-
-            {shape.length > 0 && <ShapePolyline shape={shape} />}
-
-            {userLocation.length > 0 && (
-              <UserMarker userLocation={userLocation} icon={defaultIcon} />
-            )}
-
-            <StopsMarkers stops={getStopsInShape()} />
-
-            {vehicles.length > 0 &&
-              <VehicleMarkers
-                vehicles={vehicles}
-                handleVehicleIcon={handleVehicleIcon}
-                handleWheelchairAccessible={handleWheelchairAccessible}
-                handleBikeAccessible={handleBikeAccessible}
-                getTimestampBetweenPositions={getTimestampBetweenPositions}
-              />}
-
-            {scooters.length > 0 &&
-              <ScooterMarkers
-                scooters={scooters}
-                scooterIcon={scooterIcon}
-                fetchDistance={fetchDistanceBetweenUserAndScooters}
-                onPopupClose={handleCloseRouteUserScooter}
-              />
-            }
-
-            {routeUserScooter.route && routeUserScooter.route.length > 0 && (
-              <RoutePolyline route={routeUserScooter.route} />
-            )}
-
-            {routeUserStation.route && routeUserStation.route.length > 0 && (
-              <RoutePolyline route={routeUserStation.route} />
-            )}
-
-            {
-              selectedStartingStation && routeUserStation.distance_meters && (
-                <>
-                  <DistanceMarker
-                    position={[userLocation[0] - 0.0009, userLocation[1]]}
-                    distance={routeUserStation.distance_meters}
-                    onClose={handleCloseRouteUserStation}
-                  />
-                  <Marker
-                    position={[selectedStartingStation.stop_lat, selectedStartingStation.stop_lon]}
-                    icon={defaultIcon}
-                  />
-                </>
-              )
-            }
-
-
-            {routeUserScooter.route && routeUserScooter.route.length > 0 && (
-              <DistanceMarker
-                position={[routeUserScooter.route[0][1] - 0.0009, routeUserScooter.route[0][0]]}
-                distance={routeUserScooter.distance_meters}
-                onClose={handleCloseRouteUserScooter}
-              />
-            )}
-
-          </MapWrapper>
-          <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
-            onClick={toggleScooters}>
-            {showScooters ? "Hide Scooters" : "Show Scooters"}
-          </Button>
-          <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center justify-center text-gray-100 text-sm h-8 normal-case bg-green-700"
-            onClick={toggleCars}>
-            {showCars ? "Hide Cars" : "Show Cars"}
-          </Button>
-          <SearchableStation stations={stations} selectStation={handleSelectStartingStation} onClear={handleCloseRouteUserStation} />
         </div>
       </div>
     </div >
