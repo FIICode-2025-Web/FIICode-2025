@@ -2,7 +2,7 @@ import L from "leaflet";
 import { useEffect } from "react";
 import { Marker } from "react-leaflet";
 
-export const DistanceMarker = ({ position, distance, onClose }) => {
+const DistanceMarker = ({ position, distance, onClose }) => {
     useEffect(() => {
         const closeListener = () => onClose();
         document.addEventListener("close-distance-label", closeListener);
@@ -34,3 +34,5 @@ export const DistanceMarker = ({ position, distance, onClose }) => {
         <Marker position={position} icon={distanceLabelIcon} />
     );
 };
+
+export default DistanceMarker;

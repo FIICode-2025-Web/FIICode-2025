@@ -1,31 +1,34 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "leaflet/dist/leaflet.css";
-import MapWrapper from "./MapWrapper";
-import { DistanceMarker } from "./DistanceMarker";
-import UserMarker from "./UserMarker";
-import VehicleMarkers from "./VehicleMarkers";
-import ScooterMarkers from "./ScooterMarkers";
-import StopsMarkers from "./StopsMarker";
-import ShapePolyline from "./ShapePolyline";
-import RoutePolyline from "./RoutePolyline";
-import { handleBikeAccessible, handleWheelchairAccessible, getDistance } from "../utils/helpers";
-import { Marker } from "react-leaflet";
+import { handleBikeAccessible, handleWheelchairAccessible } from "../utils/helpers";
 import "../../../../../public/css/backgrounds.css";
-import CarMarkers from "./CarMarkers";
 import MainModalComponent from "./MainModalComponent";
 import { defaultIcon, busIcon, tramIcon, scooterIcon, ridesharingIcon } from "../utils/icons";
-
+import { fetchDistanceBetweenUserAndScooters, toggleScooters } from "../utils/scootersFunctions";
+import { fetchCarsPosition, toggleCars } from "../utils/carsFunctions";
+import { usePublicTransportData } from "../utils/publicTransportFunctions";
+import MapContent from "./Map/MapContent";
 
 export function MainComponent() {
-  const [stops, setStops] = useState([]);
-  const [stations, setStations] = useState([]);
-  const [direction, setDirection] = useState(0);
-  const [routes, setRoutes] = useState([]);
-  const [shape, setShape] = useState([]);
+
+  const {
+    stops,
+    stations,
+    routes,
+    shape,
+    vehicles,
+    fetchShapeByRoute,
+    fetchStopsForRouteShortName,
+    fetchLiveVehiclesPositions,
+    getStopsInShape,
+    direction,
+    setDirection,
+    clearShape
+  } = usePublicTransportData();
+
   const [shapeId, setShapeId] = useState("");
   const [selectedRoute, setSelectedRoute] = useState("");
-  const [vehicles, setVehicles] = useState([]);
   const [scooters, setScooters] = useState([]);
   const [cars, setCars] = useState([]);
   const [userLocation, setUserLocation] = useState([]);
@@ -33,7 +36,6 @@ export function MainComponent() {
   const [routeUserStation, setRouteUserStation] = useState([]);
   const [selectedStartingStation, setSelectedStartingStation] = useState(null);
   const position = [47.165517, 27.580742];
-  const proximityThreshold = 0.5;
   const [showScooters, setShowScooters] = useState(false);
   const [showCars, setShowCars] = useState(false);
   const [isOptionSelected, setIsOptionSelected] = useState(false);
@@ -128,89 +130,6 @@ export function MainComponent() {
     }
   };
 
-  const fetchShapeByRoute = async (route_id) => {
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await axios.get(`http://127.0.0.1:8003/api/v1/tranzy/shapes/route/${route_id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const shape_id = response.data['0'][0].shape_id;
-      setShapeId(shape_id);
-      fetchShape(shape_id);
-
-    } catch (error) {
-      console.error("Error fetching shape by route:", error);
-    }
-  };
-
-  const getStopsInShape = () => {
-    console.log("AFKLSFK: " + stops)
-    return stops.filter((stop) => {
-      return shape.some(([lat, lon]) => {
-        const distance = getDistance(stop.stop_lat, stop.stop_lon, lat, lon);
-        return distance <= proximityThreshold;
-      });
-    });
-  };
-
-  const fetchStopsForRouteShortName = async (routeShortName) => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await axios.get(`http://127.0.0.1:8003/api/v1/tranzy/stops/route/stop-times/${routeShortName}/${direction}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setStops(response.data);
-    } catch (error) {
-      console.error("Error fetching stops for route short name:", error);
-    }
-  }
-
-  const fetchLiveVehiclesPositions = async (selectedRouteId) => {
-    setVehicles([]);
-    const token = localStorage.getItem("token");
-    try {
-      const response = await axios.get(`http://127.0.0.1:8003/api/v1/tranzy/vehicles/route/route-short-name/${selectedRouteId}/${direction}
-      `, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setVehicles(response.data);
-
-    }
-    catch (error) {
-      console.error("Error fetching live vehicles positions:", error);
-    }
-  }
-
-  const fetchScootersPosition = async () => {
-    clearShape();
-    clearScooters();
-    const token = localStorage.getItem("token");
-    try {
-      const response = await axios.get("http://127.0.0.1:8003/api/v1/scooter/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setScooters(response.data);
-    } catch (error) {
-      console.error("Error fetching live scooters positions:", error);
-    }
-  }
-
-  const fetchCarsPosition = async () => {
-    // clearShape();
-    // clearScooters();
-    const token = localStorage.getItem("token");
-    try {
-      const response = await axios.get("http://127.0.0.1:8003/api/v1/ridesharing/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setCars(response.data);
-    } catch (error) {
-      console.error("Error fetching live cars positions:", error);
-    }
-  }
-
   const fetchDistanceBetweenTwoPoints = async (point_A_lat, point_A_long, point_B_lat, point_B_long) => {
     const token = localStorage.getItem("token");
 
@@ -231,11 +150,6 @@ export function MainComponent() {
     } catch (error) {
       console.error("Error fetching live scooters positions:", error);
     }
-  };
-
-  const fetchDistanceBetweenUserAndScooters = async (scooterLatitude, scooterLongitude) => {
-    const distance = await fetchDistanceBetweenTwoPoints(userLocation[0], userLocation[1], scooterLatitude, scooterLongitude);
-    setRouteUserScooter(distance);
   };
 
   const fetchDistanceBetweenUserAndStations = async (stationLatitude, stationLongitude) => {
@@ -265,11 +179,6 @@ export function MainComponent() {
     fetchDistanceBetweenUserAndStations(station.stop_lat, station.stop_lon);
   };
 
-  const clearShape = () => {
-    setShape([]);
-    setVehicles([]);
-    setIsOptionSelected(false);
-  };
 
   const clearScooters = () => {
     setScooters([]);
@@ -296,113 +205,47 @@ export function MainComponent() {
     return difference.toFixed(0);
   }
 
-  const toggleScooters = async () => {
-    if (showScooters) {
-      setScooters([]);
-    } else {
-      const token = localStorage.getItem("token");
-      try {
-        const response = await axios.get("http://127.0.0.1:8003/api/v1/scooter/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setScooters(response.data);
-      } catch (error) {
-        console.error("Error fetching live scooters positions:", error);
-      }
-    }
-    setShowScooters(!showScooters);
+  const handleToggleScooters = () => {
+    toggleScooters(showScooters, setScooters, setShowScooters);
   };
-
-  const toggleCars = async () => {
-    if (showCars) {
-      setCars([]);
-    } else {
-      fetchCarsPosition();
-    }
-    setShowCars(!showCars);
+  
+  const handleToggleCars = () => {
+    toggleCars(showCars, setCars, setShowCars, fetchCarsPosition);
   };
 
   return (
     <div className="bg-main">
       <div className="flex items-center justify-center flex-row">
         <div className="flex justify-center w-screen p-28">
-            <MainModalComponent toggleCars={toggleCars} toggleScooters={toggleScooters} 
-                selectedRoute={selectedRoute} routes={routes}
-                handleRouteChange={handleRouteChange}
-                clearShape={clearShape} isOptionSelected={isOptionSelected}
-                direction={direction} handleDirection={handleDirection}/>
-            
-
-        <MapWrapper center={position}>
-
-          {shape.length > 0 && <ShapePolyline shape={shape} />}
-
-          {userLocation.length > 0 && (
-            <UserMarker userLocation={userLocation} icon={defaultIcon} />
-          )}
-
-          <StopsMarkers stops={getStopsInShape()} />
-
-          {vehicles.length > 0 &&
-            <VehicleMarkers
-              vehicles={vehicles}
-              handleVehicleIcon={handleVehicleIcon}
-              handleWheelchairAccessible={handleWheelchairAccessible}
-              handleBikeAccessible={handleBikeAccessible}
-              getTimestampBetweenPositions={getTimestampBetweenPositions}
-            />}
-
-          {scooters.length > 0 &&
-            <ScooterMarkers
-              scooters={scooters}
-              scooterIcon={scooterIcon}
-              fetchDistance={fetchDistanceBetweenUserAndScooters}
-              onPopupClose={handleCloseRouteUserScooter}
-            />
-          }
-          {
-            cars.length > 0 &&
-            <CarMarkers
-              cars={cars}
-              carIcon={ridesharingIcon}
-              fetchDistance={fetchDistanceBetweenUserAndScooters}
-              onPopupClose={handleCloseRouteUserScooter}
-            />
-          }
-
-          {routeUserScooter.route && routeUserScooter.route.length > 0 && (
-            <RoutePolyline route={routeUserScooter.route} />
-          )}
-
-          {routeUserStation.route && routeUserStation.route.length > 0 && (
-            <RoutePolyline route={routeUserStation.route} />
-          )}
-
-          {
-            selectedStartingStation && routeUserStation.distance_meters && (
-              <>
-                <DistanceMarker
-                  position={[userLocation[0] - 0.0009, userLocation[1]]}
-                  distance={routeUserStation.distance_meters}
-                  onClose={handleCloseRouteUserStation}
-                />
-                <Marker
-                  position={[selectedStartingStation.stop_lat, selectedStartingStation.stop_lon]}
-                  icon={defaultIcon}
-                />
-              </>
-            )
-          }
-
-
-          {routeUserScooter.route && routeUserScooter.route.length > 0 && (
-            <DistanceMarker
-              position={[routeUserScooter.route[0][1] - 0.0009, routeUserScooter.route[0][0]]}
-              distance={routeUserScooter.distance_meters}
-              onClose={handleCloseRouteUserScooter}
-            />
-          )}
-        </MapWrapper>
+          <MainModalComponent toggleCars={handleToggleCars} toggleScooters={handleToggleScooters} 
+              selectedRoute={selectedRoute} routes={routes}
+              handleRouteChange={handleRouteChange}
+              clearShape={clearShape} isOptionSelected={isOptionSelected}
+              direction={direction} handleDirection={handleDirection}/>
+          <MapContent
+            position={position}
+            shape={shape}
+            userLocation={userLocation}
+            vehicles={vehicles}
+            scooters={scooters}
+            cars={cars}
+            routeUserScooter={routeUserScooter}
+            routeUserStation={routeUserStation}
+            selectedStartingStation={selectedStartingStation}
+            defaultIcon={defaultIcon}
+            scooterIcon={scooterIcon}
+            ridesharingIcon={ridesharingIcon}
+            getStopsInShape={getStopsInShape}
+            fetchDistanceBetweenUserAndScooters={fetchDistanceBetweenUserAndScooters}
+            fetchDistanceBetweenTwoPoints={fetchDistanceBetweenTwoPoints}
+            setRouteUserScooter={setRouteUserScooter}
+            handleCloseRouteUserScooter={handleCloseRouteUserScooter}
+            handleCloseRouteUserStation={handleCloseRouteUserStation}
+            handleVehicleIcon={handleVehicleIcon}
+            handleWheelchairAccessible={handleWheelchairAccessible}
+            handleBikeAccessible={handleBikeAccessible}
+            getTimestampBetweenPositions={getTimestampBetweenPositions}
+          />
         </div>
         <div className="flex items-center justify-center gap-4 mt-4">
         </div>

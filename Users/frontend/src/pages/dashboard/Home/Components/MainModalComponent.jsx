@@ -1,8 +1,8 @@
 import { useState } from "react";
 import "../../../../../public/css/backgrounds.css";
-import SearchableSelect from "./SearchableSelect";
-import DirectionButton from "./DirectionButton";
-import TransportSelect from "./TransportSelect";
+import SearchableSelect from "./SearchSelects/SearchableSelect";
+import DirectionButton from "./Buttons/DirectionButton";
+import TransportSelect from "./SearchSelects/TransportSelect";
 
 const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, clearShape, isOptionSelected, direction, handleDirection}) => {
     return (
