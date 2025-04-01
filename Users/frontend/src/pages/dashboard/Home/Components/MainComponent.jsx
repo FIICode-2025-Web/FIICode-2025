@@ -6,7 +6,7 @@ import "../../../../../public/css/backgrounds.css";
 import MainModalComponent from "./MainModalComponent";
 import { defaultIcon, busIcon, tramIcon, scooterIcon, ridesharingIcon } from "../utils/icons";
 import { fetchDistanceBetweenUserAndScooters, toggleScooters } from "../utils/scootersFunctions";
-import { fetchCarsPosition, toggleCars } from "../utils/carsFunctions";
+import { fetchDistanceBetweenUserAndCars, fetchCarsPosition, toggleCars } from "../utils/carsFunctions";
 import { usePublicTransportData } from "../utils/publicTransportFunctions";
 import MapContent from "./Map/MapContent";
 
@@ -33,6 +33,7 @@ export function MainComponent() {
   const [cars, setCars] = useState([]);
   const [userLocation, setUserLocation] = useState([]);
   const [routeUserScooter, setRouteUserScooter] = useState([]);
+  const [routeUserCar, setRouteUserCar] = useState([]);
   const [routeUserStation, setRouteUserStation] = useState([]);
   const [selectedStartingStation, setSelectedStartingStation] = useState(null);
   const position = [47.165517, 27.580742];
@@ -230,15 +231,18 @@ export function MainComponent() {
             scooters={scooters}
             cars={cars}
             routeUserScooter={routeUserScooter}
+            routeUserCar={routeUserCar}
             routeUserStation={routeUserStation}
             selectedStartingStation={selectedStartingStation}
             defaultIcon={defaultIcon}
             scooterIcon={scooterIcon}
             ridesharingIcon={ridesharingIcon}
             getStopsInShape={getStopsInShape}
+            fetchDistanceBetweenUserAndCars={fetchDistanceBetweenUserAndCars}
             fetchDistanceBetweenUserAndScooters={fetchDistanceBetweenUserAndScooters}
             fetchDistanceBetweenTwoPoints={fetchDistanceBetweenTwoPoints}
             setRouteUserScooter={setRouteUserScooter}
+            setRouteUserCar={setRouteUserCar}
             handleCloseRouteUserScooter={handleCloseRouteUserScooter}
             handleCloseRouteUserStation={handleCloseRouteUserStation}
             handleVehicleIcon={handleVehicleIcon}

@@ -12,6 +12,22 @@ export const fetchCarsPosition = async (setCars) => {
   }
 };
 
+export const fetchDistanceBetweenUserAndCars = async (
+  userLocation,
+  carLatitude,
+  carLongitude,
+  fetchDistanceBetweenTwoPoints,
+  setRouteUserCar
+) => {
+  const distance = await fetchDistanceBetweenTwoPoints(
+    userLocation[0],
+    userLocation[1],
+    carLatitude,
+    carLongitude
+  );
+  setRouteUserCar(distance);
+};
+
 export const toggleCars = async (showCars, setCars, setShowCars, fetchCarsPosition) => {
   if (showCars) {
     setCars([]);

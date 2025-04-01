@@ -17,16 +17,20 @@ const MapContent = ({
   scooters,
   cars,
   routeUserScooter,
+  routeUserCar,
   routeUserStation,
   selectedStartingStation,
   defaultIcon,
   scooterIcon,
   ridesharingIcon,
   getStopsInShape,
+  fetchDistanceBetweenUserAndCars,
   fetchDistanceBetweenUserAndScooters,
   fetchDistanceBetweenTwoPoints,
   setRouteUserScooter,
+  setRouteUserCar,
   handleCloseRouteUserScooter,
+  handleCloseRouteUserCar,
   handleCloseRouteUserStation,
   handleVehicleIcon,
   handleWheelchairAccessible,
@@ -67,18 +71,19 @@ const MapContent = ({
         <CarMarkers
           cars={cars}
           carIcon={ridesharingIcon}
-          onPopupClose={handleCloseRouteUserScooter}
-          fetchDistance={(scooterLat, scooterLng) =>
-            fetchDistanceBetweenUserAndScooters(
+          onPopupClose={handleCloseRouteUserCar}
+          fetchDistance={(carLat, carLng) =>
+            fetchDistanceBetweenUserAndCars(
               userLocation,
-              scooterLat,
-              scooterLng,
+              carLat,
+              carLng,
               fetchDistanceBetweenTwoPoints,
-              setRouteUserScooter
+              setRouteUserCar
             )}
         />
       )}
       {routeUserScooter.route?.length > 0 && <RoutePolyline route={routeUserScooter.route} />}
+      {routeUserCar.route?.length > 0 && <RoutePolyline route={routeUserCar.route} />}
       {routeUserStation.route?.length > 0 && <RoutePolyline route={routeUserStation.route} />}
       {selectedStartingStation && routeUserStation.distance_meters && (
         <>
