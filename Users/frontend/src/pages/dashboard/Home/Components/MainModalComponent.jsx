@@ -4,7 +4,7 @@ import SearchableSelect from "./SearchSelects/SearchableSelect";
 import DirectionButton from "./Buttons/DirectionButton";
 import TransportSelect from "./SearchSelects/TransportSelect";
 
-const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, clearShape, isOptionSelected, direction, handleDirection}) => {
+const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, clearShape, isOptionSelected, direction, handleDirection, onClear}) => {
     return (
         <>
             {selectedCategory === "Transport Public" && (
@@ -14,6 +14,7 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
                         selectedRoute={selectedRoute}
                         handleRouteChange={handleRouteChange}
                         clearShape={clearShape}
+                        onClear={onClear}
                     />
                     {isOptionSelected && (
                         <DirectionButton direction={direction} handleDirection={handleDirection} />
@@ -42,7 +43,7 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
     );
 };
 
-const MainModalComponent = ({toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, isOptionSelected, clearShape, direction, handleDirection }) => {
+const MainModalComponent = ({toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, isOptionSelected, clearShape, direction, handleDirection, onClear }) => {
     const [selectedCategory, setSelectedCategory] = useState("");
 
     return (
@@ -50,11 +51,11 @@ const MainModalComponent = ({toggleScooters, toggleCars, routes, selectedRoute, 
             <span className="text-[2.5rem] font-semibold my-6 text-gray-300">
                 Caută ruta dorită
             </span>
-            <TransportSelect handleCategoryChange={setSelectedCategory} />
+            <TransportSelect handleCategoryChange={setSelectedCategory} clearAllData={onClear}/>
             <ImageDisplay selectedCategory={selectedCategory} toggleCars={toggleCars} toggleScooters={toggleScooters} routes={routes}
                 selectedRoute={selectedRoute}
                 handleRouteChange={handleRouteChange}
-                clearShape={clearShape} isOptionSelected={isOptionSelected} direction={direction} handleDirection={handleDirection}/>
+                clearShape={clearShape} isOptionSelected={isOptionSelected} direction={direction} handleDirection={handleDirection} onClear={onClear}/>
         </div>
     );
 };

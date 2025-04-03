@@ -36,7 +36,8 @@ const MapContent = ({
   handleVehicleIcon,
   handleWheelchairAccessible,
   handleBikeAccessible,
-  getTimestampBetweenPositions
+  getTimestampBetweenPositions,
+  clearCars
 }) => {
   const [movingCarPosition, setMovingCarPosition] = useState(null);
   const [isCarMoving, setIsCarMoving] = useState(false);
@@ -55,7 +56,7 @@ const MapContent = ({
         return;
       }
   
-      setMovingCarPosition([reversedRoute[index][1], reversedRoute[index][0]]); // Ensure correct lat/lng order
+      setMovingCarPosition([reversedRoute[index][1], reversedRoute[index][0]]);
       index++;
     }, 1000);
   };
@@ -102,7 +103,8 @@ const MapContent = ({
               carLng,
               fetchDistanceBetweenTwoPoints,
               setRouteUserCar,
-              moveCarAlongRoute
+              moveCarAlongRoute,
+              clearCars
             )
           }
         />

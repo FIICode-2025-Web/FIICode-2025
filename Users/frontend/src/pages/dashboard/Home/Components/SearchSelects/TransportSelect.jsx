@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { XCircle } from "lucide-react";
 
-const TransportSelect = ({ handleCategoryChange }) => {
+const TransportSelect = ({ handleCategoryChange, clearAllData }) => {
     const [selectedOption, setSelectedOption] = useState("");
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
@@ -36,6 +36,7 @@ const TransportSelect = ({ handleCategoryChange }) => {
                         onClick={() => {
                             setSelectedOption("");
                             handleCategoryChange("");
+                            clearAllData();
                         }}
                         className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                     >

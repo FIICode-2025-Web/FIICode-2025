@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "leaflet/dist/leaflet.css";
-import { handleBikeAccessible, handleWheelchairAccessible } from "../utils/helpers";
+import { handleBikeAccessible, handleWheelchairAccessible, getTimestampBetweenPositions, fetchStations } from "../utils/helpers";
 import "../../../../../public/css/backgrounds.css";
 import MainModalComponent from "./MainModalComponent";
 import { defaultIcon, busIcon, tramIcon, scooterIcon, ridesharingIcon } from "../utils/icons";
@@ -93,23 +93,6 @@ export function MainComponent() {
     // fetchStops();
   }, []);
 
-  const fetchStations = async () => {
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await axios.get("http://127.0.0.1:8003/api/v1/tranzy/stops", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const uniqueStops = response.data.filter(
-        (stop, index, self) =>
-          index === self.findIndex((s) => s.stop_name === stop.stop_name)
-      );
-      setStations(uniqueStops);
-
-    } catch (error) {
-      console.error("Error fetching stops:", error);
-    }
-  };
 
   const getUserCurrentLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
@@ -185,6 +168,10 @@ export function MainComponent() {
     setScooters([]);
   };
 
+  const clearCars = () =>{
+    setCars([]);
+  }
+
   const handleDirection = () => {
     const newDirection = direction === 0 ? 1 : 0;
     setDirection(newDirection);
@@ -199,30 +186,40 @@ export function MainComponent() {
     }
   }
 
-  const getTimestampBetweenPositions = (tinestamp) => {
-    var startTime = new Date(tinestamp);
-    var endTime = new Date();
-    var difference = (endTime.getTime() - startTime.getTime()) / 1000;
-    return difference.toFixed(0);
-  }
-
   const handleToggleScooters = () => {
     toggleScooters(showScooters, setScooters, setShowScooters);
   };
-  
+
   const handleToggleCars = () => {
     toggleCars(showCars, setCars, setShowCars, fetchCarsPosition);
+  };
+
+  const clearAll = () => {
+    setSelectedRoute("");
+    setSelectedStartingStation(null);
+    setRouteUserScooter([]);
+    setRouteUserCar([]);
+    clearShape();
+    clearScooters();
+    clearCars();
   };
 
   return (
     <div className="bg-main">
       <div className="flex items-center justify-center flex-row">
         <div className="flex justify-center w-screen p-28">
-          <MainModalComponent toggleCars={handleToggleCars} toggleScooters={handleToggleScooters} 
-              selectedRoute={selectedRoute} routes={routes}
-              handleRouteChange={handleRouteChange}
-              clearShape={clearShape} isOptionSelected={isOptionSelected}
-              direction={direction} handleDirection={handleDirection}/>
+          <MainModalComponent
+            toggleCars={handleToggleCars}
+            toggleScooters={handleToggleScooters}
+            selectedRoute={selectedRoute}
+            routes={routes}
+            handleRouteChange={handleRouteChange}
+            clearShape={clearShape}
+            isOptionSelected={isOptionSelected}
+            direction={direction}
+            handleDirection={handleDirection}
+            onClear={clearAll}
+          />
           <MapContent
             position={position}
             shape={shape}
@@ -249,6 +246,7 @@ export function MainComponent() {
             handleWheelchairAccessible={handleWheelchairAccessible}
             handleBikeAccessible={handleBikeAccessible}
             getTimestampBetweenPositions={getTimestampBetweenPositions}
+            clearCars={clearCars}
           />
         </div>
         <div className="flex items-center justify-center gap-4 mt-4">
