@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Marker } from "react-leaflet";
 import MapWrapper from "./MapWrapper";
 import ShapePolyline from "../Polylines/ShapePolyline";
@@ -37,6 +38,28 @@ const MapContent = ({
   handleBikeAccessible,
   getTimestampBetweenPositions
 }) => {
+  const [movingCarPosition, setMovingCarPosition] = useState(null);
+  const [isCarMoving, setIsCarMoving] = useState(false);
+
+  const moveCarAlongRoute = (route) => {
+    if (!route || route.length === 0) return;
+  
+    setIsCarMoving(true);
+    const reversedRoute = [...route].reverse();
+    let index = 0;
+  
+    const interval = setInterval(() => {
+      if (index >= reversedRoute.length) {
+        clearInterval(interval);
+        setIsCarMoving(false);
+        return;
+      }
+  
+      setMovingCarPosition([reversedRoute[index][1], reversedRoute[index][0]]); // Ensure correct lat/lng order
+      index++;
+    }, 1000);
+  };
+  
   return (
     <MapWrapper center={position}>
       {shape.length > 0 && <ShapePolyline shape={shape} />}
@@ -78,9 +101,15 @@ const MapContent = ({
               carLat,
               carLng,
               fetchDistanceBetweenTwoPoints,
-              setRouteUserCar
-            )}
+              setRouteUserCar,
+              moveCarAlongRoute
+            )
+          }
         />
+      )}
+      {routeUserCar.route?.length > 0 && <RoutePolyline route={routeUserCar.route} />}
+      {isCarMoving && movingCarPosition && (
+        <Marker position={movingCarPosition} icon={ridesharingIcon} />
       )}
       {routeUserScooter.route?.length > 0 && <RoutePolyline route={routeUserScooter.route} />}
       {routeUserCar.route?.length > 0 && <RoutePolyline route={routeUserCar.route} />}

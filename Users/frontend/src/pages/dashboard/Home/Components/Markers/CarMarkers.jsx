@@ -2,6 +2,7 @@ import { Marker, Popup } from "react-leaflet";
 import { Button } from "@material-tailwind/react";
 
 const CarMarkers = ({ cars, carIcon, fetchDistance, onPopupClose }) => {
+
     return cars.map((car) => (
         <Marker
             key={car.id}
