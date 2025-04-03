@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Marker } from "react-leaflet";
+import { useRef, useState } from "react";
+import { Marker, Popup } from "react-leaflet";
 import MapWrapper from "./MapWrapper";
 import ShapePolyline from "../Polylines/ShapePolyline";
 import UserMarker from "../Markers/UserMarker";
@@ -41,6 +41,10 @@ const MapContent = ({
 }) => {
   const [movingCarPosition, setMovingCarPosition] = useState(null);
   const [isCarMoving, setIsCarMoving] = useState(false);
+  const [arrivalPrompt, setArrivalPrompt] = useState(false);
+  const [arrivalCar, setArrivalCar] = useState(null);
+  const arrivalMarkerRef = useRef(null)
+
 
   const moveCarAlongRoute = (route) => {
     if (!route || route.length === 0) return;
@@ -53,6 +57,16 @@ const MapContent = ({
       if (index >= reversedRoute.length) {
         clearInterval(interval);
         setIsCarMoving(false);
+        const arrivalPos = {
+          latitude: reversedRoute[index - 1][1],
+          longitude: reversedRoute[index - 1][0],
+        };
+  
+        setArrivalCar(arrivalPos);
+        if (arrivalMarkerRef.current) {
+          arrivalMarkerRef.current.openPopup();
+        }
+  
         return;
       }
   
@@ -136,8 +150,19 @@ const MapContent = ({
           onClose={handleCloseRouteUserScooter}
         />
       )}
+      {arrivalCar && (
+        <Marker position={[arrivalCar.latitude, arrivalCar.longitude]} icon={ridesharingIcon}>
+          <Popup>
+            <div className="flex flex-col items-start text-sm p-2 space-y-1 leading-snug text-gray-800">
+              <h3 className="text-base font-semibold text-center w-full text-primary">Driver has arrived!</h3>
+              <p>Your car has reached the destination. You can now proceed!</p>
+            </div>
+          </Popup>
+        </Marker>
+      )}
     </MapWrapper>
   );
+  
 };
 
 export default MapContent;
