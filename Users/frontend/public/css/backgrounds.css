@@ -8,6 +8,10 @@
   background-image: url('../img/mainbg.jpg');
 }
 
+.bg-main-reversed {
+  @apply bg-cover bg-center;
+  background-image: url('../img/mainbg-reversed.jpg');
+}
 .img-bus {
   @apply bg-cover bg-center;
   background-image: url('../img/buses.png');
