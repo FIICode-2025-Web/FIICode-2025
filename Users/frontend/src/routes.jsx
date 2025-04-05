@@ -10,6 +10,7 @@ import { SignIn, SignUp } from "@/pages/auth";
 import { Dashboard } from "@mui/icons-material";
 import LoginRequired from "./context/LoginRequired";
 import { Home } from "./pages/dashboard/index";
+import Feedback from "./pages/feedback/Feedback";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -42,7 +43,13 @@ export const routes = [
         name: "dashboard",
         path: "/home",
         element: <Home />,
-      }
+      },
+      {
+        icon: <TableCellsIcon {...icon} />,
+        name: "feedback",
+        path: "/feedback",
+        element: <Feedback/>
+      },
     ],
   },
 ];

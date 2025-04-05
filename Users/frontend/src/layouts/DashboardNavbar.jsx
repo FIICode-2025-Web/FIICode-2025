@@ -11,7 +11,6 @@ export function DashboardNavbar() {
   return (
     <Navbar className="bg-black text-white border-none shadow-none transition-all px-6 py-1" fullWidth>
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
-        {/* Breadcrumbs */}
         <div className="capitalize text-surface-light">
           <Breadcrumbs className={"bg-transparent p-0 transition-all"}>
             <Link to={`/${layout}`}>
@@ -28,10 +27,17 @@ export function DashboardNavbar() {
           </Breadcrumbs>
         </div>
 
-        {/* User Profile Section */}
         <div className="flex items-center">
+        <Link to="/dashboard/feedback">
+            <Button
+              variant="text"
+              color="blue-gray"
+              className="hidden items-center gap-1 text-primary px-4 xl:flex normal-case"
+            >
+              Feedback
+            </Button>
+          </Link>
           <Link to="/dashboard/profile">
-            {/* Show username and icon on larger screens */}
             <Button
               variant="text"
               color="blue-gray"
@@ -41,7 +47,6 @@ export function DashboardNavbar() {
               {email ? `${email}` : "Hello, Guest"}
             </Button>
             
-            {/* Show only icon on smaller screens */}
             <IconButton variant="text" color="blue-gray" className="grid xl:hidden">
               <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
             </IconButton>
