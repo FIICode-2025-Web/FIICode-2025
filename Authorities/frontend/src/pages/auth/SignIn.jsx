@@ -23,7 +23,7 @@ export function SignIn() {
     }
 
     try {
-      const response = await api.post("/api/v1/auth/authority/login", {
+      const response = await api.post("/api/v1/auth/user/login", {
         email: email,
         password: password,
       });
@@ -31,7 +31,7 @@ export function SignIn() {
       if(response.status === 200) {
         localStorage.setItem("token", response.data.token);
         toast.success("Login Successful");
-        navigate('/');
+        navigate('/dashboard/home');
       }
     } catch (error) {
       let errorMessage = "Login failed";
@@ -50,9 +50,10 @@ export function SignIn() {
 
   return (
     <section className="bg-green-200 flex gap-4 text-surface-mid-dark">
-      <div className="w-full h-screen flex flex-col items-end justify-center bg-custom">
-        <div className="bg-white bg-opacity-80 w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
+      <div className="w-full h-screen flex flex-col items-end justify-center bg-main">
+        <div className="bg-white w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
           <div className="text-center">
+            <Typography variant="h3" className="font-bold mb-4 text-primary">Authorities</Typography>
             <Typography variant="h2" className="font-bold mb-4">Sign in</Typography>
             <Typography variant="paragraph" className="text-lg font-normal text-surface-light-dark">Enter your email and password to sign in.</Typography>
           </div>

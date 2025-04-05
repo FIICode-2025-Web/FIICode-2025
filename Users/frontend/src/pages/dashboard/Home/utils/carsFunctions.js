@@ -36,11 +36,22 @@ export const fetchDistanceBetweenUserAndCars = async (
   clearCars();
 };
 
-export const toggleCars = async (showCars, setCars, setShowCars, fetchCarsPosition) => {
+export const toggleCars = async (
+  showCars,
+  setCars,
+  setScooters,
+  setShowCars,
+  setShowScooters,
+  fetchCarsPosition
+) => {
   if (showCars) {
     setCars([]);
+    setShowCars(false);
   } else {
-    fetchCarsPosition(setCars);
+    await fetchCarsPosition(setCars);
+    setScooters([]);
+    setShowCars(true);
+    setShowScooters(false);
   }
-  setShowCars(!showCars);
 };
+

@@ -4,9 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { handleBikeAccessible, handleWheelchairAccessible, getTimestampBetweenPositions, fetchStations } from "../utils/helpers";
 import "../../../../../public/css/backgrounds.css";
 import MainModalComponent from "./MainModalComponent";
-import { defaultIcon, busIcon, tramIcon, scooterIcon, ridesharingIcon } from "../utils/icons";
-import { fetchDistanceBetweenUserAndScooters, toggleScooters } from "../utils/scootersFunctions";
-import { fetchDistanceBetweenUserAndCars, fetchCarsPosition, toggleCars } from "../utils/carsFunctions";
+import { defaultIcon, busIcon, tramIcon, ridesharingIcon } from "../utils/icons";
 import { usePublicTransportData } from "../utils/publicTransportFunctions";
 import MapContent from "./Map/MapContent";
 
@@ -29,22 +27,11 @@ export function MainComponent() {
 
   const [shapeId, setShapeId] = useState("");
   const [selectedRoute, setSelectedRoute] = useState("");
-  const [scooters, setScooters] = useState([]);
-  const [cars, setCars] = useState([]);
   const [userLocation, setUserLocation] = useState([]);
-  const [routeUserScooter, setRouteUserScooter] = useState([]);
-  const [routeUserCar, setRouteUserCar] = useState([]);
   const [routeUserStation, setRouteUserStation] = useState([]);
   const [selectedStartingStation, setSelectedStartingStation] = useState(null);
   const position = [47.165517, 27.580742];
-  const [showScooters, setShowScooters] = useState(false);
-  const [showCars, setShowCars] = useState(false);
   const [isOptionSelected, setIsOptionSelected] = useState(false);
-
-
-  const handleCloseRouteUserScooter = () => {
-    setRouteUserScooter([]);
-  }
 
   const handleCloseRouteUserStation = () => {
     setRouteUserStation([]);
@@ -132,7 +119,7 @@ export function MainComponent() {
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching live scooters positions:", error);
+      console.error("Error fetching live positions:", error);
     }
   };
 
@@ -142,7 +129,6 @@ export function MainComponent() {
   };
 
   const handleRouteChange = (event) => {
-    clearScooters();
     const selectedRouteId = event.target.value;
     setSelectedRoute(selectedRouteId);
     setIsOptionSelected(!!selectedRouteId);
@@ -163,19 +149,9 @@ export function MainComponent() {
     fetchDistanceBetweenUserAndStations(station.stop_lat, station.stop_lon);
   };
 
-
-  const clearScooters = () => {
-    setScooters([]);
-  };
-
-  const clearCars = () =>{
-    setCars([]);
-  }
-
   const handleDirection = () => {
     const newDirection = direction === 0 ? 1 : 0;
     setDirection(newDirection);
-    clearScooters();
   };
 
   const handleVehicleIcon = (vehicle_type) => {
@@ -186,22 +162,10 @@ export function MainComponent() {
     }
   }
 
-  const handleToggleScooters = () => {
-    toggleScooters(showScooters, setScooters, setCars, setShowScooters, setShowCars);
-  };
-  
-  const handleToggleCars = () => {
-    toggleCars(showCars, setCars, setScooters, setShowCars, setShowScooters, fetchCarsPosition);
-  };
-
   const clearAll = () => {
     setSelectedRoute("");
     setSelectedStartingStation(null);
-    setRouteUserScooter([]);
-    setRouteUserCar([]);
     clearShape();
-    clearScooters();
-    clearCars();
   };
 
   return (
@@ -209,8 +173,6 @@ export function MainComponent() {
       <div className="flex items-center justify-center flex-row">
         <div className="flex justify-center w-screen p-28">
           <MainModalComponent
-            toggleCars={handleToggleCars}
-            toggleScooters={handleToggleScooters}
             selectedRoute={selectedRoute}
             routes={routes}
             handleRouteChange={handleRouteChange}
@@ -225,28 +187,17 @@ export function MainComponent() {
             shape={shape}
             userLocation={userLocation}
             vehicles={vehicles}
-            scooters={scooters}
-            cars={cars}
-            routeUserScooter={routeUserScooter}
-            routeUserCar={routeUserCar}
             routeUserStation={routeUserStation}
             selectedStartingStation={selectedStartingStation}
             defaultIcon={defaultIcon}
-            scooterIcon={scooterIcon}
             ridesharingIcon={ridesharingIcon}
             getStopsInShape={getStopsInShape}
-            fetchDistanceBetweenUserAndCars={fetchDistanceBetweenUserAndCars}
-            fetchDistanceBetweenUserAndScooters={fetchDistanceBetweenUserAndScooters}
             fetchDistanceBetweenTwoPoints={fetchDistanceBetweenTwoPoints}
-            setRouteUserScooter={setRouteUserScooter}
-            setRouteUserCar={setRouteUserCar}
-            handleCloseRouteUserScooter={handleCloseRouteUserScooter}
             handleCloseRouteUserStation={handleCloseRouteUserStation}
             handleVehicleIcon={handleVehicleIcon}
             handleWheelchairAccessible={handleWheelchairAccessible}
             handleBikeAccessible={handleBikeAccessible}
             getTimestampBetweenPositions={getTimestampBetweenPositions}
-            clearCars={clearCars}
           />
         </div>
         <div className="flex items-center justify-center gap-4 mt-4">

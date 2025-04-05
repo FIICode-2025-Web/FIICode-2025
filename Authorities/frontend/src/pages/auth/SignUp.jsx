@@ -13,18 +13,15 @@ export function SignUp() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: '',
-    code: ''
+    confirmPassword: ''
   });
 
   const register = async (register_data) => {
     try {
-      console.log(register_data);
-      const response = await api.post("/api/v1/auth/authority/signup", {
+      const response = await api.post("/api/v1/auth/user/signup", {
         name: register_data.name,
         email: register_data.email,
         password: register_data.password,
-        code: register_data.code
       });
 
       if (response.status === 200 || response.status === 201) {
@@ -84,8 +81,8 @@ export function SignUp() {
   }
   return (
     <section className="bg-green-200 flex gap-4 text-surface-mid-dark">
-      <div className="w-full h-screen flex flex-col items-end justify-center bg-custom">
-        <div className="bg-white bg-opacity-80 w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
+      <div className="w-full h-screen flex flex-col items-end justify-center bg-main">
+        <div className="bg-white w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
         <div className="text-center">
              <Typography variant="h2" className="font-bold mb-1">Join Us Today</Typography>
              <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal text-surface-light-dark">Enter your email, name and password to register.</Typography>
@@ -147,21 +144,6 @@ export function SignUp() {
                 size="lg"
                 placeholder="Confirm password"
                 name="confirmPassword"
-                className="!border-surface-mid-dark text-surface-mid-dark focus:!border-secondary"
-                labelProps={{
-                  className: "before:content-none after:content-none",
-                }}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="mb-2 flex flex-col gap-4">
-              <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-mid-light">
-                Verification Code
-              </Typography>
-              <Input
-                size="lg"
-                placeholder="Verification Code"
-                name="code"
                 className="!border-surface-mid-dark text-surface-mid-dark focus:!border-secondary"
                 labelProps={{
                   className: "before:content-none after:content-none",
