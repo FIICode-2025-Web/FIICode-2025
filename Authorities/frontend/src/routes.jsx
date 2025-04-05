@@ -1,3 +1,5 @@
+// src/routes/index.jsx
+
 import {
   HomeIcon,
   UserCircleIcon,
@@ -6,10 +8,10 @@ import {
   ServerStackIcon,
   RectangleStackIcon,
 } from "@heroicons/react/24/solid";
+
 import { SignIn, SignUp } from "@/pages/auth";
-import { Dashboard } from "@mui/icons-material";
-import LoginRequired from "./context/LoginRequired";
-import { Home } from "./pages/dashboard/index";
+import { Home } from "./pages/dashboard";
+import Requests from "./pages/requests/Requests";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -42,7 +44,13 @@ export const routes = [
         name: "dashboard",
         path: "/home",
         element: <Home />,
-      }
+      },
+      {
+        icon: <TableCellsIcon {...icon} />,
+        name: "requests",
+        path: "/requests",
+        element: <Requests/>
+      },
     ],
   },
 ];
