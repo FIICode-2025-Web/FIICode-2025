@@ -187,11 +187,11 @@ export function MainComponent() {
   }
 
   const handleToggleScooters = () => {
-    toggleScooters(showScooters, setScooters, setShowScooters);
+    toggleScooters(showScooters, setScooters, setCars, setShowScooters, setShowCars);
   };
-
+  
   const handleToggleCars = () => {
-    toggleCars(showCars, setCars, setShowCars, fetchCarsPosition);
+    toggleCars(showCars, setCars, setScooters, setShowCars, setShowScooters, fetchCarsPosition);
   };
 
   const clearAll = () => {

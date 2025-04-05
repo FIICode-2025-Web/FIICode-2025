@@ -155,7 +155,7 @@ const MapContent = ({
           <Popup>
             <div className="flex flex-col items-start text-sm p-2 space-y-1 leading-snug text-gray-800">
               <h3 className="text-base font-semibold text-center w-full text-primary">Șoferul a ajuns!</h3>
-              <p>Your car has reached the destination. You can now proceed!</p>
+              <p>Șoferul a ajuns la destinație, </p>
             </div>
           </Popup>
         </Marker>

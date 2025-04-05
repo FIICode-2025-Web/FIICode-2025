@@ -30,11 +30,19 @@ export const fetchDistanceBetweenUserAndScooters = async (
   setRouteUserScooter(distance);
 };
 
-export const toggleScooters = async (showScooters, setScooters, setShowScooters) => {
+export const toggleScooters = async (
+  showScooters,
+  setScooters,
+  setCars,
+  setShowScooters,
+  setShowCars
+) => {
+  const token = localStorage.getItem("token");
+
   if (showScooters) {
     setScooters([]);
+    setShowScooters(false);
   } else {
-    const token = localStorage.getItem("token");
     try {
       const response = await axios.get("http://127.0.0.1:8003/api/v1/scooter/", {
         headers: { Authorization: `Bearer ${token}` },
@@ -43,6 +51,8 @@ export const toggleScooters = async (showScooters, setScooters, setShowScooters)
     } catch (error) {
       console.error("Error fetching live scooters positions:", error);
     }
+    setCars([]);
+    setShowScooters(true);
+    setShowCars(false);
   }
-  setShowScooters(!showScooters);
 };
