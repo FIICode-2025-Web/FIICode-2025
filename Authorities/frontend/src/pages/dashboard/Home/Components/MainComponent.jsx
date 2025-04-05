@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { handleBikeAccessible, handleWheelchairAccessible, getTimestampBetweenPositions, fetchStations } from "../utils/helpers";
 import "../../../../../public/css/backgrounds.css";
 import MainModalComponent from "./MainModalComponent";
-import { defaultIcon, busIcon, tramIcon, ridesharingIcon } from "../utils/icons";
+import { defaultIcon, busIcon, tramIcon } from "../utils/icons";
 import { usePublicTransportData } from "../utils/publicTransportFunctions";
 import MapContent from "./Map/MapContent";
 
@@ -190,7 +190,6 @@ export function MainComponent() {
             routeUserStation={routeUserStation}
             selectedStartingStation={selectedStartingStation}
             defaultIcon={defaultIcon}
-            ridesharingIcon={ridesharingIcon}
             getStopsInShape={getStopsInShape}
             fetchDistanceBetweenTwoPoints={fetchDistanceBetweenTwoPoints}
             handleCloseRouteUserStation={handleCloseRouteUserStation}

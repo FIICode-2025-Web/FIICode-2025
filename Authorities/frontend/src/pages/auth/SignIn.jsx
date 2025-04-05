@@ -23,7 +23,7 @@ export function SignIn() {
     }
 
     try {
-      const response = await api.post("/api/v1/auth/user/login", {
+      const response = await api.post("/api/v1/auth/authority/login", {
         email: email,
         password: password,
       });

@@ -1,4 +1,4 @@
-import {Input, Button, Typography} from "@material-tailwind/react";
+import { Input, Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,17 +13,18 @@ export function SignUp() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    code: '',
   });
 
   const register = async (register_data) => {
     try {
-      const response = await api.post("/api/v1/auth/user/signup", {
+      const response = await api.post("/api/v1/auth/authority/signup", {
         name: register_data.name,
         email: register_data.email,
         password: register_data.password,
+        code: register_data.code
       });
-
       if (response.status === 200 || response.status === 201) {
         navigate('/auth/sign-in');
         toast.success("Registration Successful");
@@ -45,12 +46,12 @@ export function SignUp() {
   };
 
   const validatePassword = (password) => {
-    if(password.length < 8){
+    if (password.length < 8) {
       toast.error("Password must be at least 8 characters long");
       return false;
     }
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{7,}$/;
-    if(!regex.test(password)){
+    if (!regex.test(password)) {
       toast.error("Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character");
       return false;
     }
@@ -58,35 +59,42 @@ export function SignUp() {
   }
 
   const handleChange = (e) => {
-    const {name,value} = e.target;
-    setInputs(prev => ({...prev,[name]:value}));
+    const { name, value } = e.target;
+    setInputs(prev => ({ ...prev, [name]: value }));
   }
 
   const handleSignup = (e) => {
     e.preventDefault();
 
-    if(inputs.username === '' || inputs.name === '' || inputs.email === '' || inputs.password === '' || inputs.confirmPassword === ''){
+    if (
+      inputs.name === '' ||
+      inputs.email === '' ||
+      inputs.password === '' ||
+      inputs.confirmPassword === '' ||
+      inputs.code === ''
+    ) {
       toast.error("Please fill all the fields");
       return;
     }
 
-    if(inputs.password !== inputs.confirmPassword){
+    if (inputs.password !== inputs.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-    if(!validatePassword(inputs.password)){
+    if (!validatePassword(inputs.password)) {
       return;
     }
-      register(inputs);
+    register(inputs);
   }
   return (
     <section className="bg-green-200 flex gap-4 text-surface-mid-dark">
       <div className="w-full h-screen flex flex-col items-end justify-center bg-main">
         <div className="bg-white w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
-        <div className="text-center">
-             <Typography variant="h2" className="font-bold mb-1">Join Us Today</Typography>
-             <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal text-surface-light-dark">Enter your email, name and password to register.</Typography>
-        </div>
+          <div className="text-center">
+            <Typography variant="h3" className="font-bold mb-4 text-primary">Authorities</Typography>
+            <Typography variant="h2" className="font-bold mb-1">Join Us Today</Typography>
+            <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal text-surface-light-dark">Enter your email, name and password to register.</Typography>
+          </div>
           <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-3/4" onSubmit={handleSignup}>
             <div className="mb-2 flex flex-col gap-4">
               <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-mid-light">
@@ -144,6 +152,21 @@ export function SignUp() {
                 size="lg"
                 placeholder="Confirm password"
                 name="confirmPassword"
+                className="!border-surface-mid-dark text-surface-mid-dark focus:!border-secondary"
+                labelProps={{
+                  className: "before:content-none after:content-none",
+                }}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="mb-2 flex flex-col gap-4">
+              <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-mid-light">
+                Code
+              </Typography>
+              <Input
+                size="lg"
+                placeholder="Enter your code"
+                name="code"
                 className="!border-surface-mid-dark text-surface-mid-dark focus:!border-secondary"
                 labelProps={{
                   className: "before:content-none after:content-none",
