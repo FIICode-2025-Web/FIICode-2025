@@ -56,6 +56,12 @@ class TranzyService:
     def get_routes(self, db: Session):
         return db.query(TranzyRoutes).all()
 
+    def disable_route(self, route_id: str, db: Session):
+        route = db.query(TranzyRoutes).filter(TranzyRoutes.route_id == route_id).first()
+        route.disabled = not route.disabled
+        db.commit()
+        return route
+
     # ------------------------------- Generic
     def save_entity(self, entity: [T], db: Session):
         db.add(entity)

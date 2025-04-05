@@ -8,6 +8,7 @@ TRANZY_KEY = config("tranzy_key")
 
 tranzy_service = TranzyService()
 
+
 class TranzyClient:
 
     def get_tranzy_vehicles(self):
@@ -16,7 +17,7 @@ class TranzyClient:
                                 )
         return response.json()
 
-    def get_tranzy_routes(self,db: Session):
+    def get_tranzy_routes(self, db: Session):
         response = requests.get("https://api.tranzy.ai/v1/opendata/routes",
                                 headers={"X-API-KEY": TRANZY_KEY, "X-Agency-Id": "1"}
                                 )
@@ -29,12 +30,13 @@ class TranzyClient:
                 route_long_name=route.get("route_long_name"),
                 route_color=route.get("route_color"),
                 route_type=route.get("route_type"),
-                route_desc=route.get("route_desc")
+                route_desc=route.get("route_desc"),
+                disabled=False
             )
             tranzy_service.save_entity(route_model, db)
         return response.json()
 
-    def get_tranzy_stops(self,db: Session):
+    def get_tranzy_stops(self, db: Session):
         response = requests.get("https://api.tranzy.ai/v1/opendata/stops",
                                 headers={"X-API-KEY": TRANZY_KEY, "X-Agency-Id": "1"}
                                 )
@@ -67,7 +69,7 @@ class TranzyClient:
             tranzy_service.save_entity(stop_time_model, db)
         return response.json()
 
-    def get_tranzy_trips(self,db: Session):
+    def get_tranzy_trips(self, db: Session):
         response = requests.get("https://api.tranzy.ai/v1/opendata/trips",
                                 headers={"X-API-KEY": TRANZY_KEY, "X-Agency-Id": "1"}
                                 )

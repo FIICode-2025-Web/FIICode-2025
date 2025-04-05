@@ -1,5 +1,5 @@
 from app.database import Base
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, Boolean
 
 
 class TranzyVehicles(Base):
@@ -27,6 +27,7 @@ class TranzyRoutes(Base):
     route_color = Column(String)
     route_type = Column(Integer)
     route_desc = Column(String)
+    disabled = Column(Boolean)
 
 class TranzyStops(Base):
     __tablename__ = 'tranzy_stops'
