@@ -26,6 +26,11 @@ const RoutesTable = ({ routes }) => {
         route.route_short_name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const formatRouteLabel = (label) => {
+        const parts = label.split("-");
+        return parts.length > 1 ? parts.slice(1).join("-").trim() : label;
+    };
+
     return (
         <>
             <Typography variant="h4" className="mb-4 text-primary">
@@ -37,13 +42,13 @@ const RoutesTable = ({ routes }) => {
                 fullWidth
                 value={searchQuery}
                 onChange={handleSearchChange}
-                className="my-4 bg-primary"
-                sx={{ backgroundColor: 'white', marginTop: '2rem', width: '17rem' }} // Set background color to white
+                className="rounded-t-md shadow-md"
+                sx={{ backgroundColor: 'white', marginTop: '2rem', width: '17rem' }}
             />
 
             <TableContainer
                 component={Paper}
-                className="rounded-xl shadow-md mt-6"
+                className="rounded-b-md shadow-md"
                 sx={{ maxHeight: 650, overflowY: 'auto' }}
             >
                 <Table stickyHeader>
@@ -58,7 +63,7 @@ const RoutesTable = ({ routes }) => {
                         {filteredRoutes.map((route) => (
                             <TableRow key={route.route_short_name}>
                                 <TableCell>{route.route_short_name}</TableCell>
-                                <TableCell>{route.label}</TableCell>
+                                <TableCell>{formatRouteLabel(route.label)}</TableCell>
                                 <TableCell>
                                     <Checkbox
                                         checked={activeRoutes[route.route_short_name] || false}

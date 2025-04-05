@@ -51,7 +51,7 @@ export function DashboardNavbar() {
               color="blue-gray"
               className="hidden items-center gap-1 text-primary px-4 xl:flex normal-case"
             >
-              Routes
+              Rute
             </Button>
           </Link>
           <Link to="/dashboard/profile">
