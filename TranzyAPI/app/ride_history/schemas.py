@@ -4,7 +4,6 @@ import datetime
 
 class HistorySchema(BaseModel):
     ride: str = Field(str)
-    user_id: str = Field(str)
     km_travelled: float = Field(float)
     duration: float = Field(float)
     cost: float = Field(float)

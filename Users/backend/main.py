@@ -1,9 +1,14 @@
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 
 from app.auth.handlers import register_auth_exception_handlers
 from app.auth.jwt.jwt_bearer import jwtBearer
 from app.auth.router import auth_router
+from app.feedback.router import feedback_router
+from app.report.router import report_router
+import app.auth.models as models
+from app.database import engine
 
 app = FastAPI(dependencies=[Depends(jwtBearer())])
 
@@ -19,9 +24,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(auth_router)
+app.include_router(feedback_router)
+app.include_router(report_router)
 register_auth_exception_handlers(app)
+
+models.Base.metadata.create_all(bind=engine)
+
 
 
 @app.get("/", tags=["test"])
 def greet():
     return {"Hello": "World"}
+
+if __name__ == "__main__":
+    config = uvicorn.Config("main:app", port=8004)
+    server = uvicorn.Server(config)
+    server.run()

@@ -10,6 +10,8 @@ import app.authorities.models as authorities_models
 from app.tranzy_client.router import tranzy_client_router
 from app.authorities.router import authorities_routes
 from app.tranzy.router import tranzy_router
+from app.feedback.router import feedback_router
+from app.report.router import report_router
 from app.database import engine, Base
 
 app = FastAPI(dependencies=[Depends(jwtBearer())])
@@ -29,6 +31,8 @@ app.include_router(auth_router)
 app.include_router(tranzy_client_router)
 app.include_router(tranzy_router)
 app.include_router(authorities_routes)
+app.include_router(feedback_router)
+app.include_router(report_router)
 register_auth_exception_handlers(app)
 
 Base.metadata.create_all(bind=engine)
