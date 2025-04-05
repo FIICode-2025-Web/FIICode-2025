@@ -51,6 +51,10 @@ def get_shapes_for_route(route_id: str, db: db_dependency):
 def get_routes(db: db_dependency):
     return tranzy_service.get_routes(db)
 
+@tranzy_router.get("/routes/route-between-two-points")
+def get_routes_between_two_points(stop_id_A: int, stop_id_B: int, db: db_dependency):
+    return tranzy_service.get_routes_between_two_stations(stop_id_A, stop_id_B, db)
+
 
 # ------------------------------- Stops
 @tranzy_router.get("/stops")
