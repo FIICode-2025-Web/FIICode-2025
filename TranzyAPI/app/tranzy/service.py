@@ -158,6 +158,37 @@ class TranzyService:
     def get_routes(self, db: Session):
         return db.query(TranzyRoutes).all()
 
+    def get_routes_between_two_stations(self, stop_id_A: int, stop_id_B: int, db: Session):
+        stop_times_A = db.query(TranzyStopTimes).filter(TranzyStopTimes.stop_id == stop_id_A).all()
+        stop_times_B = db.query(TranzyStopTimes).filter(TranzyStopTimes.stop_id == stop_id_B).all()
+
+        trips_A = {st.trip_id: st.stop_sequence for st in stop_times_A}
+        trips_B = {st.trip_id: st.stop_sequence for st in stop_times_B}
+
+        common_trip_ids = set(trips_A.keys()) & set(trips_B.keys())
+
+        results = []
+        for trip_id in common_trip_ids:
+            seq_A = trips_A[trip_id]
+            seq_B = trips_B[trip_id]
+
+            direction = 1 if seq_A < seq_B else 0
+
+            trip = db.query(TranzyTrips).filter(TranzyTrips.trip_id == trip_id).first()
+            route = db.query(TranzyRoutes).filter(TranzyRoutes.route_id == trip.route_id).first()
+
+            results.append({
+                "trip_id": trip.trip_id,
+                "route_id": route.route_id,
+                "route_short_name": route.route_short_name,
+                "route_long_name": route.route_long_name,
+                "stop_sequence_A": seq_A,
+                "stop_sequence_B": seq_B,
+                "direction": direction
+            })
+
+        return results
+
     # ------------------------------- Generic
     def save_entity(self, entity: [T], db: Session):
         db.add(entity)
