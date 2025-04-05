@@ -45,6 +45,15 @@ export function DashboardNavbar() {
               Feedback
             </Button>
           </Link>
+          <Link to="/authorities/dashboard/routes">
+            <Button
+              variant="text"
+              color="blue-gray"
+              className="hidden items-center gap-1 text-primary px-4 xl:flex normal-case"
+            >
+              Routes
+            </Button>
+          </Link>
           <Link to="/dashboard/profile">
             <Button
               variant="text"
