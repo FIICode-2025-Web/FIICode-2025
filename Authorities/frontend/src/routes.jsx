@@ -7,6 +7,9 @@ import {
   RectangleStackIcon,
 } from "@heroicons/react/24/solid";
 import { SignIn, SignUp } from "@/pages/auth";
+import { Dashboard } from "@mui/icons-material";
+import LoginRequired from "./context/LoginRequired";
+import { Home } from "./pages/dashboard/index";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -29,6 +32,17 @@ export const routes = [
         path: "/sign-up",
         element: <SignUp />,
       },
+    ],
+  },
+  {
+    layout: "dashboard",
+    pages: [
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "dashboard",
+        path: "/home",
+        element: <Home />,
+      }
     ],
   },
 ];

@@ -1,20 +1,18 @@
-import {Navigate, Outlet} from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import api from "../services/api";
-import {useEffect, useState, createContext, useContext} from "react";
-import {Spinner} from "@material-tailwind/react";
+import { useEffect, useState, createContext, useContext } from "react";
+import { Spinner } from "@material-tailwind/react";
 
 type UserType = {
     token: string | null;
     userId: string | null;
-    username: string | null;
     email: string | null;
     role: string | null;
-}
+};
 
 const UserContext = createContext<UserType>({
     token: null,
     userId: null,
-    username: null,
     email: null,
     role: null,
 });
@@ -25,22 +23,13 @@ export const useUser = () => {
         throw new Error("useUser must be used within a UserProvider");
     }
     return context;
-}
-
-type GetCurrentUserInfoResponseType = {
-    isAuthenticated: boolean;
-    userName: string;
-    claims: {
-        [key: string]: string;
-    }
-} | undefined;
+};
 
 export default function LoginRequired() {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
     const [user, setUser] = useState<UserType>({
         token: null,
         userId: null,
-        username: null,
         email: null,
         role: null,
     });
@@ -54,21 +43,20 @@ export default function LoginRequired() {
             }
 
             try {
-                const response = await api.get<GetCurrentUserInfoResponseType>("/api/v1/Authentication/currentuserinfo", {
+                const response = await api.post("http://127.0.0.1:8000/api/v1/auth/account", {}, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
 
-                if (response.status === 200 && response.data?.isAuthenticated) {
+                if (response.status === 200 && response.data?.id) {
                     setIsAuthenticated(true);
                     setUser({
-                        token: token,
-                        userId: response.data?.claims?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
-                        username: response.data?.userName,
-                        email: response.data?.claims?.["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
-                        role: response.data?.claims?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
-                    })
+                        token,
+                        userId: response.data.id,
+                        email: response.data.email,
+                        role: response.data.role,
+                    });
                 } else {
                     setIsAuthenticated(false);
                 }
@@ -80,23 +68,21 @@ export default function LoginRequired() {
         checkLogin();
     }, []);
 
-    if(isAuthenticated === null) {
+    if (isAuthenticated === null) {
         return (
             <div className="flex min-h-screen bg-gradient-to-r from-surface-darkest to-[#262133]">
-                <Spinner className={'m-auto w-10 h-10'}/>
+                <Spinner className="m-auto w-10 h-10" />
             </div>
-        )
+        );
     }
 
-
-    if(!isAuthenticated) {
-        return <Navigate to="/auth/sign-in" replace/>;
+    if (!isAuthenticated) {
+        return <Navigate to="/auth/sign-in" replace />;
     }
 
     return (
         <UserContext.Provider value={user}>
-            <Outlet/>
+            <Outlet />
         </UserContext.Provider>
-    )
-
+    );
 }
