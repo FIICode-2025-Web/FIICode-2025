@@ -34,6 +34,10 @@ def get_shapes_for_route_short_name(route_short_name: str, db: db_dependency):
 def get_routes(db: db_dependency):
     return tranzy_service.get_routes(db)
 
+@tranzy_router.patch("/routes/disable/{route_id}")
+def disable_route(route_id: str, db: db_dependency):
+    return tranzy_service.disable_route(route_id, db)
+
 @tranzy_router.get("/shapes/route/{route_id}")
 def get_shapes_for_route(route_id: str, db: db_dependency):
     return tranzy_service.get_shape_for_route_id(route_id, db)
