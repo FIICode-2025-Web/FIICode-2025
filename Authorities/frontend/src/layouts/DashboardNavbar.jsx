@@ -13,7 +13,7 @@ export function DashboardNavbar() {
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
         <div className="capitalize text-surface-light">
           <Breadcrumbs className={"bg-transparent p-0 transition-all"}>
-            <Link to={`/${layout}`}>
+            <Link to={'/authorities/dashboard/home'}>
               <Typography
                 variant="small"
                 className="font-normal opacity-90 transition-all text-primary hover:opacity-100 hover:text-primary"
@@ -27,6 +27,33 @@ export function DashboardNavbar() {
           </Breadcrumbs>
         </div>
         <div className="flex items-center">
+          <Link to="/authorities/dashboard/requests">
+            <Button
+              variant="text"
+              color="blue-gray"
+              className="hidden items-center gap-1 text-primary px-4 xl:flex normal-case"
+            >
+              Rapoarte
+            </Button>
+          </Link>
+          <Link to="/authorities/dashboard/feedback">
+            <Button
+              variant="text"
+              color="blue-gray"
+              className="hidden items-center gap-1 text-primary px-4 xl:flex normal-case"
+            >
+              Feedback
+            </Button>
+          </Link>
+          <Link to="/authorities/dashboard/routes">
+            <Button
+              variant="text"
+              color="blue-gray"
+              className="hidden items-center gap-1 text-primary px-4 xl:flex normal-case"
+            >
+              Rute
+            </Button>
+          </Link>
           <Link to="/dashboard/profile">
             <Button
               variant="text"

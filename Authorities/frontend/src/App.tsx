@@ -9,7 +9,6 @@ function App() {
        <Route element={<LoginRequired/>}>
           <Route path="authorities/dashboard/*" element={<Dashboard/>}/>
         </Route>
-        {/* <Route path="/dashboard/*" element={<Dashboard/>}/> */}
         <Route path="authorities/auth/*" element={<Auth/>}/>
         <Route path="/404" element={<NotFound />}/>
         <Route path="*" element={<Navigate to="/authorities/auth/sign-in" replace/>}/>
