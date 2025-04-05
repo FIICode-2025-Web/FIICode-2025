@@ -18,7 +18,7 @@ const icon = {
 export const routes = [
   {
     title: "auth pages",
-    layout: "auth",
+    layout: "authorities/auth",
     pages: [
       {
         icon: <ServerStackIcon {...icon} />,
@@ -35,7 +35,7 @@ export const routes = [
     ],
   },
   {
-    layout: "dashboard",
+    layout: "authorities/dashboard",
     pages: [
       {
         icon: <HomeIcon {...icon} />,

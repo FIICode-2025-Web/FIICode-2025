@@ -26,7 +26,7 @@ export function SignUp() {
         code: register_data.code
       });
       if (response.status === 200 || response.status === 201) {
-        navigate('/auth/sign-in');
+        navigate('/authorities/auth/sign-in');
         toast.success("Registration Successful");
       } else {
         toast.error("Registration failed");
@@ -179,7 +179,7 @@ export function SignUp() {
             </Button>
             <Typography variant="paragraph" className="text-center text-surface-light-dark font-medium mt-4">
               Already have an account?
-              <Link to="/auth/sign-in" className="text-secondary ml-1 hover:text-primary">Sign in</Link>
+              <Link to="/authorities/auth/sign-in" className="text-secondary ml-1 hover:text-primary">Sign in</Link>
             </Typography>
           </form>
         </div>

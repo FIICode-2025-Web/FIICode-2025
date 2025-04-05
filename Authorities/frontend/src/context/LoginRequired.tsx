@@ -77,7 +77,7 @@ export default function LoginRequired() {
     }
 
     if (!isAuthenticated) {
-        return <Navigate to="/auth/sign-in" replace />;
+        return <Navigate to="authorities/auth/sign-in" replace />;
     }
 
     return (

@@ -7,7 +7,7 @@ export function Auth() {
       <Routes>
         {routes.map(
           ({ layout, pages }) =>
-            layout === "auth" &&
+            layout === "authorities/auth" &&
             pages.map(({ path, element }) => (
               <Route exact path={path} element={element} />
             ))

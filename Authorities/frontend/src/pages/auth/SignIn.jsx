@@ -31,7 +31,7 @@ export function SignIn() {
       if(response.status === 200) {
         localStorage.setItem("token", response.data.token);
         toast.success("Login Successful");
-        navigate('/dashboard/home');
+        navigate('/authorities/dashboard/home');
       }
     } catch (error) {
       let errorMessage = "Login failed";
@@ -93,7 +93,7 @@ export function SignIn() {
             </div>
             <Typography variant="small" className="text-center text-surface-light-dark font-medium mt-4">
               Not registered?
-              <Link to="/auth/sign-up" className="text-secondary ml-1 hover:text-primary">Create account</Link>
+              <Link to="/authorities/auth/sign-up" className="text-secondary ml-1 hover:text-primary">Create account</Link>
             </Typography>
             {/* <Typography variant="small" className="text-center text-surface-light-dark font-medium mt-4">
               Forgot password?
