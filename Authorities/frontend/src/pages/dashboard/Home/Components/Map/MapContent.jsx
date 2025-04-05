@@ -80,7 +80,7 @@ const MapContent = ({
         <Circle
           key={index}
           center={[data.lat, data.lng]}
-          radius={620} // Increased circle size (much larger)
+          radius={620}
           pathOptions={{
             color: getColorForTraffic(data.level),
             fillColor: getColorForTraffic(data.level),
