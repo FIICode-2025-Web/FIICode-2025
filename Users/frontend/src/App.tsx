@@ -6,19 +6,18 @@ import { useEffect } from "react";
 
 function App() {
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const ws = new WebSocket(`ws://127.0.0.1:8004/api/v1/auth/ws?token=${token}`);
+    const ws = new WebSocket(`ws://127.0.0.1:8004/api/v1/notification/ws`);
 
     // ws.onopen = () => {
     //   console.log("✅ WebSocket deschis");
     // };
 
     ws.onmessage = (event) => {
-      alert("Notificare: " + event.data);
+      console.log("Notificare primita:", event.data);
     };
 
     // ws.onclose = () => {
-    //   console.warn("WebSocket închis");
+    //   console.warn("⚠️ WebSocket închis");
     // };
 
     return () => {
