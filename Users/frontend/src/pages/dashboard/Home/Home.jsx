@@ -5,14 +5,15 @@ import WelcomeSection from './Components/WelcomeSection'
 import FooterSection from './Components/FooterSection'
 
 export function Home() {
+
   return (
     <>
-        <DashboardNavbar/>
-        <WelcomeSection/>
-        <MainComponent/>
-        <FooterSection/>
+      <DashboardNavbar />
+      <WelcomeSection />
+      <MainComponent />
+      <FooterSection />
     </>
-    
+
   )
 }
 

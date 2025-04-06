@@ -12,12 +12,14 @@ from app.authorities.router import authorities_routes
 from app.tranzy.router import tranzy_router
 from app.feedback.router import feedback_router
 from app.report.router import report_router
+from app.notification.router import notification_router
 from app.database import engine, Base
 
 app = FastAPI(dependencies=[Depends(jwtBearer())])
 
 origins = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "http://localhost:5174"
 ]
 
 app.add_middleware(
@@ -33,11 +35,10 @@ app.include_router(tranzy_router)
 app.include_router(authorities_routes)
 app.include_router(feedback_router)
 app.include_router(report_router)
+app.include_router(notification_router)
 register_auth_exception_handlers(app)
 
 Base.metadata.create_all(bind=engine)
-
-
 
 
 @app.get("/", tags=["test"])
