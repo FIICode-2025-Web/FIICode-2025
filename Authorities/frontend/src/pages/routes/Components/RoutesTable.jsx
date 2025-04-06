@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Typography, TextField } from "@mui/material";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const RoutesTable = ({ routes }) => {
     const [activeRoutes, setActiveRoutes] = useState(
@@ -8,15 +10,43 @@ const RoutesTable = ({ routes }) => {
             return acc;
         }, {})
     );
-    
+
     const [searchQuery, setSearchQuery] = useState("");
 
     const handleCheckboxChange = (routeNumber) => {
+        sendNotificationAboutRoute(routeNumber);
         setActiveRoutes((prev) => ({
             ...prev,
             [routeNumber]: !prev[routeNumber],
         }));
     };
+
+    const sendNotificationAboutRoute = async (routeNumber) => {
+        const token = localStorage.getItem("token");
+        try {
+            const message = `Ruta ${routeNumber} e blocata`;
+            const response = await axios.post(`http://127.0.0.1:8001/api/v1/notification/?message=${message}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            if (response.status === 200 || response.status === 201) {
+                toast.success("Notificare trimisa cu succes");
+            } else {
+                toast.error("Trimiterea notificarii a esuat");
+            }
+        } catch (error) {
+            let errorMessage = "Trimiterea notificarii a esuat";
+            if (axios.isAxiosError(error) && error.response) {
+                console.error("Server response:", error.response);
+                if (error.response.data) {
+                    errorMessage += ": " + error.response.data.message;
+                }
+            } else if (error instanceof Error) {
+                errorMessage += ": " + error.message;
+            }
+        }
+    }
 
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);

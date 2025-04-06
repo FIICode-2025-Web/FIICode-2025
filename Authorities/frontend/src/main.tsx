@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@material-tailwind/react";
 import { MaterialTailwindControllerProvider } from "./context/MaterialTailwind";
 import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import "../public/css/tailwind.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
