@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { XCircle } from "lucide-react";
 
-const SearchableStation = ({ stations, selectStation, onClear }) => {
+const SearchableStation = ({ stations, onSelect, onClear }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
-  const filteredStations = stations.filter(station =>
+  const filteredStations = stations.filter((station) =>
     station.stop_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -23,8 +23,14 @@ const SearchableStation = ({ stations, selectStation, onClear }) => {
     };
   }, []);
 
+  const handleClearClick = () => {
+    setSearchTerm("");
+    setShowDropdown(false);
+    onClear(); // Notify parent to clear selection
+  };
+
   return (
-    <div className="relative w-80 my-10" ref={dropdownRef}>
+    <div className="relative w-80" ref={dropdownRef}>
       <div className="relative">
         <input
           type="text"
@@ -36,11 +42,7 @@ const SearchableStation = ({ stations, selectStation, onClear }) => {
         />
         {searchTerm && (
           <button
-            onClick={() => {
-              setSearchTerm("");
-              setShowDropdown(false);
-              onClear();
-            }}
+            onClick={handleClearClick}
             className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
           >
             <XCircle size={20} />
@@ -56,7 +58,7 @@ const SearchableStation = ({ stations, selectStation, onClear }) => {
                 onClick={() => {
                   setSearchTerm(station.stop_name);
                   setShowDropdown(false);
-                  selectStation(station);
+                  onSelect(station);
                 }}
                 className="px-4 py-2 cursor-pointer hover:bg-blue-100"
               >

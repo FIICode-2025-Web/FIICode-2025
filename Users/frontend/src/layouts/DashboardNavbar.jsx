@@ -13,7 +13,7 @@ export function DashboardNavbar() {
       <div className="flex flex-col-reverse justify-between gap-6 md:flex-row md:items-center">
         <div className="capitalize text-surface-light">
           <Breadcrumbs className={"bg-transparent p-0 transition-all"}>
-            <Link to={`/${layout}`}>
+            <Link to={`/${layout}/home`}>
               <Typography
                 variant="small"
                 className="font-normal opacity-90 transition-all text-primary hover:opacity-100 hover:text-primary"

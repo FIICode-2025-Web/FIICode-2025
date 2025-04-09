@@ -121,6 +121,7 @@ export const usePublicTransportData = () => {
     stops,
     stations,
     routes,
+    setRoutes,
     shape,
     shapeId,
     vehicles,

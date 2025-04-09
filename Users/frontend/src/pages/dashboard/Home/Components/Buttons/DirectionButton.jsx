@@ -6,7 +6,7 @@ const DirectionButton = ({ direction, handleDirection }) => {
         <Button
             variant="text"
             color="blue-gray"
-            className="flex items-center justify-center text-primary text-sm h-8 normal-case bg-gray-300" onClick={handleDirection}>
+            className="flex items-center justify-center text-primary text-sm h-8 normal-case bg-primary hover:bg-secondary" onClick={handleDirection}>
             <span className={`${direction === 0 ? 'text-white' : 'text-black'}`}>
                 Tur
             </span>
