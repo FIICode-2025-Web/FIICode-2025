@@ -1,8 +1,4 @@
-from datetime import datetime
-
-from app.auth.jwt.jwt_handler import decodeJWT
 from app.report.models import Report
-from app.report.schemas import ReportSchema
 
 
 class ReportService:
