@@ -1,5 +1,6 @@
 
 import { busIcon, tramIcon} from "../utils/icons";
+import axios from "axios";
 
 export const handleWheelchairAccessible = (wheelchair_accessible) => {
     if (wheelchair_accessible === "WHEELCHAIR_ACCESSIBLE") {
