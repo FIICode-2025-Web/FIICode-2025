@@ -12,9 +12,9 @@ async def send_notification(
         message: str,
         token: Annotated[str, Depends(jwtBearer())]
 ):
-    user = decodeJWT(token)["email"]
+    user = decodeJWT(token)["id"]
     async with httpx.AsyncClient() as client:
         await client.post(
-            f"http://127.0.0.1:8004/api/v1/notification/send-notification?message={message}&user={user}",
+            f"http://127.0.0.1:8002/api/v1/notification/send-notification?message={message}&user={user}",
         )
     return {"status": "sent"}

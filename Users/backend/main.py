@@ -42,6 +42,6 @@ def greet():
     return {"Hello": "World"}
 
 if __name__ == "__main__":
-    config = uvicorn.Config("main:app", port=8004)
+    config = uvicorn.Config("main:app", port=8002)
     server = uvicorn.Server(config)
     server.run()

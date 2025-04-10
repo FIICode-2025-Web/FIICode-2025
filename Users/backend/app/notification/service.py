@@ -17,7 +17,7 @@ class NotificationService:
         users = db.query(Users).filter(Users.email != user).all()
         for user in users:
             notification = Notification(
-                user=user.email,
+                user_id=user.id,
                 message=message,
                 datePosted=datetime.datetime.now(),
                 is_read=False,
@@ -30,14 +30,14 @@ class NotificationService:
 
     def get_notifications_by_user(self, db, token: str):
         payload = decodeJWT(token)
-        user = payload["email"]
-        return db.query(Notification).filter(Notification.user == user).all()
+        user = payload["id"]
+        return db.query(Notification).filter(Notification.user_id == user).all()
 
     def mark_notification_as_read(self, notification_id: int, token: str, db: Session):
         payload = decodeJWT(token)
-        user = payload["email"]
+        user = payload["id"]
         notification = db.query(Notification).filter(Notification.id == notification_id).first()
-        if notification and notification.user == user:
+        if notification and notification.user_id == user:
             notification.is_read = True
             db.commit()
             db.refresh(notification)
