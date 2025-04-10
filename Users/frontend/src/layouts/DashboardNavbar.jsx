@@ -28,15 +28,6 @@ export function DashboardNavbar() {
         </div>
 
         <div className="flex items-center">
-        <Link to="/dashboard/feedback">
-            <Button
-              variant="text"
-              color="blue-gray"
-              className="hidden items-center gap-1 text-primary px-4 xl:flex normal-case"
-            >
-              Feedback
-            </Button>
-          </Link>
           <Link to="/dashboard/profile">
             <Button
               variant="text"
