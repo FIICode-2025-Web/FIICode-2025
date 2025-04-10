@@ -16,9 +16,7 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
                         clearShape={clearShape}
                         onClear={onClear}
                     />
-                    {isOptionSelected && (
-                        <DirectionButton direction={direction} handleDirection={handleDirection} />
-                    )}
+                   
                     <div className="grid grid-cols-2 gap-12 mx-2">
                         <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
                             <div className="w-6 h-6 img-bus hover:cursor-pointer"></div>
@@ -48,9 +46,12 @@ const MainModalComponent = ({toggleScooters, toggleCars, routes, selectedRoute, 
 
     return (
         <div className="flex items-center justify-center gap-4 mr-6 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-12">
-            <span className="text-[2.5rem] font-semibold my-6 text-gray-300">
+            <span className="text-[2.5rem] font-semibold mt-6 text-gray-300">
                 Caută ruta dorită
             </span>
+            {isOptionSelected && (
+                        <DirectionButton direction={direction} handleDirection={handleDirection} />
+                    )}
             <TransportSelect handleCategoryChange={setSelectedCategory} clearAllData={onClear}/>
             <ImageDisplay selectedCategory={selectedCategory} toggleCars={toggleCars} toggleScooters={toggleScooters} routes={routes}
                 selectedRoute={selectedRoute}

@@ -6,19 +6,21 @@ import { useEffect } from "react";
 
 function App() {
   useEffect(() => {
-    const ws = new WebSocket(`ws://127.0.0.1:8004/api/v1/notification/ws`);
+    const ws = new WebSocket(`ws://127.0.0.1:8002/api/v1/notification/ws`);
 
-    // ws.onopen = () => {
-    //   console.log("✅ WebSocket deschis");
-    // };
+
+    ws.onopen = () => {
+      console.log("✅ WebSocket deschis");
+    };
+
 
     ws.onmessage = (event) => {
       console.log("Notificare primita:", event.data);
     };
 
-    // ws.onclose = () => {
-    //   console.warn("⚠️ WebSocket închis");
-    // };
+    ws.onclose = () => {
+      console.warn("⚠️ WebSocket închis");
+    };
 
     return () => {
       if (ws.readyState === 1) {

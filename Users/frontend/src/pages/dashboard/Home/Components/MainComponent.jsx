@@ -16,6 +16,7 @@ export function MainComponent() {
     stops,
     stations,
     routes,
+    setRoutes,
     shape,
     vehicles,
     fetchShapeByRoute,
