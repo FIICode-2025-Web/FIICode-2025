@@ -4,7 +4,7 @@ from fastapi import Depends, APIRouter
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.ride_history.schemas import HistorySchema
+from app.ride_history.schemas import HistorySchema, RideHistoryResponseSchema
 from app.ride_history.service import HistoryService
 from app.auth.jwt.jwt_bearer import jwtBearer
 
@@ -15,7 +15,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 history_service = HistoryService()
 
 
-@history.post("/")
+@history.post("/", response_model=RideHistoryResponseSchema)
 def post_ride_history(ride_history: HistorySchema, db: db_dependency, token: Annotated[str, Depends(jwtBearer())]):
     return history_service.save_ride_history(ride_history, db, token)
 

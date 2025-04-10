@@ -1,10 +1,12 @@
 from app.gamification.models import UserBadges, Badges
 from app.auth.models import Users
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, extract
 from app.auth.exceptions import UserNotFoundException, BadgeNotFoundException, BadgeAlreadyAwardedException
 from app.gamification.models import Badges, UserBadges
 from app.ride_history.models import RideHistory
+from sqlalchemy.sql.sqltypes import TIMESTAMP
+from datetime import datetime, timedelta
 
 
 class GamificationService:
@@ -31,7 +33,6 @@ class GamificationService:
         user_badge_ids = {ub.badge_id for ub in db.query(UserBadges).filter(UserBadges.user_id == user_id).all()}
 
         for badge in all_badges:
-            print("badge",badge)
             if badge.id in user_badge_ids:
                 continue
 
@@ -55,4 +56,42 @@ class GamificationService:
             elif badge.condition_type == "badges_count":
 
                 if len(user_badge_ids) >= badge.condition_value:
+                    self.award_badge(user_id, badge.id, db)
+
+            elif badge.condition_type == "morning_rides":
+                morning_rides_count = db.query(RideHistory).filter(
+                    RideHistory.user_id == user_id,
+                    extract('hour', func.timezone('Europe/Bucharest',
+                                                  RideHistory.start_time.cast(TIMESTAMP(timezone=True)))).between(6, 11)
+                ).count()
+
+                if morning_rides_count >= badge.condition_value:
+                    self.award_badge(user_id, badge.id, db)
+
+            elif badge.condition_type == "night_rides":
+                night_rides_count = db.query(RideHistory).filter(
+                    RideHistory.user_id == user_id,
+                    extract('hour', func.timezone('Europe/Bucharest',
+                                                  RideHistory.start_time.cast(TIMESTAMP(timezone=True)))).between(20,
+                                                                                                                  23)
+                ).count()
+
+                if night_rides_count >= badge.condition_value:
+                    self.award_badge(user_id, badge.id, db)
+
+            elif badge.condition_type == "daily_streak":
+                today = datetime.now().date()
+                streak_days = badge.condition_value
+                start_day = today - timedelta(days=streak_days - 1)
+
+                days = (((db.query(func.date(RideHistory.start_time))
+                          .filter(RideHistory.user_id == user_id, func.date(RideHistory.start_time) >= start_day))
+                         .distinct())
+                        .all())
+
+                unique_days = {d[0] for d in days}
+
+                expected_days = {today - timedelta(days=i) for i in range(streak_days)}
+
+                if expected_days.issubset(unique_days):
                     self.award_badge(user_id, badge.id, db)
