@@ -21,7 +21,7 @@ def authenticate_user(email: str, password: str, role: int, db):
     if user.role != role:
         raise InvalidCredentialsException()
 
-    return signJWT(user.email, role)
+    return signJWT(user.email, user.id, role)
 
 
 def register_account(user: UserSchema, user_role: int, db: Session):

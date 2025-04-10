@@ -1,9 +1,17 @@
 from pydantic import BaseModel, Field
 import datetime
+from enum import Enum
+
+
+class RideType(Enum):
+    PUBLIC_TRANSPORT = "public_transport"
+    RIDESHARING = "ridesharing"
+    SCOOTER = "scooter"
 
 
 class HistorySchema(BaseModel):
-    ride: str = Field(str)
+    # type: RideType = Field(RideType)
+    type : str = Field(str)
     km_travelled: float = Field(float)
     duration: float = Field(float)
     cost: float = Field(float)

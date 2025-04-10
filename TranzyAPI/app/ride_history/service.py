@@ -1,6 +1,10 @@
 from app.ride_history.models import RideHistory
 from app.ride_history.schemas import HistorySchema
 from app.auth.jwt.jwt_bearer import decodeJWT
+from app.gamification.service import GamificationService
+from app.auth.models import Users
+
+gamificationService = GamificationService()
 
 
 class HistoryService:
@@ -9,9 +13,10 @@ class HistoryService:
 
     def save_ride_history(self, history: HistorySchema, db, token: str):
         payload = decodeJWT(token)
-        user_id = payload["email"]
+        user_id = payload["id"]
+
         ride_history = RideHistory(
-            ride=history.ride,
+            type=history.type,
             user_id=user_id,
             km_travelled=history.km_travelled,
             duration=history.duration,
@@ -22,6 +27,7 @@ class HistoryService:
         db.add(ride_history)
         db.commit()
         db.refresh(ride_history)
+        gamificationService.evaluate_user_badges(user_id, db)
         return ride_history
 
     def get_ride_history_by_user(self, db, token: str):

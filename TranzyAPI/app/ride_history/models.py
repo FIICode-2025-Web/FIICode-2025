@@ -6,8 +6,8 @@ class RideHistory(Base):
     __tablename__ = 'ride_history'
 
     id = Column(Integer, primary_key=True, index=True)
-    ride = Column(String)
-    user_id = Column(String)
+    type = Column(String)
+    user_id = Column(Integer)
     km_travelled = Column(Float)
     duration = Column(Float)
     cost = Column(Float)
