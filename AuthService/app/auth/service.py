@@ -28,7 +28,7 @@ def register_account(user: UserSchema, user_role: int, db: Session):
     if find_user_by_email(user.email, db):
         raise UserAlreadyExistsException()
     saved_user = create_user(user, user_role, db)
-    return signJWT(saved_user.email, user_role)
+    return signJWT(saved_user.email, saved_user.id, user_role)
 
 
 def register_authority(user: AuthorityRegisterSchema, authority_role: int, db: Session):
@@ -49,7 +49,7 @@ def register_authority(user: AuthorityRegisterSchema, authority_role: int, db: S
     saved_user = create_user(user, authority_role, db)
     update_verification_code(verification_code, db)
 
-    return signJWT(saved_user.email, authority_role)
+    return signJWT(saved_user.email, saved_user.id, authority_role)
 
 
 def find_user_by_email(email: str, db: Session):
