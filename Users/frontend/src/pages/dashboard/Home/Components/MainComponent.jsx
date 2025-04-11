@@ -151,6 +151,7 @@ export function MainComponent() {
     fetchStopsForRouteShortName(selectedRouteId);
     fetchLiveVehiclesPositions(selectedRouteId);
   };
+  
 
   const handleDropdownBlur = (event) => {
     if (!event.relatedTarget || !event.relatedTarget.closest('.dropdown-container')) {

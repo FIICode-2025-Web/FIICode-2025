@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Marker, Popup } from "react-leaflet";
 import MapWrapper from "./MapWrapper";
 import ShapePolyline from "../Polylines/ShapePolyline";
@@ -9,6 +9,8 @@ import ScooterMarkers from "../Markers/ScooterMarkers";
 import CarMarkers from "../Markers/CarMarkers";
 import RoutePolyline from "../Polylines/RoutePolyline";
 import DistanceMarker from "../Markers/DistanceMarker";
+import axios from "axios";
+
 
 const MapContent = ({
   position,
@@ -45,7 +47,59 @@ const MapContent = ({
   const [arrivalPrompt, setArrivalPrompt] = useState(false);
   const [arrivalCar, setArrivalCar] = useState(null);
   const arrivalMarkerRef = useRef(null)
+  const [carsState, setCarsState] = useState(cars);
 
+  const handleRequestClosestCar = async () => {
+    const token = localStorage.getItem("token");
+  
+    if (!userLocation || userLocation.length !== 2) return;
+  
+    try {
+      const res = await axios.post(
+        "http://127.0.0.1:8003/api/v1/ridesharing/car",
+        {
+          user_latitude: userLocation[0],
+          user_longitute: userLocation[1],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      const closestCar = res.data;
+  
+      setCarsState((prev) =>
+        prev.map((car) =>
+          car.id === closestCar.id ? { ...closestCar, selected: true } : car
+        )
+      );
+  
+      fetchDistanceBetweenUserAndCars(
+        userLocation,
+        closestCar.latitude,
+        closestCar.longitude,
+        fetchDistanceBetweenTwoPoints,
+        setRouteUserCar
+      );
+  
+      moveCarAlongRoute(routeUserCar.route);
+    } catch (err) {
+      console.error("Failed to fetch closest car:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (routeUserCar.route?.length > 0) {
+      moveCarAlongRoute(routeUserCar.route);
+    }
+  }, [routeUserCar.route]);
+
+  useEffect(() => {
+    setCarsState(cars);
+  }, [cars]);
 
   const moveCarAlongRoute = (route) => {
     if (!route || route.length === 0) return;
@@ -53,6 +107,7 @@ const MapContent = ({
     setIsCarMoving(true);
     const reversedRoute = [...route].reverse();
     let index = 0;
+    setCarsState([])
   
     const interval = setInterval(() => {
       if (index >= reversedRoute.length) {
@@ -74,10 +129,6 @@ const MapContent = ({
       setMovingCarPosition([reversedRoute[index][1], reversedRoute[index][0]]);
       index++;
     }, 1000);
-  };
-  
-  const filterToSelectedScooter = (scooterList) => {
-    setScooters(scooterList);
   };
 
   return (
@@ -112,9 +163,10 @@ const MapContent = ({
       />
       
       )}
-      {cars.length > 0 && (
+      {carsState.length > 0 && (
+        <>
         <CarMarkers
-          cars={cars}
+          cars={carsState}
           carIcon={ridesharingIcon}
           onPopupClose={handleCloseRouteUserCar}
           fetchDistance={(carLat, carLng) =>
@@ -129,6 +181,13 @@ const MapContent = ({
             )
           }
         />
+        <button
+        onClick={handleRequestClosestCar}
+        className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-primary text-white py-2 px-4 rounded-lg shadow-lg z-[1000]"
+      >
+        Comandă Mașină
+      </button>
+      </>
       )}
       {routeUserCar.route?.length > 0 && <RoutePolyline route={routeUserCar.route} />}
       {isCarMoving && movingCarPosition && (
@@ -167,6 +226,7 @@ const MapContent = ({
           </Popup>
         </Marker>
       )}
+    
     </MapWrapper>
   );
   
