@@ -11,7 +11,7 @@ export function WelcomeSection() {
   const [firstStop, setFirstStop] = useState(null);
   const [secondStop, setSecondStop] = useState(null);
   const [routeData, setRouteData] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState("");  // Manage selected category state
+  const [selectedCategory, setSelectedCategory] = useState(""); 
 
   useEffect(() => {
     const fetchStations = async () => {

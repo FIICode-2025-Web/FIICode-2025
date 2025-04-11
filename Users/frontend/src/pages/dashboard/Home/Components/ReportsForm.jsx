@@ -9,22 +9,22 @@ function FeedbackForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const feedbackData = { title, message };
+    const reportsData = { title, message };
 
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post("http://127.0.0.1:8002/api/v1/reports/", feedbackData, {
+      await axios.post("http://127.0.0.1:8002/api/v1/reports/", reportsData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setStatus("Feedback sent successfully!");
+      setStatus("reports sent successfully!");
       setTitle("");
       setMessage("");
     } catch (error) {
-      console.error("Error sending feedback:", error);
+      console.error("Error sending reports:", error);
       setStatus("Something went wrong. Please try again.");
     }
   };
