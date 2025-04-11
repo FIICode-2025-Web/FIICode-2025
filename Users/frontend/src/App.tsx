@@ -18,11 +18,10 @@ function App() {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if(data.type == "badge")
-        toast.success(`${data.message}`);
+      if (data.type == "route_problem")
+        toast.error(`${data.message}`);
       else
-      toast.error(`${data.message}`);
-
+        toast.success(`${data.message}`);
     };
 
 

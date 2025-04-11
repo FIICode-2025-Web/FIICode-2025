@@ -29,10 +29,10 @@ async def websocket_endpoint(websocket: WebSocket):
 @notification_router.post("/send-notification")
 async def send_notification(db: db_dependency, type: str, message: str, user: str):
     disconnected = []
-    if type == 'notification':
-        notification_service.add_notification_to_all_users(message, user, db)
+    if type == 'route_problem' or type == 'route_fixed':
+        notification_service.add_notification_to_all_users(message, user, type, db)
     if type == 'badge':
-        notification_service.add_notification_to_user(message, user, db)
+        notification_service.add_notification_to_user(message, user, type, db)
 
     payload = {
         "type": type,

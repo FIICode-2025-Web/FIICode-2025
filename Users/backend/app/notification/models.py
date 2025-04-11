@@ -10,3 +10,4 @@ class Notification(Base):
     message = Column(String)
     datePosted = Column(DateTime)
     is_read = Column(Boolean)
+    type = Column(String)

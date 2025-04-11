@@ -2,6 +2,7 @@ import { useLocation, Link } from "react-router-dom";
 import { Navbar, Typography, Button, IconButton, Breadcrumbs } from "@material-tailwind/react";
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { useUser } from "../context/LoginRequired";
+import NotificationDropdown from "./NotificationDropdown";
 
 export function DashboardNavbar() {
   const { userId, username, email } = useUser();
@@ -28,6 +29,7 @@ export function DashboardNavbar() {
         </div>
 
         <div className="flex items-center">
+          <NotificationDropdown />
           <Link to="/dashboard/profile">
             <Button
               variant="text"

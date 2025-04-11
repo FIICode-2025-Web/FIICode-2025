@@ -14,7 +14,7 @@ class NotificationService:
         db.refresh(notification)
         return notification
 
-    def add_notification_to_all_users(self, message, user: str, db: Session):
+    def add_notification_to_all_users(self, message, user: str, type: str, db: Session):
         users = db.query(Users).filter(Users.id != user).all()
         for user in users:
             notification = Notification(
@@ -22,6 +22,7 @@ class NotificationService:
                 message=message,
                 datePosted=datetime.datetime.now(),
                 is_read=False,
+                type=type
             )
             db.add(notification)
             db.commit()
@@ -29,12 +30,13 @@ class NotificationService:
 
         return []
 
-    def add_notification_to_user(self, message, user_id: str, db: Session):
+    def add_notification_to_user(self, message, user_id: str, type: str, db: Session):
         notification = Notification(
             user_id=int(user_id),
             message=message,
             datePosted=datetime.datetime.now(),
             is_read=False,
+            type = type
         )
         db.add(notification)
         db.commit()
