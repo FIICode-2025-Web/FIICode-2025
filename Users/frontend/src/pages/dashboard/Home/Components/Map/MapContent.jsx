@@ -48,12 +48,22 @@ const MapContent = ({
   const [arrivalCar, setArrivalCar] = useState(null);
   const arrivalMarkerRef = useRef(null)
   const [carsState, setCarsState] = useState(cars);
+  const [clickedPoint, setClickedPoint] = useState(null);
+  const [routeToClickedPoint, setRouteToClickedPoint] = useState([]);
+  const [rideStarted, setRideStarted] = useState(false);
+  const [rideTimer, setRideTimer] = useState(0);
+  const [rideInterval, setRideInterval] = useState(null);
+  const [rideEnded, setRideEnded] = useState(false);
+  const [destinationLocation, setDestinationLocation] = useState(null);
+  const [isLocationConfirmed, setIsLocationConfirmed] = useState(false);
+  const [timerInterval, setTimerInterval] = useState(null); 
+
 
   const handleRequestClosestCar = async () => {
     const token = localStorage.getItem("token");
-  
+
     if (!userLocation || userLocation.length !== 2) return;
-  
+
     try {
       const res = await axios.post(
         "http://127.0.0.1:8003/api/v1/ridesharing/car",
@@ -68,15 +78,15 @@ const MapContent = ({
           },
         }
       );
-  
+
       const closestCar = res.data;
-  
+
       setCarsState((prev) =>
         prev.map((car) =>
           car.id === closestCar.id ? { ...closestCar, selected: true } : car
         )
       );
-  
+
       fetchDistanceBetweenUserAndCars(
         userLocation,
         closestCar.latitude,
@@ -84,12 +94,51 @@ const MapContent = ({
         fetchDistanceBetweenTwoPoints,
         setRouteUserCar
       );
-  
+
       moveCarAlongRoute(routeUserCar.route);
     } catch (err) {
       console.error("Failed to fetch closest car:", err);
     }
   };
+
+  const handleMapClick = async (point) => {
+    if (destinationLocation || !userLocation || userLocation.length !== 2) return; // prevent placing another marker once destination is selected
+
+    setClickedPoint(point);
+    const [endLat, endLng] = point;
+    const [startLat, startLng] = userLocation;
+
+    const result = await fetchDistanceBetweenTwoPoints(startLat, startLng, endLat, endLng);
+
+    if (result?.route) {
+      setRouteToClickedPoint((prevRoute) => {
+        return result.route.length > 0 && !arraysAreEqual(prevRoute, result.route) ? result.route : prevRoute;
+      });
+    }
+  };
+
+  const handleConfirmLocation = () => {
+    if (clickedPoint) {
+      setDestinationLocation(clickedPoint);
+      setIsLocationConfirmed(true);
+      setClickedPoint(null);
+    }
+  };
+  const arraysAreEqual = (arr1, arr2) => {
+    if (arr1.length !== arr2.length) return false;
+    for (let i = 0; i < arr1.length; i++) {
+      if (arr1[i][0] !== arr2[i][0] || arr1[i][1] !== arr2[i][1]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  useEffect(() => {
+    if (rideEnded && timerInterval) {
+      clearInterval(timerInterval); // Clear the timer interval when the ride ends
+    }
+  }, [rideEnded, timerInterval]);
 
   useEffect(() => {
     if (routeUserCar.route?.length > 0) {
@@ -103,12 +152,12 @@ const MapContent = ({
 
   const moveCarAlongRoute = (route) => {
     if (!route || route.length === 0) return;
-  
+
     setIsCarMoving(true);
     const reversedRoute = [...route].reverse();
     let index = 0;
     setCarsState([])
-  
+
     const interval = setInterval(() => {
       if (index >= reversedRoute.length) {
         clearInterval(interval);
@@ -117,22 +166,71 @@ const MapContent = ({
           latitude: reversedRoute[index - 1][1],
           longitude: reversedRoute[index - 1][0],
         };
-  
+
         setArrivalCar(arrivalPos);
         if (arrivalMarkerRef.current) {
           arrivalMarkerRef.current.openPopup();
         }
-  
+
         return;
       }
-  
+
       setMovingCarPosition([reversedRoute[index][1], reversedRoute[index][0]]);
       index++;
     }, 1000);
   };
 
+  const startRideToDestination = () => {
+    if (!routeToClickedPoint || routeToClickedPoint.length === 0) return;
+  
+    setRideStarted(true);
+    setRideEnded(false);
+    setArrivalCar(null);
+    let index = 0;
+  
+    const carInterval = setInterval(() => {
+      if (index >= routeToClickedPoint.length) {
+        clearInterval(carInterval);  // Stop car movement
+        setIsCarMoving(false);
+        setRideEnded(true);
+        setRideStarted(false);
+  
+        clearInterval(timerInterval);  // Clear the ride timer when the ride ends
+        return;
+      }
+  
+      const [lng, lat] = routeToClickedPoint[index];
+      setMovingCarPosition([lat, lng]);
+      index++;
+    }, 1000);
+  
+    setIsCarMoving(true);
+    setRideInterval(carInterval);
+  
+    // Start timer
+    const newTimerInterval = setInterval(() => {
+      if (rideEnded) {
+        clearInterval(newTimerInterval);  // Ensure timer stops when ride ends
+      } else {
+        setRideTimer((prev) => prev + 1);
+      }
+    }, 1000);
+  
+    setTimerInterval(newTimerInterval); // Store the timer interval
+  };
   return (
-    <MapWrapper center={position}>
+    <MapWrapper center={position} onMapClick={handleMapClick}>
+      {rideStarted && (
+        <div className="absolute top-4 right-4 bg-white shadow px-4 py-2 rounded-md z-[1000] text-primary font-medium">
+          Timp cursă: {rideTimer}s
+        </div>
+      )}
+
+      {rideEnded && (
+        <div className="absolute top-4 right-4 bg-green-100 text-green-700 shadow px-4 py-2 rounded-md z-[1000] font-semibold">
+          Cursa a fost finalizată în {rideTimer} secunde!
+        </div>
+      )}
       {shape.length > 0 && <ShapePolyline shape={shape} />}
       {userLocation.length > 0 && <UserMarker userLocation={userLocation} icon={defaultIcon} />}
       <StopsMarkers stops={getStopsInShape()} />
@@ -147,47 +245,71 @@ const MapContent = ({
       )}
       {scooters.length > 0 && (
         <ScooterMarkers
-        scooters={scooters}
-        scooterIcon={scooterIcon}
-        fetchDistance={(scooterLat, scooterLng) =>
-          fetchDistanceBetweenUserAndScooters(
-            userLocation,
-            scooterLat,
-            scooterLng,
-            fetchDistanceBetweenTwoPoints,
-            setRouteUserScooter
-          )
-        }
-        onPopupClose={handleCloseRouteUserScooter}
-        setScooters={setScooters}
-      />
-      
+          scooters={scooters}
+          scooterIcon={scooterIcon}
+          fetchDistance={(scooterLat, scooterLng) =>
+            fetchDistanceBetweenUserAndScooters(
+              userLocation,
+              scooterLat,
+              scooterLng,
+              fetchDistanceBetweenTwoPoints,
+              setRouteUserScooter
+            )
+          }
+          onPopupClose={handleCloseRouteUserScooter}
+          setScooters={setScooters}
+        />
+
       )}
       {carsState.length > 0 && (
         <>
-        <CarMarkers
-          cars={carsState}
-          carIcon={ridesharingIcon}
-          onPopupClose={handleCloseRouteUserCar}
-          fetchDistance={(carLat, carLng) =>
-            fetchDistanceBetweenUserAndCars(
-              userLocation,
-              carLat,
-              carLng,
-              fetchDistanceBetweenTwoPoints,
-              setRouteUserCar,
-              moveCarAlongRoute,
-              clearCars
-            )
-          }
-        />
-        <button
-        onClick={handleRequestClosestCar}
-        className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-primary text-white py-2 px-4 rounded-lg shadow-lg z-[1000]"
-      >
-        Comandă Mașină
-      </button>
-      </>
+          {!destinationLocation && clickedPoint && (
+            <Marker position={clickedPoint}>
+              <Popup>
+                <button onClick={handleConfirmLocation} className=" px-3 py-2 bg-primary text-white rounded-md">
+                  Confirmă destinția
+                </button>
+              </Popup>
+            </Marker>
+          )}
+
+          {destinationLocation && (
+            <Marker position={destinationLocation}>
+              <Popup>Destinație confirmată</Popup>
+            </Marker>
+          )}
+
+          {routeToClickedPoint.length > 0 && <RoutePolyline route={routeToClickedPoint} />}
+          <CarMarkers
+            cars={carsState}
+            carIcon={ridesharingIcon}
+            onPopupClose={handleCloseRouteUserCar}
+            fetchDistance={(carLat, carLng) =>
+              fetchDistanceBetweenUserAndCars(
+                userLocation,
+                carLat,
+                carLng,
+                fetchDistanceBetweenTwoPoints,
+                setRouteUserCar,
+                moveCarAlongRoute,
+                clearCars
+              )
+            }
+          />
+          {!isLocationConfirmed && (
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-primary text-white py-2 px-4 rounded-md shadow-lg z-[1000]">
+              Selecteaza locatia
+            </div>
+          )}
+          {isLocationConfirmed && (
+            <button
+              onClick={handleRequestClosestCar}
+              className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-primary text-white py-2 px-4 rounded-lg shadow-lg z-[1000]"
+            >
+              Comandă Mașină
+            </button>
+          )}
+        </>
       )}
       {routeUserCar.route?.length > 0 && <RoutePolyline route={routeUserCar.route} />}
       {isCarMoving && movingCarPosition && (
@@ -216,20 +338,25 @@ const MapContent = ({
           onClose={handleCloseRouteUserScooter}
         />
       )}
-      {arrivalCar && (
-        <Marker position={[arrivalCar.latitude, arrivalCar.longitude]} icon={ridesharingIcon}>
+      {arrivalCar && !rideStarted && (
+        <Marker position={[arrivalCar.latitude, arrivalCar.longitude]} icon={ridesharingIcon} ref={arrivalMarkerRef}>
           <Popup>
             <div className="flex flex-col items-start text-sm p-2 space-y-1 leading-snug text-gray-800">
               <h3 className="text-base font-semibold text-center w-full text-primary">Șoferul a ajuns!</h3>
-              <p>Șoferul a ajuns la destinație, </p>
+              <p>Șoferul a ajuns la locația ta.</p>
+              <button
+                className="mt-2 px-3 py-1 bg-primary text-white rounded-md"
+                onClick={startRideToDestination}
+              >
+                Începe cursa
+              </button>
             </div>
           </Popup>
         </Marker>
       )}
-    
     </MapWrapper>
   );
-  
+
 };
 
 export default MapContent;

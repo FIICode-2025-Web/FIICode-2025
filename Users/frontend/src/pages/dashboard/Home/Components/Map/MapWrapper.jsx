@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvent } from "react-leaflet";
 
-const MapWrapper = ({ children, center }) => {
-  const [clickPosition, setClickPosition] = useState(null);
-
+const MapWrapper = ({ children, center, onMapClick }) => {
   const ClickHandler = () => {
     useMapEvent("click", (e) => {
-      console.log("Clicked on map at:", e.latlng);
-      setClickPosition([e.latlng.lat, e.latlng.lng]);
+      const { lat, lng } = e.latlng;
+      onMapClick?.([lat, lng]); // call the callback with clicked position
     });
     return null;
   };
@@ -19,15 +17,6 @@ const MapWrapper = ({ children, center }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       <ClickHandler />
-
-      {clickPosition && (
-        <Marker position={clickPosition}>
-          <div className="leaflet-popup-content">
-            <p>Ai selectat acest punct</p>
-          </div>
-        </Marker>
-      )}
-
       {children}
     </MapContainer>
   );
