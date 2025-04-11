@@ -57,7 +57,45 @@ const MapContent = ({
   const [destinationLocation, setDestinationLocation] = useState(null);
   const [isLocationConfirmed, setIsLocationConfirmed] = useState(false);
   const [timerInterval, setTimerInterval] = useState(null); 
+  const [rideStartTime, setRideStartTime] = useState(null);
 
+  const handleCarArrival = async () => {
+    if (!rideStartTime) return;
+  
+    const endTime = new Date();
+    const duration = rideTimer;
+    const durationMinutes = Math.floor(duration / 60);
+    const kmTravelled = 1 + (duration / 60) * 0.4;
+    const cost = 3.0 + (1.2 * durationMinutes);
+  
+    const payload = {
+      type: "car",
+      km_travelled: parseFloat(kmTravelled.toFixed(2)),
+      duration,
+      cost: parseFloat(cost.toFixed(2)),
+      start_time: rideStartTime.toISOString(),
+      end_time: endTime.toISOString(),
+    };
+  
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post("http://127.0.0.1:8003/api/v1/ride-history/", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      setRideStarted(false);
+      setRideTimer(0);
+      setArrivalCar(null);
+      setRideEnded(true);
+  
+      clearInterval(timerInterval);
+    } catch (err) {
+      console.error("Ride submission failed:", err);
+    }
+  };
 
   const handleRequestClosestCar = async () => {
     const token = localStorage.getItem("token");
@@ -102,7 +140,7 @@ const MapContent = ({
   };
 
   const handleMapClick = async (point) => {
-    if (destinationLocation || !userLocation || userLocation.length !== 2) return; // prevent placing another marker once destination is selected
+    if (destinationLocation || !userLocation || userLocation.length !== 2) return;
 
     setClickedPoint(point);
     const [endLat, endLng] = point;
@@ -136,7 +174,7 @@ const MapContent = ({
 
   useEffect(() => {
     if (rideEnded && timerInterval) {
-      clearInterval(timerInterval); // Clear the timer interval when the ride ends
+      clearInterval(timerInterval);
     }
   }, [rideEnded, timerInterval]);
 
@@ -162,16 +200,16 @@ const MapContent = ({
       if (index >= reversedRoute.length) {
         clearInterval(interval);
         setIsCarMoving(false);
+      
         const arrivalPos = {
           latitude: reversedRoute[index - 1][1],
           longitude: reversedRoute[index - 1][0],
         };
-
+      
         setArrivalCar(arrivalPos);
-        if (arrivalMarkerRef.current) {
-          arrivalMarkerRef.current.openPopup();
-        }
-
+      
+        handleCarArrival();
+      
         return;
       }
 
@@ -180,22 +218,28 @@ const MapContent = ({
     }, 1000);
   };
 
+  useEffect(() => {
+    if (arrivalCar && !rideStarted) {
+      handleCarArrival();
+    }
+  }, [arrivalCar]);
   const startRideToDestination = () => {
     if (!routeToClickedPoint || routeToClickedPoint.length === 0) return;
   
     setRideStarted(true);
     setRideEnded(false);
     setArrivalCar(null);
+    setRideStartTime(new Date());
     let index = 0;
   
     const carInterval = setInterval(() => {
       if (index >= routeToClickedPoint.length) {
-        clearInterval(carInterval);  // Stop car movement
+        clearInterval(carInterval);
         setIsCarMoving(false);
         setRideEnded(true);
         setRideStarted(false);
   
-        clearInterval(timerInterval);  // Clear the ride timer when the ride ends
+        clearInterval(timerInterval);
         return;
       }
   
@@ -207,16 +251,15 @@ const MapContent = ({
     setIsCarMoving(true);
     setRideInterval(carInterval);
   
-    // Start timer
     const newTimerInterval = setInterval(() => {
       if (rideEnded) {
-        clearInterval(newTimerInterval);  // Ensure timer stops when ride ends
+        clearInterval(newTimerInterval);
       } else {
         setRideTimer((prev) => prev + 1);
       }
     }, 1000);
   
-    setTimerInterval(newTimerInterval); // Store the timer interval
+    setTimerInterval(newTimerInterval);
   };
   return (
     <MapWrapper center={position} onMapClick={handleMapClick}>
