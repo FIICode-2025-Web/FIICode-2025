@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field
-import datetime
 
 
 class BadgeSchema(BaseModel):
@@ -9,6 +8,7 @@ class BadgeSchema(BaseModel):
     type:str = Field(str)
     condition_type:str = Field(str)
     condition_value: int = Field(int)
+    description: str = Field(str)
 
 class GetBadgeSchema(BaseModel):
     user_id: int = Field(int)

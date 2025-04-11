@@ -10,58 +10,65 @@ class GamificationService:
             "identification_name": "ecofriendly",
             "type": "scooter",
             "condition_type": "km_total",
-            "condition_value": 50
+            "condition_value": 50,
+            "description": "Ai parcurs peste {value} km cu trotineta electrică."
         },
         {
             "name": "Scooter Lover",
             "identification_name": "scooter_lover",
             "type": "scooter",
             "condition_type": "rides_count",
-            "condition_value": 30
+            "condition_value": 30,
+            "description": "Ai realizat peste {value} curse cu trotineta electrică."
         },
         {
             "name": "Ridesharing Addict",
             "identification_name": "ridesharing_addict",
             "type": "ride_sharing",
             "condition_type": "km_total",
-            "condition_value": 100
+            "condition_value": 100,
+            "description": "Ai parcurs peste {value} km cu mașini de ridesharing."
         },
         {
             "name": "Public Transport Fan",
             "identification_name": "public_transport_fan",
             "type": "public_transport",
             "condition_type": "rides_count",
-            "condition_value": 20
+            "condition_value": 20,
+            "description": "Ai efectuat peste {value} curse în cadrul transportului public."
         },
         {
             "name": "All-Round Traveler",
             "identification_name": "all_round_traveler",
             "type": "general",
             "condition_type": "badges_count",
-            "condition_value": 4
+            "condition_value": 4,
+            "description": "Ai obținut cel puțin {value} alte badge-uri diferite."
         },
         {
             "name": "Early Bird",
             "identification_name": "early_bird",
             "type": "general",
             "condition_type": "morning_rides",
-            "condition_value": 5
+            "condition_value": 5,
+            "description": "Ai avut cel puțin {value} curse dimineața (06:00 - 11:59)."
         },
         {
             "name": "Night Rider",
             "identification_name": "night_rider",
             "type": "general",
             "condition_type": "night_rides",
-            "condition_value": 5
+            "condition_value": 5,
+            "description": "Ai avut cel puțin {value} curse seara (20:00 - 23:59)."
         },
-    {
-        "name": "Streak Master",
-        "identification_name": "streak_master",
-        "type": "general",
-        "condition_type": "daily_streak",
-        "condition_value": 7
-    }
-
+        {
+            "name": "Streak Master",
+            "identification_name": "streak_master",
+            "type": "general",
+            "condition_type": "daily_streak",
+            "condition_value": 7,
+            "description": "Ai avut un streak de {value} zile consecutive cu cel puțin o călătorie."
+        }
     ]
 
     def add_badges(self, db: Session):

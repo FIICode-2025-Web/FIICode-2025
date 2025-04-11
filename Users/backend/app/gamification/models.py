@@ -10,7 +10,6 @@ class UserBadges(Base):
     badge_id = Column(Integer)
     earned_at = Column(DateTime)
 
-
 class Badges(Base):
     __tablename__ = 'badges'
 
@@ -20,3 +19,4 @@ class Badges(Base):
     type = Column(String)
     condition_type = Column(String)
     condition_value = Column(Integer)
+    description = Column(String)

@@ -1,4 +1,3 @@
-from app.gamification.models import UserBadges, Badges
 from app.auth.models import Users
 from sqlalchemy.orm import Session
 from sqlalchemy import func, extract
@@ -7,7 +6,7 @@ from app.gamification.models import Badges, UserBadges
 from app.ride_history.models import RideHistory
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from datetime import datetime, timedelta
-
+import httpx
 
 class GamificationService:
     def award_badge(self, user_id: int, badge_id, db: Session):
@@ -21,12 +20,24 @@ class GamificationService:
         existing_badge = db.query(UserBadges).filter_by(user_id=user_id, badge_id=badge_id).first()
         if existing_badge:
             raise BadgeAlreadyAwardedException()
-        new_badge = UserBadges(user_id=user_id, badge_id=badge_id, earned_at=func.now())
+        new_badge = UserBadges(user_id=user_id, badge_id=badge_id)
         db.add(new_badge)
         db.commit()
         db.refresh(new_badge)
 
-        return {"message": "Badge awarded successfully", "badge": new_badge}
+        badge = db.query(Badges).filter_by(id=badge_id).first()
+        payload = {
+            "type": "badge",
+            "message": f"🏅 Felicitări! Ai obținut badge-ul {badge.name}.",
+            "user": str(user_id)
+        }
+
+        try:
+            httpx.post("http://127.0.0.1:8002/api/v1/notification/send-notification", params=payload)
+        except Exception as e:
+            print(f"Failed to notify: {e}")
+
+        return {"message": "Badge awarded", "badge": new_badge}
 
     def evaluate_user_badges(self, user_id, db: Session):
         all_badges = db.query(Badges).all()

@@ -3,6 +3,8 @@ import { Auth, Dashboard } from "./layouts";
 import LoginRequired from "./context/LoginRequired";
 import NotFound from "./pages/NotFound/NotFound";
 import { useEffect } from "react";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   useEffect(() => {
@@ -15,8 +17,14 @@ function App() {
 
 
     ws.onmessage = (event) => {
-      console.log("Notificare primita:", event.data);
+      const data = JSON.parse(event.data);
+      if(data.type == "badge")
+        toast.success(`${data.message}`);
+      else
+      toast.error(`${data.message}`);
+
     };
+
 
     ws.onclose = () => {
       console.warn("⚠️ WebSocket închis");

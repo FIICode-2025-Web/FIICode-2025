@@ -27,12 +27,22 @@ async def websocket_endpoint(websocket: WebSocket):
 
 
 @notification_router.post("/send-notification")
-async def send_notification(db: db_dependency, message: str, user: str):
+async def send_notification(db: db_dependency, type: str, message: str, user: str):
     disconnected = []
-    notification_service.add_notification_to_all_users(message, user, db)
+    if type == 'notification':
+        notification_service.add_notification_to_all_users(message, user, db)
+    if type == 'badge':
+        notification_service.add_notification_to_user(message, user, db)
+
+    payload = {
+        "type": type,
+        "message": message,
+        "user": user
+    }
+
     for conn in connections:
         try:
-            await conn.send_text(message)
+            await conn.send_json(payload)
         except:
             disconnected.append(conn)
 
@@ -50,7 +60,7 @@ def get_notifications(db: db_dependency, token: Annotated[str, Depends(jwtBearer
 
 @notification_router.patch("/mark-as-read/{notification_id}")
 def mark_notification_as_read(notification_id: int, db: db_dependency, token: Annotated[str, Depends(jwtBearer())]):
-    notification = notification_service.mark_notification_as_read(notification_id,token, db)
+    notification = notification_service.mark_notification_as_read(notification_id, token, db)
     if notification:
         return {"status": "success", "notification": notification}
     return {"status": "error", "message": "Notification not found"}

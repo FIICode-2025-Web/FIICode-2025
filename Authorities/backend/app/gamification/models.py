@@ -11,3 +11,4 @@ class Badges(Base):
     type = Column(String)
     condition_type = Column(String)
     condition_value = Column(Integer)
+    description = Column(String)
