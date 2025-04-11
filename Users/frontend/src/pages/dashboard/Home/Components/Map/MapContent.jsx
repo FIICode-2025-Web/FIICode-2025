@@ -37,7 +37,8 @@ const MapContent = ({
   handleWheelchairAccessible,
   handleBikeAccessible,
   getTimestampBetweenPositions,
-  clearCars
+  clearCars,
+  setScooters
 }) => {
   const [movingCarPosition, setMovingCarPosition] = useState(null);
   const [isCarMoving, setIsCarMoving] = useState(false);
@@ -75,6 +76,10 @@ const MapContent = ({
     }, 1000);
   };
   
+  const filterToSelectedScooter = (scooterList) => {
+    setScooters(scooterList);
+  };
+
   return (
     <MapWrapper center={position}>
       {shape.length > 0 && <ShapePolyline shape={shape} />}
@@ -91,19 +96,21 @@ const MapContent = ({
       )}
       {scooters.length > 0 && (
         <ScooterMarkers
-          scooters={scooters}
-          scooterIcon={scooterIcon}
-          fetchDistance={(scooterLat, scooterLng) =>
-            fetchDistanceBetweenUserAndScooters(
-              userLocation,
-              scooterLat,
-              scooterLng,
-              fetchDistanceBetweenTwoPoints,
-              setRouteUserScooter
-            )
-          }
-          onPopupClose={handleCloseRouteUserScooter}
-        />
+        scooters={scooters}
+        scooterIcon={scooterIcon}
+        fetchDistance={(scooterLat, scooterLng) =>
+          fetchDistanceBetweenUserAndScooters(
+            userLocation,
+            scooterLat,
+            scooterLng,
+            fetchDistanceBetweenTwoPoints,
+            setRouteUserScooter
+          )
+        }
+        onPopupClose={handleCloseRouteUserScooter}
+        setScooters={setScooters}
+      />
+      
       )}
       {cars.length > 0 && (
         <CarMarkers
