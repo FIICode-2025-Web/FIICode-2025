@@ -5,13 +5,15 @@ import logo from '../../../../img/logo-vaya.png'
 import SearchableStation from "./SearchSelects/SearchableStation";
 import RouteResults from "./RouteResults";
 import TransportSelect from "./SearchSelects/TransportSelect";
+import { fetchDistanceBetweenTwoPoints } from "../utils/helpers";
 
 export function WelcomeSection() {
   const [stations, setStations] = useState([]);
   const [firstStop, setFirstStop] = useState(null);
   const [secondStop, setSecondStop] = useState(null);
   const [routeData, setRouteData] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(""); 
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [distance, setDistance] = useState(null);
 
   useEffect(() => {
     const fetchStations = async () => {
@@ -33,11 +35,18 @@ export function WelcomeSection() {
     fetchStations();
   }, []);
 
+  const handleRouteRidesharing = async () => {
+    const response = await fetchDistanceBetweenTwoPoints(firstStop.stop_lat, firstStop.stop_lon, secondStop.stop_lat, secondStop.stop_lon);
+    if (response) {
+      setDistance(response.distance_meters);
+    }
+  }
+
   const fetchRouteBetweenStops = async () => {
     const token = localStorage.getItem("token");
 
     if (!firstStop || !secondStop) return;
-
+    handleRouteRidesharing();
     try {
       const response = await axios.get(
         `http://127.0.0.1:8003/api/v1/tranzy/routes/route-between-two-points?stop_id_A=${firstStop.stop_id}&stop_id_B=${secondStop.stop_id}`,
@@ -59,7 +68,7 @@ export function WelcomeSection() {
     setFirstStop(null);
     setRouteData([]);
   };
-  
+
   const handleClearSecondStop = () => {
     setSecondStop(null);
     setRouteData([]);
@@ -67,14 +76,16 @@ export function WelcomeSection() {
 
   const onClear = () => {
     setSelectedCategory("");
+    setRouteData([]);
   };
+
 
   useEffect(() => {
     console.log("routeData changed:", routeData);
   }, [routeData]);
 
   return (
-    <div className="bg-main-reversed min-h-screen flex flex-col md:flex-row items-center justify-evenly p-4 md:p-24 gap-10">
+    <div className="bg-main-reversed min-h-screen flex flex-col 2xl:flex-row items-center justify-evenly p-4 md:p-24 gap-10">
       <div className="italic opacity-90 flex items-center justify-center flex-col">
         <div>
           <img src={logo} alt="logo" className="w-[14rem] md:w-[28rem]" />
@@ -83,7 +94,7 @@ export function WelcomeSection() {
           Călătorește rapid, simplu, eficient!
         </div>
       </div>
-     
+
       <div className="flex justify-center h-[32rem] gap-4 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-8 md:p-12 mt-10 md:mt-0">
         <span className="text-[2rem] text-center font-semibold my-6 text-gray-300">
           Unde vrei sa ajungi?
@@ -103,8 +114,8 @@ export function WelcomeSection() {
           onClear={handleClearSecondStop}
         />
         <p className="text-[1rem] text-gray-300">Tip de transport:</p>
-        <TransportSelect 
-          handleCategoryChange={setSelectedCategory} 
+        <TransportSelect
+          handleCategoryChange={setSelectedCategory}
           clearAllData={onClear}
         />
         <button
@@ -114,7 +125,7 @@ export function WelcomeSection() {
           Cauta rute
         </button>
       </div>
-      {routeData && <RouteResults routes={routeData} />}
+      {routeData && <RouteResults routes={routeData} distanceBetween={distance} selectedCategory={selectedCategory} />}
     </div>
   );
 }

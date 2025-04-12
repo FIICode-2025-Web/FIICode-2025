@@ -167,6 +167,9 @@ class TranzyService:
 
         common_trip_ids = set(trips_A.keys()) & set(trips_B.keys())
 
+        stop_A = db.query(TranzyStops).filter(TranzyStops.stop_id == stop_id_A).first()
+        stop_B = db.query(TranzyStops).filter(TranzyStops.stop_id == stop_id_B).first()
+
         results = []
         for trip_id in common_trip_ids:
             seq_A = trips_A[trip_id]
@@ -177,6 +180,13 @@ class TranzyService:
             trip = db.query(TranzyTrips).filter(TranzyTrips.trip_id == trip_id).first()
             route = db.query(TranzyRoutes).filter(TranzyRoutes.route_id == trip.route_id).first()
 
+            coords = CoordinateSchema(
+                latitude_A=stop_A.stop_lat,
+                longitude_A=stop_A.stop_lon,
+                latitude_B=stop_B.stop_lat,
+                longitude_B=stop_B.stop_lon
+            )
+
             results.append({
                 "trip_id": trip.trip_id,
                 "route_id": route.route_id,
@@ -184,7 +194,8 @@ class TranzyService:
                 "route_long_name": route.route_long_name,
                 "stop_sequence_A": seq_A,
                 "stop_sequence_B": seq_B,
-                "direction": direction
+                "direction": direction,
+                "distance": self.get_route_between_locations(coords)["distance_meters"],
             })
 
         return results
