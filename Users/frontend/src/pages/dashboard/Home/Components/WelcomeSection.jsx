@@ -125,7 +125,7 @@ export function WelcomeSection() {
           Cauta rute
         </button>
       </div>
-      {routeData && <RouteResults routes={routeData} distanceBetween={distance} selectedCategory={selectedCategory} />}
+      {routeData && distance && <RouteResults routes={routeData} distanceBetween={distance} selectedCategory={selectedCategory} />}
     </div>
   );
 }
