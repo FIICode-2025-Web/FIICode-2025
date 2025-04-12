@@ -92,7 +92,7 @@ export default function RequestsTable() {
             <TableBody>
               {reportsList?.map((req, index) => (
                 <TableRow key={index} hover>
-                  <TableCell>{req.user?.name || "Anonim"}</TableCell>
+                  <TableCell>{req.user}</TableCell>
                   <TableCell>{req.title}</TableCell>
                   <TableCell>{req.route}</TableCell>
                   <TableCell className="lg:space-x-2">

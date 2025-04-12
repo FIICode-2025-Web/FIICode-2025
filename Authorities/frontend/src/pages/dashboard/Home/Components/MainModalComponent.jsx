@@ -32,7 +32,7 @@ const ImageDisplay = ({ routes, selectedRoute, handleRouteChange, clearShape, is
 
 const MainModalComponent = ({ routes, selectedRoute, handleRouteChange, isOptionSelected, clearShape, direction, handleDirection, onClear }) => {
     return (
-        <div className="flex items-center justify-center gap-4 mr-6 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-12">
+        <div className="flex items-center justify-center gap-4 md:mr-6 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md md:mb-0 mb-12 p-6 md:p-12">
             <span className="text-[2.5rem] font-semibold my-6 text-gray-300">
                 Caută ruta dorită
             </span>
