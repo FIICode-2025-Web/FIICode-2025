@@ -4,7 +4,8 @@ import SearchableSelect from "./SearchSelects/SearchableSelect";
 import DirectionButton from "./Buttons/DirectionButton";
 import TransportSelect from "./SearchSelects/TransportSelect";
 
-const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, clearShape, isOptionSelected, direction, handleDirection, onClear}) => {
+const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange,
+    clearShape, isOptionSelected, direction, handleDirection, onClear, filteredType, setFilteredType }) => {
     return (
         <>
             {selectedCategory === "Transport Public" && (
@@ -15,13 +16,22 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
                         handleRouteChange={handleRouteChange}
                         clearShape={clearShape}
                         onClear={onClear}
+                        filteredType={filteredType}
                     />
-                   
+
                     <div className="grid grid-cols-2 md:gap-12 md:mx-2">
-                        <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
+                        <div
+                            className={`rounded-sm p-3 outline outline-2 ${filteredType === 3 ? "outline-green-500 opacity-90" : "outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500"
+                                }`}
+                            onClick={() => setFilteredType(filteredType === 3 ? null : 3)}  // Toggle bus selection
+                        >
                             <div className="w-6 h-6 img-bus hover:cursor-pointer"></div>
                         </div>
-                        <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
+                        <div
+                            className={`rounded-sm p-3 outline outline-2 ${filteredType === 0 ? "outline-green-500 opacity-90" : "outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500"
+                                }`}
+                            onClick={() => setFilteredType(filteredType === 0 ? null : 0)}  // Toggle tram selection
+                        >
                             <div className="w-6 h-6 img-tram hover:cursor-pointer"></div>
                         </div>
                     </div>
@@ -41,8 +51,9 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
     );
 };
 
-const MainModalComponent = ({toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, isOptionSelected, clearShape, direction, handleDirection, onClear }) => {
+const MainModalComponent = ({ toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, isOptionSelected, clearShape, direction, handleDirection, onClear }) => {
     const [selectedCategory, setSelectedCategory] = useState("");
+    const [filteredType, setFilteredType] = useState(null);
 
     return (
         <div className="flex items-center justify-center min-h-[10rem] md:min-h-fit md:h-[35rem] mt-4 gap-4 md:mr-6 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-8 md:p-12 mb-12 md:mb-0">
@@ -50,13 +61,15 @@ const MainModalComponent = ({toggleScooters, toggleCars, routes, selectedRoute, 
                 Caută ruta dorită
             </span>
             {isOptionSelected && selectedRoute && (
-                        <DirectionButton direction={direction} handleDirection={handleDirection} />
-                    )}
-            <TransportSelect handleCategoryChange={setSelectedCategory} clearAllData={onClear}/>
+                <DirectionButton direction={direction} handleDirection={handleDirection} />
+            )}
+            <TransportSelect handleCategoryChange={setSelectedCategory} clearAllData={onClear} />
             <ImageDisplay selectedCategory={selectedCategory} toggleCars={toggleCars} toggleScooters={toggleScooters} routes={routes}
                 selectedRoute={selectedRoute}
                 handleRouteChange={handleRouteChange}
-                clearShape={clearShape} isOptionSelected={isOptionSelected} direction={direction} handleDirection={handleDirection} onClear={onClear}/>
+                clearShape={clearShape} isOptionSelected={isOptionSelected}
+                direction={direction} handleDirection={handleDirection} onClear={onClear}
+                filteredType={filteredType} setFilteredType={setFilteredType} />
         </div>
     );
 };

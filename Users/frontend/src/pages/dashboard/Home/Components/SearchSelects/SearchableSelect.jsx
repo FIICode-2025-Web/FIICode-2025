@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { XCircle } from "lucide-react";
 
-const SearchableSelect = ({ routes, selectedRoute, handleRouteChange, clearShape, onClear }) => {
+const SearchableSelect = ({ routes, selectedRoute, handleRouteChange, clearShape, onClear, filteredType }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -19,8 +19,12 @@ const SearchableSelect = ({ routes, selectedRoute, handleRouteChange, clearShape
     };
   }, []);
 
-  const filteredRoutes = routes.filter(route =>
+  const filteredRoutes = routes
+  .filter(route =>
     route.label.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+  .filter(route =>
+    filteredType === null ? true : route.route_type === filteredType
   );
 
   return (
@@ -40,6 +44,7 @@ const SearchableSelect = ({ routes, selectedRoute, handleRouteChange, clearShape
               setSearchTerm("");
               setShowDropdown(false);
               onClear();
+              setFilteredType(null); 
             }}
             className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
           >
