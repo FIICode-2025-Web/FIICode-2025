@@ -3,23 +3,15 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const RoutesTable = ({ routes }) => {
-    const [activeRoutes, setActiveRoutes] = useState(
+const RoutesTable = ({ routes}) => {
+    const [activeRoutes, setActiveRoutes] = useState(() =>
         routes.reduce((acc, route) => {
-            acc[route.route_short_name] = route.isActive || false;
-            return acc;
+          acc[route.route_id] = route.disabled ?? false;
+          return acc;
         }, {})
-    );
+      );
 
     const [searchQuery, setSearchQuery] = useState("");
-
-    const handleCheckboxChange = (routeNumber) => {
-        sendNotificationAboutRoute(routeNumber);
-        setActiveRoutes((prev) => ({
-            ...prev,
-            [routeNumber]: !prev[routeNumber],
-        }));
-    };
 
     const sendNotificationAboutRoute = async (routeNumber) => {
         const token = localStorage.getItem("token");
@@ -79,7 +71,7 @@ const RoutesTable = ({ routes }) => {
             <TableContainer
                 component={Paper}
                 className="rounded-b-md shadow-md"
-                sx={{ maxHeight: 650, overflowY: 'auto' }}
+                sx={{ maxHeight: 500, overflowY: 'auto' }}
             >
                 <Table stickyHeader>
                     <TableHead className="bg-primary">
@@ -95,11 +87,41 @@ const RoutesTable = ({ routes }) => {
                                 <TableCell>{route.route_short_name}</TableCell>
                                 <TableCell>{formatRouteLabel(route.label)}</TableCell>
                                 <TableCell>
-                                    <Checkbox
-                                        checked={activeRoutes[route.route_short_name] || false}
-                                        onChange={() => handleCheckboxChange(route.route_short_name)}
-                                        color="success"
-                                    />
+                                    <button
+                                        onClick={async () => {
+                                            const token = localStorage.getItem("token");
+                                            try {
+                                                const response = await axios.patch(
+                                                    `http://127.0.0.1:8001/api/v1/tranzy/routes/disable/${route.route_id}`,
+                                                    {},
+                                                    {
+                                                        headers: {
+                                                            Authorization: `Bearer ${token}`,
+                                                        },
+                                                    }
+                                                );
+
+                                                if (response.status === 200) {
+                                                    setActiveRoutes((prev) => ({
+                                                        ...prev,
+                                                        [route.route_id]: !prev[route.route_id],
+                                                    }));
+                                                    toast.success(
+                                                        `Ruta ${route.route_short_name} a fost ${activeRoutes[route.route_id] ? "activată" : "dezactivată"
+                                                        } cu succes`
+                                                    );
+                                                    sendNotificationAboutRoute(routeNumber);
+                                                }
+                                            } catch (error) {
+                                                // toast.error("Eroare la actualizarea rutei");
+                                                console.error("PATCH error:", error);
+                                            }
+                                        }}
+                                        className={`px-4 py-2 rounded ${activeRoutes[route.route_id] ? "bg-primary" : "bg-red-500"
+                                            } text-white font-semibold hover:opacity-80 transition`}
+                                    >
+                                        {activeRoutes[route.route_id] ? "Activează" : "Dezactivează"}
+                                    </button>
                                 </TableCell>
                             </TableRow>
                         ))}
