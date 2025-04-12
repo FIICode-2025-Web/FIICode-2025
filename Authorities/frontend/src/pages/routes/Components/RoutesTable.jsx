@@ -1,23 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox, Typography, TextField } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const RoutesTable = ({ routes}) => {
+const RoutesTable = () => {
+    const [searchQuery, setSearchQuery] = useState("");
+    const [routes, setRoutes] = useState([]);
+    const token = localStorage.getItem("token");
+    
+    const fetchRoutes = async () => {
+        try {
+            const response = await axios.get("http://127.0.0.1:8003/api/v1/tranzy/routes", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            const routesData = response.data.map((route) => ({
+                ...route,
+                label: `${route.route_short_name} - ${route.route_long_name}`,
+            }));
+            setRoutes(routesData);
+        } catch (error) {
+            console.error("Error fetching routes:", error);
+        }
+    };
+    useEffect(() => {
+        fetchRoutes();
+    }, []);
+
     const [activeRoutes, setActiveRoutes] = useState(() =>
         routes.reduce((acc, route) => {
-          acc[route.route_id] = route.disabled ?? false;
-          return acc;
+            acc[route.route_id] = route.disabled ?? false;
+            return acc;
         }, {})
-      );
-
-    const [searchQuery, setSearchQuery] = useState("");
+    );
 
     const sendNotificationAboutRoute = async (routeNumber) => {
         const token = localStorage.getItem("token");
+        const type = activeRoutes[routeNumber] ? "route_fixed" : "route_problem"
         try {
             const message = `Ruta ${routeNumber} e blocata`;
-            const response = await axios.post(`http://127.0.0.1:8001/api/v1/notification/?message=${message}`, {}, {
+            const response = await axios.post(`http://127.0.0.1:8001/api/v1/notification/?type=${type}&message=${message}`, {}, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -107,20 +128,21 @@ const RoutesTable = ({ routes}) => {
                                                         [route.route_id]: !prev[route.route_id],
                                                     }));
                                                     toast.success(
-                                                        `Ruta ${route.route_short_name} a fost ${activeRoutes[route.route_id] ? "activată" : "dezactivată"
+                                                        `Ruta ${route.route_short_name} a fost ${route.disabled? "activată" : "dezactivată"
                                                         } cu succes`
                                                     );
-                                                    sendNotificationAboutRoute(routeNumber);
+                                                    sendNotificationAboutRoute(route.route_id);
+                                                    fetchRoutes();
                                                 }
                                             } catch (error) {
-                                                // toast.error("Eroare la actualizarea rutei");
+                                                toast.error("Eroare la actualizarea rutei");
                                                 console.error("PATCH error:", error);
                                             }
                                         }}
-                                        className={`px-4 py-2 rounded ${activeRoutes[route.route_id] ? "bg-primary" : "bg-red-500"
+                                        className={`px-4 py-2 rounded ${route.disabled ? "bg-primary" : "bg-red-500"
                                             } text-white font-semibold hover:opacity-80 transition`}
                                     >
-                                        {activeRoutes[route.route_id] ? "Activează" : "Dezactivează"}
+                                        {route.disabled ? "Activează" : "Dezactivează"}
                                     </button>
                                 </TableCell>
                             </TableRow>
