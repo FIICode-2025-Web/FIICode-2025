@@ -9,7 +9,7 @@ export default function ProfilePage() {
   return (
     <>
       <DashboardNavbar />
-      <div className="p-24 text-white space-y-8 bg-gray-900 min-h-screen">
+      <div className="p-8 md:p-24 text-white space-y-8 bg-gray-900 min-h-screen">
         <ProfileSection />
         <BadgesSection />
         <PreferencesSection />

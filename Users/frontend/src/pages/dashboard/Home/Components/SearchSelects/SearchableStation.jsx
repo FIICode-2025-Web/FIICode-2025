@@ -30,7 +30,7 @@ const SearchableStation = ({ stations, onSelect, onClear }) => {
   };
 
   return (
-    <div className="relative w-80" ref={dropdownRef}>
+    <div className="relative md:w-80" ref={dropdownRef}>
       <div className="relative">
         <input
           type="text"

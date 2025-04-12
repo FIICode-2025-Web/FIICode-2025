@@ -209,7 +209,7 @@ export function MainComponent() {
   return (
     <div className="bg-main">
       <div className="flex items-center justify-center flex-row">
-        <div className="flex justify-center w-screen p-28">
+        <div className="flex justify-center items-center w-screen md:p-28 flex-col md:flex-row">
           <MainModalComponent
             toggleCars={handleToggleCars}
             toggleScooters={handleToggleScooters}

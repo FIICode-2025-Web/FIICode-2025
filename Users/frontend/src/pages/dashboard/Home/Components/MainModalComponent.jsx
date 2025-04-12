@@ -8,7 +8,7 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
     return (
         <>
             {selectedCategory === "Transport Public" && (
-                <div className="flex items-center justify-center gap-4 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md">
+                <div className="flex items-center justify-center md:gap-4 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md">
                     <SearchableSelect
                         routes={routes}
                         selectedRoute={selectedRoute}
@@ -17,7 +17,7 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
                         onClear={onClear}
                     />
                    
-                    <div className="grid grid-cols-2 gap-12 mx-2">
+                    <div className="grid grid-cols-2 md:gap-12 md:mx-2">
                         <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
                             <div className="w-6 h-6 img-bus hover:cursor-pointer"></div>
                         </div>
@@ -45,8 +45,8 @@ const MainModalComponent = ({toggleScooters, toggleCars, routes, selectedRoute, 
     const [selectedCategory, setSelectedCategory] = useState("");
 
     return (
-        <div className="flex items-center justify-center gap-4 mr-6 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-12">
-            <span className="text-[2.5rem] font-semibold mt-6 text-gray-300">
+        <div className="flex items-center justify-center min-h-[10rem] md:min-h-fit md:h-[35rem] mt-4 gap-4 md:mr-6 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-8 md:p-12 mb-12 md:mb-0">
+            <span className="text-[1.6rem] md:text-[2.5rem] font-semibold mt-6 text-gray-300">
                 Caută ruta dorită
             </span>
             {isOptionSelected && (

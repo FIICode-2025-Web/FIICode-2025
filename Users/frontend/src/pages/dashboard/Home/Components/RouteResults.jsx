@@ -18,7 +18,7 @@ const RouteResults = ({ routes }) => {
   }
 
   return (
-    <div className="mt-6 w-[30] bg-gray-900 bg-opacity-95 shadow-md rounded-md p-4">
+    <div className="mt-6 bg-gray-900 bg-opacity-95 shadow-md rounded-md p-4 justify-start">
       <h2 className="text-xl font-semibold mb-4 text-gray-300">Rezultate trasee</h2>
       <div className="mb-4">
         <label htmlFor="filter" className="text-gray-300 mr-2">Filtru după:</label>
@@ -37,7 +37,7 @@ const RouteResults = ({ routes }) => {
       {routes.length === 0 ? (
         <p className="text-gray-400">Niciun traseu găsit.</p>
       ) : (
-        <ul className="space-y-3 h-[25rem] overflow-y-auto pr-2">
+        <ul className="space-y-3 min-h-[10rem] md:min-h-fit md:h-[23rem] justify-start overflow-y-auto pr-2">
           {routes.map((route) => (
             <li
               key={route.trip_id}

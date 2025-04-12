@@ -74,17 +74,17 @@ export function WelcomeSection() {
   }, [routeData]);
 
   return (
-    <div className="bg-main-reversed h-[50rem] flex items-center justify-evenly flex-row">
-      <div className="italic opacity-90">
+    <div className="bg-main-reversed min-h-screen flex flex-col md:flex-row items-center justify-evenly p-4 md:p-24 gap-10">
+      <div className="italic opacity-90 flex items-center justify-center flex-col">
         <div>
-          <img src={logo} alt="logo" className="w-[28rem]" />
+          <img src={logo} alt="logo" className="w-[14rem] md:w-[28rem]" />
         </div>
-        <div className="text-[1.9rem] my-6 text-gray-300">
+        <div className="text-[1.1rem] md:text-[1.9rem] md:my-3 md:my-6 text-gray-300">
           Călătorește rapid, simplu, eficient!
         </div>
       </div>
-      {routeData && selectedCategory ==='Transport Public' && <RouteResults routes={routeData} />}
-      <div className="flex justify-center h-[32rem] gap-4 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-12">
+     
+      <div className="flex justify-center h-[32rem] gap-4 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-8 md:p-12 mt-10 md:mt-0">
         <span className="text-[2rem] text-center font-semibold my-6 text-gray-300">
           Unde vrei sa ajungi?
         </span>
@@ -114,6 +114,7 @@ export function WelcomeSection() {
           Cauta rute
         </button>
       </div>
+      {routeData && <RouteResults routes={routeData} />}
     </div>
   );
 }

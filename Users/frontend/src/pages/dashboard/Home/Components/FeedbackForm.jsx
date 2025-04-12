@@ -30,11 +30,11 @@ function FeedbackForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-2/3 bg-gray-900 p-6 rounded-md shadow-md space-y-4">
-      <h2 className="text-xl font-semibold">Send us your feedback</h2>
+    <form onSubmit={handleSubmit} className="w-full md:w-2/3 bg-gray-900 p-6 rounded-md shadow-md space-y-4">
+      <h2 className="text-xl font-semibold">Trimite-ne părerea ta</h2>
 
       <div>
-        <label className="block mb-1">Title</label>
+        <label className="block mb-1">Titlu</label>
         <input
           type="text"
           value={title}
@@ -45,7 +45,7 @@ function FeedbackForm() {
       </div>
 
       <div>
-        <label className="block mb-1">Message</label>
+        <label className="block mb-1">Mesaj</label>
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
@@ -59,7 +59,7 @@ function FeedbackForm() {
         type="submit"
         className="bg-primary hover:bg-primary hover:bg-opacity-80 text-white text-sm font-semibold py-2 px-4 rounded"
       >
-        Submit Feedback
+        Trimite
       </button>
 
       {status && <p className="mt-2 text-sm">{status}</p>}
