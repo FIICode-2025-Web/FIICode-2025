@@ -18,3 +18,7 @@ feedback_service = FeedbackService()
 @feedback_router.get("/")
 def get_reports(db: db_dependency):
     return feedback_service.get_feedbacks(db)
+
+@feedback_router.patch("/feedback_id")
+def update_report(feedback_id: int, db: db_dependency):
+    return feedback_service.review_feedback(feedback_id, db)
