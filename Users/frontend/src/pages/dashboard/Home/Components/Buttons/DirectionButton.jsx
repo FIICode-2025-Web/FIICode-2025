@@ -1,20 +1,17 @@
 import React from 'react'
-import { Button } from "@material-tailwind/react";
 
 const DirectionButton = ({ direction, handleDirection }) => {
     return (
-        <Button
-            variant="text"
-            color="blue-gray"
-            className="flex items-center justify-center text-primary text-sm h-8 normal-case bg-primary hover:bg-secondary" onClick={handleDirection}>
+        <button
+            className="w-80 flex items-center rounded-md justify-center text-primary text-md h-10 normal-case bg-primary hover:bg-secondary" onClick={handleDirection}>
             <span className={`${direction === 0 ? 'text-white' : 'text-black'}`}>
                 Tur
             </span>
-            / 
+            --
             <span className={`${direction === 1 ? 'text-white' : 'text-black'}`}>
                 Retur
             </span>
-        </Button>
+        </button>
     )
 }
 
