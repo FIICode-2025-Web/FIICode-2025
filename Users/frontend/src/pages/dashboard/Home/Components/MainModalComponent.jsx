@@ -49,7 +49,7 @@ const MainModalComponent = ({toggleScooters, toggleCars, routes, selectedRoute, 
             <span className="text-[1.6rem] md:text-[2.5rem] font-semibold mt-6 text-gray-300">
                 Caută ruta dorită
             </span>
-            {isOptionSelected && (
+            {isOptionSelected && selectedRoute && (
                         <DirectionButton direction={direction} handleDirection={handleDirection} />
                     )}
             <TransportSelect handleCategoryChange={setSelectedCategory} clearAllData={onClear}/>
