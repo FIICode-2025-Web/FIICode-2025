@@ -1,9 +1,10 @@
-import {Input, Button, Typography} from "@material-tailwind/react";
-import {Link, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
-import {toast} from "react-toastify";
+import { Input, Button, Typography } from "@material-tailwind/react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import api from "@/services/api";
 import axios from "axios";
+import logo from '../../img/logo-vaya.png'
 import "../../../public/css/backgrounds.css";
 
 export function SignIn() {
@@ -17,7 +18,7 @@ export function SignIn() {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    if(!email || !password) {
+    if (!email || !password) {
       toast.error("Please fill all fields");
       return;
     }
@@ -28,7 +29,7 @@ export function SignIn() {
         password: password,
       });
 
-      if(response.status === 200) {
+      if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
         toast.success("Login Successful");
         navigate('/dashboard/home');
@@ -51,7 +52,12 @@ export function SignIn() {
   return (
     <section className="bg-green-200 flex gap-4 text-surface-mid-dark">
       <div className="w-full h-screen flex flex-col items-end justify-center bg-main">
-        <div className="bg-white w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
+        <div className="bg-white w-full lg:w-2/4 xl:w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
+          <div className="italic opacity-90 flex items-center justify-center flex-col">
+            <div>
+              <img src={logo} alt="logo" className="w-[14rem] md:w-[20rem] mb-20" />
+            </div>
+          </div>
           <div className="text-center">
             <Typography variant="h2" className="font-bold mb-4">Sign in</Typography>
             <Typography variant="paragraph" className="text-lg font-normal text-surface-light-dark">Enter your email and password to sign in.</Typography>

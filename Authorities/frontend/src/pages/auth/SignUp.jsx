@@ -89,7 +89,7 @@ export function SignUp() {
   return (
     <section className="bg-green-200 flex gap-4 text-surface-mid-dark">
       <div className="w-full h-screen flex flex-col items-end justify-center bg-main">
-        <div className="bg-white w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
+        <div className="bg-white w-full lg:w-2/4 xl:w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
           <div className="text-center">
             <Typography variant="h3" className="font-bold mb-4 text-primary">Authorities</Typography>
             <Typography variant="h2" className="font-bold mb-1">Join Us Today</Typography>
