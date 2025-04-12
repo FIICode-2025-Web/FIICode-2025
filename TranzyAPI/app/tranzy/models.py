@@ -70,3 +70,13 @@ class TranzyShapes(Base):
     class Config:
         orm_mode = True
 
+class FavoriteRoutes(Base):
+    __tablename__ = 'favorite_routes'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer)
+    route_id = Column(Integer)
+    route_short_name = Column(String)
+    route_long_name = Column(String)
+
+

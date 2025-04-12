@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.scooter.schemas import CoordinateSchema
 from app.tranzy.service import TranzyService
+from app.auth.jwt.jwt_bearer import jwtBearer
 
 tranzy_router = APIRouter(prefix="/api/v1/tranzy", tags=["tranzy"])
 
@@ -51,6 +52,7 @@ def get_shapes_for_route(route_id: str, db: db_dependency):
 def get_routes(db: db_dependency):
     return tranzy_service.get_routes(db)
 
+
 @tranzy_router.get("/routes/route-between-two-points")
 def get_routes_between_two_points(stop_id_A: int, stop_id_B: int, db: db_dependency):
     return tranzy_service.get_routes_between_two_stations(stop_id_A, stop_id_B, db)
@@ -79,6 +81,23 @@ def get_stop_by_route_short_name(route_short_name: str, direction_id: int, db: d
 @tranzy_router.get("/trips")
 def get_trips(db: db_dependency):
     return tranzy_service.get_trips(db)
+
+
+# -------------------------------- Favorite Routes
+@tranzy_router.get("/favorite-routes")
+def get_favorite_routes(token: Annotated[str, Depends(jwtBearer())], db: db_dependency):
+    return tranzy_service.get_favorite_routes(token, db)
+
+
+@tranzy_router.post("/favorite-routes")
+def add_favorite_route(route_id: int, token: Annotated[str, Depends(jwtBearer())],
+                       db: db_dependency):
+    return tranzy_service.add_favorite_route(route_id, token, db)
+
+@tranzy_router.delete("/favorite-routes/{route_id}")
+def delete_favorite_route(route_id: int, token: Annotated[str, Depends(jwtBearer())],
+                           db: db_dependency):
+    return tranzy_service.delete_favorite_route(route_id, token, db)
 
 
 # ------------------------------- General

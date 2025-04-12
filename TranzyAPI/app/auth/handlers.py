@@ -3,7 +3,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from app.auth.exceptions import (WrongRoleException, UserNotFoundException,
-                                 BadgeNotFoundException, BadgeAlreadyAwardedException)
+                                 BadgeNotFoundException, BadgeAlreadyAwardedException, RouteNotFoundException)
 from fastapi import logger
 
 
@@ -26,6 +26,10 @@ def badge_already_awarded_exception_handler(request: Request, exc: BadgeAlreadyA
     logger.logger.error(f"BadgeAlreadyAwardedException: {exc}")
     return JSONResponse(status_code=exc.status_code, content={"message": str(exc.detail)})
 
+def route_not_found_exception_handler(request: Request, exc: RouteNotFoundException):
+    logger.logger.error(f"RouteNotFoundException: {exc}")
+    return JSONResponse(status_code=exc.status_code, content={"message": str(exc.detail)})
+
 
 def validation_exception_handler(request: Request, exc: RequestValidationError):
     errors = exc.errors()
@@ -41,6 +45,7 @@ def register_auth_exception_handlers(app: FastAPI):
         UserNotFoundException: user_not_found_exception_handler,
         BadgeNotFoundException: badge_not_found_exception_handler,
         BadgeAlreadyAwardedException: badge_already_awarded_exception_handler,
+        RouteNotFoundException: route_not_found_exception_handler
     }
 
     for exc, handler in exception_handlers.items():

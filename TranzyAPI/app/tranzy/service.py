@@ -2,8 +2,10 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from typing import TypeVar
 
+from app.auth.exceptions import RouteNotFoundException
+from app.auth.jwt.jwt_handler import decodeJWT
 from app.scooter.schemas import CoordinateSchema
-from app.tranzy.models import TranzyShapes, TranzyRoutes, TranzyTrips, TranzyStops, TranzyStopTimes
+from app.tranzy.models import TranzyShapes, TranzyRoutes, TranzyTrips, TranzyStops, TranzyStopTimes, FavoriteRoutes
 import requests
 from decouple import config
 import openrouteservice
@@ -188,8 +190,6 @@ class TranzyService:
             trip = db.query(TranzyTrips).filter(TranzyTrips.trip_id == trip_id).first()
             route = db.query(TranzyRoutes).filter(TranzyRoutes.route_id == trip.route_id).first()
 
-
-
             results.append({
                 "trip_id": trip.trip_id,
                 "route_id": route.route_id,
@@ -202,6 +202,56 @@ class TranzyService:
             })
 
         return results
+
+    # ------------------------------- Favorite Routes
+    def get_favorite_routes(self, token: str, db: Session):
+        payload = decodeJWT(token)
+        user_id = payload["id"]
+        return db.query(FavoriteRoutes).filter(FavoriteRoutes.user_id == user_id).all()
+
+    def add_favorite_route(self, route_id: int, token: str, db: Session):
+        payload = decodeJWT(token)
+        user_id = payload["id"]
+
+        existing_favorite = db.query(FavoriteRoutes).filter(
+            FavoriteRoutes.user_id == user_id,
+            FavoriteRoutes.route_id == route_id
+        ).first()
+
+        if existing_favorite:
+            return existing_favorite
+
+        route = db.query(TranzyRoutes).filter(TranzyRoutes.route_id == route_id).first()
+
+        if not route:
+            raise RouteNotFoundException()
+
+        favorite_route = FavoriteRoutes(
+            user_id=user_id,
+            route_id=route_id,
+            route_short_name=route.route_short_name,
+            route_long_name=route.route_long_name,
+        )
+        db.add(favorite_route)
+        db.commit()
+        db.refresh(favorite_route)
+        return favorite_route
+
+    def delete_favorite_route(self, route_id: int, token: str, db: Session):
+        payload = decodeJWT(token)
+        user_id = payload["id"]
+
+        existing_favorite = db.query(FavoriteRoutes).filter(
+            FavoriteRoutes.user_id == user_id,
+            FavoriteRoutes.route_id == route_id
+        ).first()
+
+        if not existing_favorite:
+            return None
+
+        db.delete(existing_favorite)
+        db.commit()
+        return existing_favorite
 
     # ------------------------------- Generic
     def save_entity(self, entity: [T], db: Session):

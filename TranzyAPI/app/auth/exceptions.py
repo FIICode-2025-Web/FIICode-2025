@@ -15,3 +15,7 @@ class BadgeNotFoundException(HTTPException):
 class BadgeAlreadyAwardedException(HTTPException):
     def __init__(self):
         super().__init__(status_code=409, detail="Badge already awarded to user!")
+
+class RouteNotFoundException(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=404, detail="Route not found!")

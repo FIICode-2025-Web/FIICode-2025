@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 import logo from '../../../../img/logo-vaya.png'
 import SearchableStation from "./SearchSelects/SearchableStation";
 import RouteResults from "./RouteResults";
-import TransportSelect from "./SearchSelects/TransportSelect";
+import TransportSelectWelcome from "./SearchSelects/TransportSelectWelcome";
 import { fetchDistanceBetweenTwoPoints } from "../utils/helpers";
 
 export function WelcomeSection() {
@@ -114,7 +114,7 @@ export function WelcomeSection() {
           onClear={handleClearSecondStop}
         />
         <p className="text-[1rem] text-gray-300">Tip de transport:</p>
-        <TransportSelect
+        <TransportSelectWelcome
           handleCategoryChange={setSelectedCategory}
           clearAllData={onClear}
         />

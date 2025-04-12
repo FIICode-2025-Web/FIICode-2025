@@ -18,7 +18,7 @@ const TransportSelect = ({ handleCategoryChange, clearAllData }) => {
         };
     }, []);
 
-    const options = ["Toate", "Transport Public", "Ridesharing"];
+    const options = ["Transport Public", "Ridesharing"];
 
     return (
         <div className=" relative w-80" ref={dropdownRef}>
