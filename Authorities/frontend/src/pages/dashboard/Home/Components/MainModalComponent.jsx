@@ -14,7 +14,7 @@ const ImageDisplay = ({ routes, selectedRoute, handleRouteChange, clearShape, is
                     clearShape={clearShape}
                     onClear={onClear}
                 />
-                {isOptionSelected && (
+                {isOptionSelected && selectedRoute && (
                     <DirectionButton direction={direction} handleDirection={handleDirection} />
                 )}
                 <div className="grid grid-cols-2 gap-12 mx-2">
