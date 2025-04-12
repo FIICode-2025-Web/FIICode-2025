@@ -31,7 +31,7 @@ const SearchableSelect = ({ routes, selectedRoute, handleRouteChange, clearShape
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onFocus={() => setShowDropdown(true)}
-          className="md:w-full w-3/4 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-10"
           placeholder="Caută o rută"
         />
         {searchTerm && (
@@ -49,23 +49,23 @@ const SearchableSelect = ({ routes, selectedRoute, handleRouteChange, clearShape
       </div>
       {showDropdown && (
         <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 max-h-40 overflow-y-auto">
-          {filteredRoutes.length > 0 ? (
-            filteredRoutes.map(route => (
-              <li
-                key={route.route_short_name}
-                onClick={() => {
-                  handleRouteChange({ target: { value: route.route_short_name } });
-                  setSearchTerm(route.label);
-                  setShowDropdown(false);
-                }}
-                className="px-4 py-2 cursor-pointer hover:bg-blue-100"
-              >
-                {route.label}
-              </li>
-            ))
-          ) : (
-            <li className="px-4 py-2 text-gray-500">Niciun rezultat.</li>
-          )}
+          {filteredRoutes.map(route => (
+            <li
+              key={route.route_short_name}
+              onClick={() => {
+                if (route.disabled) return;
+                handleRouteChange({ target: { value: route.route_short_name } });
+                setSearchTerm(route.label);
+                setShowDropdown(false);
+              }}
+              className={`px-4 py-2 cursor-pointer ${route.disabled
+                  ? "text-gray-400 bg-gray-100 cursor-not-allowed"
+                  : "hover:bg-blue-100"
+                }`}
+            >
+              {route.label}
+            </li>
+          ))}
         </ul>
       )}
     </div>
