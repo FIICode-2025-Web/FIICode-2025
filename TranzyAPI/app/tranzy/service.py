@@ -6,6 +6,8 @@ from app.auth.exceptions import RouteNotFoundException
 from app.auth.jwt.jwt_handler import decodeJWT
 from app.scooter.schemas import CoordinateSchema
 from app.tranzy.models import TranzyShapes, TranzyRoutes, TranzyTrips, TranzyStops, TranzyStopTimes, FavoriteRoutes
+from app.ride_history.models import RideHistory
+from sqlalchemy import func
 import requests
 from decouple import config
 import openrouteservice
@@ -252,6 +254,52 @@ class TranzyService:
         db.delete(existing_favorite)
         db.commit()
         return existing_favorite
+
+        # ------------------------------- User data
+
+    def get_user_data(self, token: str, db: Session):
+        payload = decodeJWT(token)
+        user_id = payload["id"]
+
+        user_data = {
+            "public_transport": {
+                "trips": 0,
+                "distance_km": 0.0,
+                "duration_hours": 0.0,
+                "total_cost": 0.0
+            },
+            "scooter": {
+                "trips": 0,
+                "distance_km": 0.0,
+                "duration_hours": 0.0,
+                "total_cost": 0.0
+            },
+            "ridesharing": {
+                "trips": 0,
+                "distance_km": 0.0,
+                "duration_hours": 0.0,
+                "total_cost": 0.0
+            }
+        }
+
+        results = db.query(
+            RideHistory.type,
+            func.count(RideHistory.id).label("trips"),
+            func.sum(RideHistory.km_travelled).label("total_distance"),
+            func.sum(RideHistory.duration).label("total_duration"),
+            func.sum(RideHistory.cost).label("total_cost")
+        ).filter(RideHistory.user_id == user_id).group_by(RideHistory.type).all()
+
+        for transport_type, trips, total_distance, total_duration, total_cost in results:
+            if transport_type in user_data:
+                user_data[transport_type] = {
+                    "trips": trips,
+                    "distance_km": round(total_distance or 0, 2),
+                    "duration_hours": round((total_duration or 0) / 60, 2),
+                    "total_cost": round(total_cost or 0, 2)
+                }
+
+        return user_data
 
     # ------------------------------- Generic
     def save_entity(self, entity: [T], db: Session):

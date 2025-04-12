@@ -104,3 +104,7 @@ def delete_favorite_route(route_id: int, token: Annotated[str, Depends(jwtBearer
 @tranzy_router.post("/route_between_two_points")
 def get_route(coordinates: CoordinateSchema):
     return tranzy_service.get_route_between_locations(coordinates)
+
+@tranzy_router.get("/user-data")
+def get_user_data(token: Annotated[str, Depends(jwtBearer())], db: db_dependency):
+    return tranzy_service.get_user_data(token, db)
