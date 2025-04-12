@@ -1,10 +1,10 @@
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 function FeedbackForm() {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,18 +14,19 @@ function FeedbackForm() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post("http://127.0.0.1:8002/api/v1/feedback/", feedbackData, {
+      const response = await axios.post("http://127.0.0.1:8002/api/v1/feedback/", feedbackData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setStatus("Feedback sent successfully!");
+      if (response.status === 201) {
+        toast.success("Feedback trimis cu success!");
+      }
       setTitle("");
       setMessage("");
     } catch (error) {
-      console.error("Error sending feedback:", error);
-      setStatus("Something went wrong. Please try again.");
+      toast.error("A apărut o eroare la trimiterea feedback-ului.");
     }
   };
 
@@ -61,8 +62,6 @@ function FeedbackForm() {
       >
         Trimite
       </button>
-
-      {status && <p className="mt-2 text-sm">{status}</p>}
     </form>
   );
 }

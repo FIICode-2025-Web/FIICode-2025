@@ -15,7 +15,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 feedback_service = FeedbackService()
 
 
-@feedback_router.post("/")
+@feedback_router.post("/", status_code=201)
 def add_feedback(feedback_entry: FeedbackSchema, db: db_dependency, token: Annotated[str, Depends(jwtBearer())]):
     return feedback_service.add_feedback(feedback_entry, db, token)
 
