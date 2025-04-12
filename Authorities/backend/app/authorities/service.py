@@ -25,6 +25,9 @@ class AuthorityService:
                                               created_at=self.generate_time())
         return self.save_entity(verification_code, db)
 
+    def get_user_by_id(self, user_id: int, db: Session):
+        return db.query(Users).filter(Users.id == user_id).first()
+
     def save_entity(self, entity: [T], db: Session):
         db.add(entity)
         db.commit()

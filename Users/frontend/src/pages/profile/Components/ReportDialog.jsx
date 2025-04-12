@@ -97,6 +97,7 @@ export function AddReportDialog({
           handleRouteChange={(e) => setNewRoute(e.target.value)}
           clearShape={() => {}}
           onClear={() => setNewRoute("")}
+          filteredType={null}
         />
         <TextField
           fullWidth

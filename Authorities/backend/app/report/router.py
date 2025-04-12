@@ -18,3 +18,8 @@ report_service = ReportService()
 @report_router.get("/")
 def get_reports(db: db_dependency):
     return report_service.get_reports(db)
+
+@report_router.patch("/report_id")
+def update_report(report_id: int, db: db_dependency):
+    return report_service.review_report(report_id, db)
+
