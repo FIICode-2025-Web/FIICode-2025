@@ -31,13 +31,13 @@ export default function StatisticsSections() {
 
   }
   return (
-    <div className="bg-gray-800 p-6 rounded-2xl shadow-md space-y-4 flex flex-col gap-5 items-center">
-      <div className="flex gap-2 md:gap-6">
+    <div className="bg-gray-800 p-6 rounded-2xl shadow-md space-y-4 flex flex-row md:flex-col gap-5">
+      <div className="md:flex md:flex-row gap-2 md:gap-6 grid grid-cols-2">
         {userData &&  <StatsCard icon={buses} title="Transport Public" userData={userData.public_transport} />}
         {userData &&  <StatsCard icon={ridesharing} title="Ridesharing" userData={userData.ridesharing} />}
         {userData && <StatsCard icon={scooter} title="Trotinete" userData={userData.scooter} />}
+        <SummaryCard userData={userData}/>
       </div>
-      <SummaryCard userData={userData}/>
     </div>
   );
 }
