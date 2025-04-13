@@ -195,6 +195,7 @@ const MapContent = ({
       cost: parseFloat(cost.toFixed(2)),
       start_time: rideStartTimeRef.current?.toISOString(),
       end_time: endTime.toISOString(),
+      ride_id: Math.floor(Math.random() * 100 + 1)
     };
 
     try {

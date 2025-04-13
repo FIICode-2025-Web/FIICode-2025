@@ -10,7 +10,7 @@ const SummaryCard = ({ userData }) => {
             </Typography>
             <div className="text-sm text-gray-300 flex flex-col text-center">
                 <p>Total bani cheltuiți: <span className="text-white font font-large">{Object.values(userData).reduce((sum, current) => sum + current.total_cost, 0)} RON</span></p>
-                <p>Timp total de călătorie: <span className="text-white font-large">{Object.values(userData).reduce((sum, current) => sum + current.duration_hours, 0)} ore</span></p>
+                <p>Timp total de călătorie: <span className="text-white font-large">{Object.values(userData).reduce((sum, current) => sum + current.duration_hours, 0).toFixed(2)} ore</span></p>
             </div>
         </Card>
     )
