@@ -31,7 +31,7 @@ export function SignIn() {
 
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
-        toast.success("Login Successful");
+        toast.success("Conectare reușită!");
         navigate('/dashboard/home');
       }
     } catch (error) {
@@ -59,8 +59,10 @@ export function SignIn() {
             </div>
           </div>
           <div className="text-center">
-            <Typography variant="h2" className="font-bold mb-4">Sign in</Typography>
-            <Typography variant="paragraph" className="text-lg font-normal text-surface-light-dark">Enter your email and password to sign in.</Typography>
+            <Typography variant="h2" className="font-bold mb-4">
+              Conectează-te la cont
+            </Typography>
+            <Typography variant="paragraph" className="text-lg font-normal text-surface-light-dark">Introdu detaliile pentru a te conecta</Typography>
           </div>
           <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-3/4" onSubmit={handleSignIn}>
             <div className="mb-1 flex flex-col gap-6">
@@ -69,7 +71,7 @@ export function SignIn() {
               </Typography>
               <Input
                 size="lg"
-                placeholder="Your email"
+                placeholder="Email-ul tău"
                 className="!border-surface-mid-dark text-surface-mid-dark focus:!border-secondary"
                 labelProps={{
                   className: "before:content-none after:content-none",
@@ -77,7 +79,7 @@ export function SignIn() {
                 onChange={(e) => setEmail(e.target.value)}
               />
               <Typography variant="small" className="-mb-3 font-medium text-surface-mid-light">
-                Password
+                Parolă
               </Typography>
               <Input
                 type="password"
@@ -92,13 +94,15 @@ export function SignIn() {
             </div>
             <div className="flex flex-col items-center gap-2">
               <Button className="mt-6 bg-secondary hover:bg-primary duration-200" fullWidth type="submit">
-                Sign In
+                Conectează-te
               </Button>
               <div id="signInDiv" className="w-6"></div>
             </div>
             <Typography variant="small" className="text-center text-surface-light-dark font-medium mt-4">
-              Not registered?
-              <Link to="/auth/sign-up" className="text-secondary ml-1 hover:text-primary">Create account</Link>
+              Nu ai un cont?
+              <Link to="/auth/sign-up" className="text-secondary ml-1 hover:text-primary">
+                Creează cont
+              </Link>
             </Typography>
             {/* <Typography variant="small" className="text-center text-surface-light-dark font-medium mt-4">
               Forgot password?

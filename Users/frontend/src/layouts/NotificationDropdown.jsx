@@ -110,7 +110,7 @@ const NotificationDropdown = () => {
                             className={`flex flex-col items-start gap-1 ${notification.is_read ? "bg-white" : "bg-gray-100"
                                 } hover:bg-gray-200`}
                         >
-                            <span className={`text-sm ${notification.is_read ? "font-normal" : "font-semibold"}`}>
+                            <span className={`text-xs ${notification.is_read ? "font-normal" : "font-semibold"}`}>
                                 {notification.message}
                             </span>
                             <span className="text-xs text-gray-500">

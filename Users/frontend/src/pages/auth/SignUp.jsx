@@ -1,4 +1,4 @@
-import {Input, Button, Typography} from "@material-tailwind/react";
+import { Input, Button, Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +26,7 @@ export function SignUp() {
 
       if (response.status === 200 || response.status === 201) {
         navigate('/auth/sign-in');
-        toast.success("Registration Successful");
+        toast.success(" Cont creat cu succes! Te rugăm să te conectezi pentru a continua.");
       } else {
         toast.error("Registration failed");
       }
@@ -45,12 +45,12 @@ export function SignUp() {
   };
 
   const validatePassword = (password) => {
-    if(password.length < 8){
+    if (password.length < 8) {
       toast.error("Password must be at least 8 characters long");
       return false;
     }
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{7,}$/;
-    if(!regex.test(password)){
+    if (!regex.test(password)) {
       toast.error("Password must contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character");
       return false;
     }
@@ -58,35 +58,39 @@ export function SignUp() {
   }
 
   const handleChange = (e) => {
-    const {name,value} = e.target;
-    setInputs(prev => ({...prev,[name]:value}));
+    const { name, value } = e.target;
+    setInputs(prev => ({ ...prev, [name]: value }));
   }
 
   const handleSignup = (e) => {
     e.preventDefault();
 
-    if(inputs.username === '' || inputs.name === '' || inputs.email === '' || inputs.password === '' || inputs.confirmPassword === ''){
+    if (inputs.username === '' || inputs.name === '' || inputs.email === '' || inputs.password === '' || inputs.confirmPassword === '') {
       toast.error("Please fill all the fields");
       return;
     }
 
-    if(inputs.password !== inputs.confirmPassword){
+    if (inputs.password !== inputs.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-    if(!validatePassword(inputs.password)){
+    if (!validatePassword(inputs.password)) {
       return;
     }
-      register(inputs);
+    register(inputs);
   }
   return (
     <section className="bg-green-200 flex gap-4 text-surface-mid-dark">
       <div className="w-full h-screen flex flex-col items-end justify-center bg-main">
         <div className="bg-white w-full lg:w-2/4 xl:w-1/3 h-screen flex flex-col items-center justify-center shadow-md shadow-green-500">
-        <div className="text-center">
-             <Typography variant="h2" className="font-bold mb-1">Join Us Today</Typography>
-             <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal text-surface-light-dark">Enter your email, name and password to register.</Typography>
-        </div>
+          <div className="text-center">
+            <Typography variant="h2" className="font-bold mb-1">
+              Alătură-te comunității Vaya
+            </Typography>
+            <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal text-surface-light-dark">
+              Creează-ți contul pentru a începe să călătorești cu noi
+            </Typography>
+          </div>
           <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-3/4" onSubmit={handleSignup}>
             <div className="mb-2 flex flex-col gap-4">
               <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-mid-light">
@@ -106,11 +110,11 @@ export function SignUp() {
             </div>
             <div className="mb-2 flex flex-col gap-4">
               <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-mid-light">
-                Name
+                Nume
               </Typography>
               <Input
                 size="lg"
-                placeholder="Your name"
+                placeholder="Numele tău"
                 name="name"
                 className="!border-surface-mid-dark text-surface-mid-dark focus:!border-secondary"
                 labelProps={{
@@ -121,12 +125,12 @@ export function SignUp() {
             </div>
             <div className="mb-2 flex flex-col gap-4">
               <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-mid-light">
-                Password
+                Parolă
               </Typography>
               <Input
                 type="password"
                 size="lg"
-                placeholder="Your password"
+                placeholder="Parola ta"
                 name="password"
                 className="!border-surface-mid-dark text-surface-mid-dark focus:!border-secondary"
                 labelProps={{
@@ -137,12 +141,12 @@ export function SignUp() {
             </div>
             <div className="mb-2 flex flex-col gap-4">
               <Typography variant="small" color="blue-gray" className="-mb-3 font-medium text-surface-mid-light">
-                Confirm password
+                Confirmare parolă
               </Typography>
               <Input
                 type="password"
                 size="lg"
-                placeholder="Confirm password"
+                placeholder="Confirmă parola ta"
                 name="confirmPassword"
                 className="!border-surface-mid-dark text-surface-mid-dark focus:!border-secondary"
                 labelProps={{
@@ -152,11 +156,13 @@ export function SignUp() {
               />
             </div>
             <Button className="mt-6 bg-secondary hover:bg-primary" fullWidth type="submit">
-              Register Now
+              Creează cont
             </Button>
             <Typography variant="paragraph" className="text-center text-surface-light-dark font-medium mt-4">
-              Already have an account?
-              <Link to="/auth/sign-in" className="text-secondary ml-1 hover:text-primary">Sign in</Link>
+              Ai deja un cont?
+              <Link to="/auth/sign-in" className="text-secondary ml-1 hover:text-primary">
+                Conectează-te
+              </Link>
             </Typography>
           </form>
         </div>
