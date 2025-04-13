@@ -7,7 +7,7 @@ const RoutesTable = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [routes, setRoutes] = useState([]);
     const token = localStorage.getItem("token");
-    
+
     const fetchRoutes = async () => {
         try {
             const response = await axios.get("http://127.0.0.1:8003/api/v1/tranzy/routes", {
@@ -33,11 +33,11 @@ const RoutesTable = () => {
         }, {})
     );
 
-    const sendNotificationAboutRoute = async (routeNumber) => {
+    const sendNotificationAboutRoute = async (routeNumber, route_short_name) => {
         const token = localStorage.getItem("token");
         const type = activeRoutes[routeNumber] ? "route_fixed" : "route_problem"
         try {
-            const message = `Ruta ${routeNumber} e blocata`;
+            const message = activeRoutes[routeNumber] ? `Ruta ${route_short_name} a fost activată` : `Ruta ${route_short_name} a fost dezactivată`;
             const response = await axios.post(`http://127.0.0.1:8001/api/v1/notification/?type=${type}&message=${message}`, {}, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -128,10 +128,10 @@ const RoutesTable = () => {
                                                         [route.route_id]: !prev[route.route_id],
                                                     }));
                                                     toast.success(
-                                                        `Ruta ${route.route_short_name} a fost ${route.disabled? "activată" : "dezactivată"
+                                                        `Ruta ${route.route_short_name} a fost ${route.disabled ? "activată" : "dezactivată"
                                                         } cu succes`
                                                     );
-                                                    sendNotificationAboutRoute(route.route_id);
+                                                    sendNotificationAboutRoute(route.route_id, route.route_short_name);
                                                     fetchRoutes();
                                                 }
                                             } catch (error) {
