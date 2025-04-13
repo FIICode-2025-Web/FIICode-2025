@@ -51,51 +51,13 @@ const MapContent = ({
   const [clickedPoint, setClickedPoint] = useState(null);
   const [routeToClickedPoint, setRouteToClickedPoint] = useState([]);
   const [rideStarted, setRideStarted] = useState(false);
-  const [rideTimer, setRideTimer] = useState(0);
   const [rideInterval, setRideInterval] = useState(null);
   const [rideEnded, setRideEnded] = useState(false);
   const [destinationLocation, setDestinationLocation] = useState(null);
   const [isLocationConfirmed, setIsLocationConfirmed] = useState(false);
-  const [timerInterval, setTimerInterval] = useState(null); 
-  const [rideStartTime, setRideStartTime] = useState(null);
-
-  const handleCarArrival = async () => {
-    if (!rideStartTime) return;
-  
-    const endTime = new Date();
-    const duration = rideTimer;
-    const durationMinutes = Math.floor(duration / 60);
-    const kmTravelled = 1 + (duration / 60) * 0.4;
-    const cost = 3.0 + (1.2 * durationMinutes);
-  
-    const payload = {
-      type: "car",
-      km_travelled: parseFloat(kmTravelled.toFixed(2)),
-      duration,
-      cost: parseFloat(cost.toFixed(2)),
-      start_time: rideStartTime.toISOString(),
-      end_time: endTime.toISOString(),
-    };
-  
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post("http://127.0.0.1:8003/api/v1/ride-history/", payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-  
-      setRideStarted(false);
-      setRideTimer(0);
-      setArrivalCar(null);
-      setRideEnded(true);
-  
-      clearInterval(timerInterval);
-    } catch (err) {
-      console.error("Ride submission failed:", err);
-    }
-  };
+  const [timerInterval, setTimerInterval] = useState(null);
+  const rideStartTimeRef = useRef(null);
+  const rideTimerRef = useRef(0);
 
   const handleRequestClosestCar = async () => {
     const token = localStorage.getItem("token");
@@ -200,16 +162,14 @@ const MapContent = ({
       if (index >= reversedRoute.length) {
         clearInterval(interval);
         setIsCarMoving(false);
-      
+
         const arrivalPos = {
           latitude: reversedRoute[index - 1][1],
           longitude: reversedRoute[index - 1][0],
         };
-      
+
         setArrivalCar(arrivalPos);
-      
-        handleCarArrival();
-      
+
         return;
       }
 
@@ -218,60 +178,89 @@ const MapContent = ({
     }, 1000);
   };
 
-  useEffect(() => {
-    if (arrivalCar && !rideStarted) {
-      handleCarArrival();
+  const handleEndRide = async () => {
+    const token = localStorage.getItem("token");
+    const endTime = new Date();
+    const duration = rideTimerRef.current;
+    const durationMinutes = Math.floor(duration / 60);
+    const kmTravelled = 0.5 + (duration / 60) * 0.3;
+    const baseFare = 2;
+    const costPerKm = 1.5;
+    const cost = baseFare + kmTravelled * costPerKm;
+
+    const payload = {
+      type: "ridesharing",
+      km_travelled: parseFloat(kmTravelled.toFixed(2)),
+      duration,
+      cost: parseFloat(cost.toFixed(2)),
+      start_time: rideStartTimeRef.current?.toISOString(),
+      end_time: endTime.toISOString(),
+    };
+
+    try {
+      await axios.post("http://127.0.0.1:8003/api/v1/ride-history/", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Ride history saved.");
+    } catch (err) {
+      console.error("Failed to save ride:", err);
     }
-  }, [arrivalCar]);
+  };
   const startRideToDestination = () => {
     if (!routeToClickedPoint || routeToClickedPoint.length === 0) return;
-  
+
     setRideStarted(true);
     setRideEnded(false);
     setArrivalCar(null);
-    setRideStartTime(new Date());
+    // setRideStartTime(new Date());
+    rideStartTimeRef.current = new Date();
     let index = 0;
-  
+
     const carInterval = setInterval(() => {
       if (index >= routeToClickedPoint.length) {
         clearInterval(carInterval);
         setIsCarMoving(false);
         setRideEnded(true);
         setRideStarted(false);
-  
+
         clearInterval(timerInterval);
+
+        handleEndRide();
         return;
       }
-  
+
       const [lng, lat] = routeToClickedPoint[index];
       setMovingCarPosition([lat, lng]);
       index++;
     }, 1000);
-  
+
     setIsCarMoving(true);
     setRideInterval(carInterval);
-  
+
     const newTimerInterval = setInterval(() => {
       if (rideEnded) {
         clearInterval(newTimerInterval);
       } else {
-        setRideTimer((prev) => prev + 1);
+        rideTimerRef.current += 1;
       }
     }, 1000);
-  
+
     setTimerInterval(newTimerInterval);
   };
   return (
     <MapWrapper center={position} onMapClick={handleMapClick}>
       {rideStarted && (
         <div className="absolute top-4 right-4 bg-white shadow px-4 py-2 rounded-md z-[1000] text-primary font-medium">
-          Timp cursă: {rideTimer}s
+          Timp cursă: {rideTimerRef.current}s
         </div>
       )}
 
       {rideEnded && (
         <div className="absolute top-4 right-4 bg-green-100 text-green-700 shadow px-4 py-2 rounded-md z-[1000] font-semibold">
-          Cursa a fost finalizată în {rideTimer} secunde!
+          Cursa a fost finalizată în {rideTimerRef.current} secunde!
         </div>
       )}
       {shape.length > 0 && <ShapePolyline shape={shape} />}

@@ -98,7 +98,8 @@ export function MainComponent() {
 
   const getUserCurrentLocation = () => {
     navigator.geolocation.getCurrentPosition((position) => {
-      setUserLocation([position.coords.latitude, position.coords.longitude]);
+      // setUserLocation([position.coords.latitude, position.coords.longitude]);
+      setUserLocation([47.151571, 27.587795]);
     });
   }
 
