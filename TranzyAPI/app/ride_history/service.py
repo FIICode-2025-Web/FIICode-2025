@@ -32,5 +32,5 @@ class HistoryService:
 
     def get_ride_history_by_user(self, db, token: str):
         payload = decodeJWT(token)
-        user_id = payload["email"]
+        user_id = payload["id"]
         return db.query(RideHistory).filter(RideHistory.user_id == user_id).all()
