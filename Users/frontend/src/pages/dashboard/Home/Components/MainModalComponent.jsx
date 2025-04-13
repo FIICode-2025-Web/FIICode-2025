@@ -27,7 +27,7 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
                     {selectedRoute && (
                         <button
                             onClick={handleSaveRoute}
-                            className={`mb-2 px-4 py-2 w-80 rounded-md font-semibold ${routeSaved ? "bg-green-600 text-white" : "bg-primary text-white hover:bg-secondary"
+                            className={`mb-2 px-4 py-2 w-80 rounded-md font-semibold ${routeSaved ? "bg-secondary text-white" : "bg-primary text-white hover:bg-secondary"
                                 }`}
                         >
                             {routeSaved ? "Ruta salvată" : "Alege ruta"}
@@ -78,14 +78,15 @@ const MainModalComponent = ({ toggleScooters, toggleCars, routes, selectedRoute,
         const averageSpeed = 42;
         const randomKmTravelled = parseFloat((Math.random() * (15 - 1) + 1).toFixed(2));
         const durationInMinutes = parseFloat(((randomKmTravelled / averageSpeed) * 60).toFixed(2));
-    
+        const endDate = new Date(now.getTime() + durationInMinutes * 60000);
+        
         const payload = {
             type: "public_transport",
             km_travelled: randomKmTravelled,
             duration: durationInMinutes,
             cost: 4,
             start_time: now.toISOString(),
-            end_time: now.toISOString()
+            end_time: endDate.toISOString()
         };
 
         try {

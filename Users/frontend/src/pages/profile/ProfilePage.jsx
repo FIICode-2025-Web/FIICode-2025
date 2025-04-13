@@ -5,6 +5,7 @@ import ReportsSection from "./Components/ReportsSection";
 import StatisticsSections from "./Components/StatisticsSections";
 import FeedbackSection from "./Components/FeedbackSection";
 import FavoritesRoutesSection from "./Components/FavoritesRoutesSection";
+import RideHistorySection from "./Components/RideHistorySection";
 
 export default function ProfilePage() {
   return (
@@ -15,6 +16,7 @@ export default function ProfilePage() {
         <BadgesSection />
         <FavoritesRoutesSection />
         <StatisticsSections />
+        <RideHistorySection/>
         <ReportsSection />
         <FeedbackSection/>
       </div>
