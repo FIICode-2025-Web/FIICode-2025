@@ -93,7 +93,7 @@ const SearchableSelect = ({ routes, selectedRoute, handleRouteChange, clearShape
                 key={route.route_short_name}
                 onClick={() => {
                   if (route.disabled) return;
-                  handleRouteChange({ target: { value: route.route_short_name } });
+                  handleRouteChange({ target: { value: route.route_short_name, route_id: route.route_id } });
                   setSearchTerm(route.label);
                   setShowDropdown(false);
                 }}

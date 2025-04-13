@@ -17,6 +17,7 @@ class HistoryService:
 
         ride_history = RideHistory(
             type=history.type,
+            ride_id=history.ride_id,
             user_id=user_id,
             km_travelled=history.km_travelled,
             duration=history.duration,

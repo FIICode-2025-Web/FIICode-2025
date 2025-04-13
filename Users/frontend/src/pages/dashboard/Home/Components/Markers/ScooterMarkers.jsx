@@ -55,6 +55,7 @@ const ScooterMarkers = ({ scooters, scooterIcon, fetchDistance, onPopupClose, se
 
         const payload = {
             type: "scooter",
+            ride_id: scooterId,
             km_travelled: parseFloat(kmTravelled.toFixed(2)),
             duration,
             cost: parseFloat(cost.toFixed(2)),

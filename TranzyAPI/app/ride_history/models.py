@@ -8,6 +8,7 @@ class RideHistory(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     type = Column(String)
+    ride_id = Column(Integer)
     user_id = Column(Integer)
     km_travelled = Column(Float)
     duration = Column(Float)
