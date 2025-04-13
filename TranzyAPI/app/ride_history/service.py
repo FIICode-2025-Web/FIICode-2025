@@ -1,8 +1,12 @@
-from app.ride_history.models import RideHistory
-from app.ride_history.schemas import HistorySchema
+from datetime import datetime, timedelta
+
+from sqlalchemy import func
+
 from app.auth.jwt.jwt_bearer import decodeJWT
 from app.gamification.service import GamificationService
-from app.auth.models import Users
+from app.ride_history.models import RideHistory
+from app.ride_history.schemas import HistorySchema
+from app.tranzy.models import TranzyRoutes
 
 gamificationService = GamificationService()
 
@@ -35,3 +39,37 @@ class HistoryService:
         payload = decodeJWT(token)
         user_id = payload["email"]
         return db.query(RideHistory).filter(RideHistory.user_id == user_id).all()
+
+    def get_frequent_routes(self, token: str, db):
+        payload = decodeJWT(token)
+        user_id = payload["id"]
+
+        one_month_ago = datetime.utcnow() - timedelta(days=30)
+
+        results = (
+            db.query(
+                RideHistory.ride_id,
+                func.count(RideHistory.id).label("count")
+            )
+            .filter(
+                RideHistory.user_id == user_id,
+                RideHistory.type == "public_transport",
+                RideHistory.start_time >= one_month_ago
+            )
+            .group_by(RideHistory.ride_id)
+            .order_by(func.count(RideHistory.id).desc())
+            .limit(3)
+            .all()
+        )
+
+        suggestions = []
+        for ride_id, count in results:
+            route = db.query(TranzyRoutes).filter(TranzyRoutes.route_id == ride_id).first()
+            suggestions.append({
+                "ride_id": ride_id,
+                "times_used": count,
+                "route_short_name": route.route_short_name,
+                # "suggestion": f"Vrei să refaci traseul {route.route_short_name}? În ultimele 30 de zile ai folosit acest traseu de {count} ori.",
+            })
+
+        return suggestions

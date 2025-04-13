@@ -19,6 +19,12 @@ history_service = HistoryService()
 def post_ride_history(ride_history: HistorySchema, db: db_dependency, token: Annotated[str, Depends(jwtBearer())]):
     return history_service.save_ride_history(ride_history, db, token)
 
+
 @history.get("/")
 def get_ride_history_by_user(db: db_dependency, token: Annotated[str, Depends(jwtBearer())]):
     return history_service.get_ride_history_by_user(db, token)
+
+
+@history.get("/suggested")
+def get_suggested_ride_history(db: db_dependency, token: Annotated[str, Depends(jwtBearer())]):
+    return history_service.get_frequent_routes(token, db)
