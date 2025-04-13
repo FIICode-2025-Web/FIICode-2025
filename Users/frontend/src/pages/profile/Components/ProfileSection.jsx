@@ -22,7 +22,7 @@ export default function ProfileSection() {
                 <div className="space-y-2">
                     <div>
                         <p className="text-sm text-gray-400">Nume de utilizator</p>
-                        <p className="text-base font-medium">{username}</p>
+                        <p className="text-base font-medium">{email.split('@')[0]}</p>
                     </div>
 
                     <hr className="border-gray-700" />
