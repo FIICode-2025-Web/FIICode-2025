@@ -12,6 +12,7 @@ class RideType(Enum):
 class HistorySchema(BaseModel):
     # type: RideType = Field(RideType)
     type: str = Field(str)
+    ride_id: int = Field(int)
     km_travelled: float = Field(float)
     duration: float = Field(float)
     cost: float = Field(float)
@@ -22,6 +23,7 @@ class HistorySchema(BaseModel):
 class RideHistoryResponseSchema(BaseModel):
     id: int = Field(int)
     type: str = Field(str)
+    ride_id: int = Field(int)
     user_id: int = Field(int)
     km_travelled: float = Field(float)
     duration: float = Field(float)

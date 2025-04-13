@@ -30,6 +30,7 @@ export function MainComponent() {
 
   const [shapeId, setShapeId] = useState("");
   const [selectedRoute, setSelectedRoute] = useState("");
+  const [selectedRouteId, setSelectedRouteId] = useState("");
   const [scooters, setScooters] = useState([]);
   const [cars, setCars] = useState([]);
   const [userLocation, setUserLocation] = useState([]);
@@ -145,14 +146,16 @@ export function MainComponent() {
 
   const handleRouteChange = (event) => {
     clearScooters();
-    const selectedRouteId = event.target.value;
+    const selectedRouteId = event.target.value; // short_name
+    const selected_route_id = event.target.route_id; // route_id
+    setSelectedRouteId(selected_route_id);
     setSelectedRoute(selectedRouteId);
     setIsOptionSelected(!!selectedRouteId);
     fetchShapeByRoute(selectedRouteId);
     fetchStopsForRouteShortName(selectedRouteId);
     fetchLiveVehiclesPositions(selectedRouteId);
   };
-  
+
 
   const handleDropdownBlur = (event) => {
     if (!event.relatedTarget || !event.relatedTarget.closest('.dropdown-container')) {
@@ -171,7 +174,7 @@ export function MainComponent() {
     setScooters([]);
   };
 
-  const clearCars = () =>{
+  const clearCars = () => {
     setCars([]);
   }
 
@@ -192,7 +195,7 @@ export function MainComponent() {
   const handleToggleScooters = () => {
     toggleScooters(showScooters, setScooters, setCars, setShowScooters, setShowCars);
   };
-  
+
   const handleToggleCars = () => {
     toggleCars(showCars, setCars, setScooters, setShowCars, setShowScooters, fetchCarsPosition);
   };
@@ -222,6 +225,7 @@ export function MainComponent() {
             direction={direction}
             handleDirection={handleDirection}
             onClear={clearAll}
+            selected_route_id={selectedRouteId}
           />
           <MapContent
             position={position}
