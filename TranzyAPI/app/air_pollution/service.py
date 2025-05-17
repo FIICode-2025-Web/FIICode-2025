@@ -1,45 +1,64 @@
-from typing import TypeVar
-
+import json
+from datetime import datetime, timedelta, timezone
 import requests
 from decouple import config
-from passlib.context import CryptContext
-from typing import List, Dict
-bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+from sqlalchemy.orm import Session
 
-T = TypeVar('T')
-AIR_KEY = config("tranzy_key")
+from app.air_pollution.models import AirPollutionCache
 
-
-zones_list = ['A124528','A115744','A124498','A124222','A76708','A227611','A124267','A124273','A124357',
-              'A124366','124327','A124489','A74905','A124225', 'A124324']
+AIR_KEY = config("aqi_key")
+ZONES = [
+    'A124528', 'A115744', 'A124498', 'A124222', 'A76708',
+    'A227611', 'A124267', 'A124273', 'A124357', 'A124366',
+    'A124327', 'A124489', 'A74905', 'A124225', 'A124324'
+]
 
 class AirPollutionService:
-    def get_air_pollution_levels(self) -> List[Dict]:
+    CACHE_TTL = timedelta(minutes=10)
+
+    def get_air_pollution_levels(self, db: Session):
+        # use timezone‐aware now
+        now = datetime.now(timezone.utc)
+
+        cache = (
+            db.query(AirPollutionCache)
+              .order_by(AirPollutionCache.fetched_at.desc())
+              .first()
+        )
+        if cache and (now - cache.fetched_at) < self.CACHE_TTL:
+            return json.loads(cache.data)
+
         pollution_zones = []
-
-        for zone in zones_list:
+        for zone in ZONES:
             try:
-                response = requests.get(f"https://api.waqi.info/feed/{zone}?token=f593a26ea46d1a06b349ee4acff7d4bdee09de84")
-
-                data = response.json()
-
-                if data["status"] != "ok":
+                resp = requests.get(
+                    f"https://api.waqi.info/feed/{zone}?token={AIR_KEY}",
+                    timeout=5
+                )
+                payload = resp.json()
+                if payload.get("status") != "ok":
                     continue
 
-                city = data["data"]["city"]
-                aqi = data["data"]["aqi"]
-
+                city = payload["data"]["city"]
+                aqi = payload["data"]["aqi"]
                 pollution_zones.append({
                     "zone_id": zone,
                     "zone_name": city["name"],
-                    "location": {
-                        "lat": city["geo"][0],
-                        "lon": city["geo"][1],
-                    },
-                    "aqi": aqi
+                    "location": {"lat": city["geo"][0], "lon": city["geo"][1]},
+                    "aqi": aqi,
                 })
-            except Exception as e:
-                print(f"Eroare la fetch pentru zona {zone}: {e}")
+            except Exception:
                 continue
+
+        serialized = json.dumps(pollution_zones)
+        # clear out old cache
+        db.query(AirPollutionCache).delete()
+        # insert fresh cache with UTC timestamp
+        new_cache = AirPollutionCache(
+            data=serialized,
+            fetched_at=now
+        )
+        db.add(new_cache)
+        db.commit()
 
         return pollution_zones
