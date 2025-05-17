@@ -83,7 +83,8 @@ const NotificationDropdown = () => {
 
     return (
         <div>
-            <img className='w-5 h-5 cursor-pointer' src={`/img/bell.png`} alt="notification" onClick={handleClick} />
+            
+            <img className='w-5 h-5 ml-2 mr-2 cursor-pointer' src={`/img/bell.png`} alt="notification" onClick={handleClick} />
             <Menu
                 anchorEl={anchorEl}
                 open={open}

@@ -12,6 +12,7 @@ import LoginRequired from "./context/LoginRequired";
 import { Home } from "./pages/dashboard/index";
 import ProfilePage from "./pages/profile/ProfilePage";
 import PollutionSection from "./pages/pollution/PollutionSection";
+import AssistantPage from "./pages/assistant/AssistantPage";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -56,6 +57,12 @@ export const routes = [
         name: "profile",
         path: "/profile",
         element: <ProfilePage/>
+      },
+            {
+        icon: <TableCellsIcon {...icon} />,
+        name: "assistant",
+        path: "/assistant",
+        element: <AssistantPage/>
       },
     ],
   },
