@@ -82,6 +82,10 @@ class GamificationService:
             return f"Realizează {badge.condition_value} curse noaptea (20:00 - 23:59)."
         elif badge.condition_type == "daily_streak":
             return f"Folosește una din modalitățile de transport în cel puțin {badge.condition_value} zile consecutive."
+        elif badge.condition_type == "pollution":
+            return f"Realizează {badge.condition_value} curse în zone cu un nivel scăzut de poluare."
+        elif badge.condition_type == "noise":
+            return f"Ajută la identificarea nivelului de zgomot în cel puțin {badge.condition_value} zone."
         else:
             return "Progres necunoscut."
 
