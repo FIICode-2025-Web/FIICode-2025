@@ -11,6 +11,7 @@ import { usePublicTransportData } from "../utils/publicTransportFunctions";
 import MapContent from "./Map/MapContent";
 import PollutionMainModalComponent from "./PollutionMainModalComponent";
 import PollutionMapContent from "./Map/PollutionMapContent";
+import RecordNoise from "@/pages/pollution/components/RecordNoise";
 
 export function PollutionMainComponent() {
 
@@ -213,10 +214,10 @@ export function PollutionMainComponent() {
   };
 
   return (
-    <div className="bg-main">
+    <div className="bg-main flex items-center justify-center flex-col">
+       
       <div className="flex items-center justify-center flex-row">
         <div className="flex justify-center items-center w-screen md:p-28 flex-col md:flex-row">
-        
           <PollutionMainModalComponent
             toggleCars={handleToggleCars}
             toggleScooters={handleToggleScooters}
@@ -235,12 +236,13 @@ export function PollutionMainComponent() {
             position={position}
             userLocation={userLocation}
             defaultIcon={defaultIcon}
-            selectedCategory={selectedPollutionCategory} 
+            selectedCategory={selectedPollutionCategory}
           />
         </div>
-        <div className="flex items-center justify-center gap-4 mt-4">
-        </div>
       </div>
+      {selectedPollutionCategory === "Poluarea fonică" && (
+      <RecordNoise/>
+    )}
     </div >
   );
 }
