@@ -19,9 +19,5 @@ vector_service = VectorService()
 def suggest_route_tasks(
     req: RouteTasksRequest,
 ):
-    result = vector_service.fetch_pipeline(
-        departure_place=req.departure_place,
-        arrival_place=req.arrival_place,
-        departure_time=req.departure_time
-    )
-    return result or {"routes": []}
+    result = vector_service.fetch_pipeline(text=req.text)
+    return result or {"events": [], "routes": []}
