@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRadiation } from '@fortawesome/free-solid-svg-icons';
 const calculateDuration = (distance, speed) => {
   const durationInHours = distance / speed;
   return Math.round(durationInHours * 60);
@@ -41,6 +42,22 @@ const RouteResults = ({ routes, distanceBetween, selectedCategory }) => {
   const scooterRoute = mockRouteData("scooter", distanceKm);
   const ridesharingRoute = mockRouteData("ridesharing", distanceKm);
 
+  function randomOutside7to20() {
+
+    const outsideCount = 26;
+    const i = Math.floor(Math.random() * outsideCount);
+    return i < 6
+      ? 1 + i
+      : 21 + (i - 6);
+  }
+  function getMockPollution() {
+    if (Math.random() < 0.7) {
+      return Math.floor(Math.random() * (20 - 7 + 1)) + 7;
+    } else {
+      return randomOutside7to20();
+    }
+  }
+
   const allRoutes = useMemo(() => [
     ...routes.map(route => ({
       ...route,
@@ -48,6 +65,7 @@ const RouteResults = ({ routes, distanceBetween, selectedCategory }) => {
       distance: distanceBetween.toFixed(1),
       duration: calculateDuration(distanceKm, 25),
       price: 2.5,
+      pollution: getMockPollution(),
     })),
     scooterRoute,
     ridesharingRoute,
@@ -131,6 +149,10 @@ const RouteResults = ({ routes, distanceBetween, selectedCategory }) => {
                 <div className="flex items-center justify-center gap-1">
                   <img src="/img/price-tag.png" className="w-5 h-5" />
                   <span className="text-gray-400 text-sm">{route.price} RON</span>
+                </div>
+                <div className="flex items-center justify-center gap-1">
+                  <FontAwesomeIcon icon={faRadiation} className="#5bcf72 w-4 h-4 text-red-500"/>
+                  <span className="text-gray-400 text-sm">{route.pollution}</span>
                 </div>
               </div>
             </div>
