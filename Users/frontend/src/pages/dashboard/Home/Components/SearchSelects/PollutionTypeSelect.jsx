@@ -18,7 +18,7 @@ const PollutionTypeSelect = ({ handleCategoryChange, clearAllData }) => {
         };
     }, []);
 
-    const options = ["Poluarea aerului", "Poluare fonica"];
+    const options = ["Poluarea aerului", "Poluarea fonică"];
 
     return (
         <div className=" relative w-80" ref={dropdownRef}>

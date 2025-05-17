@@ -8,70 +8,23 @@ import { toast } from "react-toastify";
 import PollutionTypeSelect from "./SearchSelects/PollutionTypeSelect";
 import SearchableStation from "./SearchSelects/SearchableStation";
 import TransportSelectWelcome from "./SearchSelects/TransportSelectWelcome";
+import RecordNoise from "@/pages/pollution/components/RecordNoise";
 
 const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange,
     clearShape, isOptionSelected, direction, handleDirection, onClear, filteredType, setFilteredType,
     handleSaveRoute, routeSaved }) => {
     return (
         <>
-            {selectedCategory === "Transport Public" && (
+            {selectedCategory === "Poluare fonica" && (
                 <div className="flex items-center justify-center md:gap-4 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md">
-
-                    <SearchableSelect
-                        routes={routes}
-                        selectedRoute={selectedRoute}
-                        handleRouteChange={handleRouteChange}
-                        clearShape={clearShape}
-                        onClear={onClear}
-                        filteredType={filteredType}
-                    />
-                    {isOptionSelected && selectedRoute && (
-                        <DirectionButton direction={direction} handleDirection={handleDirection} />
-                    )}
-                    {selectedRoute && (
-                        <button
-                            onClick={handleSaveRoute}
-                            className={`mb-2 px-4 py-2 w-80 rounded-md font-semibold ${routeSaved ? "bg-secondary text-white" : "bg-primary text-white hover:bg-secondary"
-                                }`}
-                        >
-                            {routeSaved ? "Ruta salvată" : "Alege ruta"}
-                        </button>
-                    )}
-
-                    <div className="grid grid-cols-2 md:gap-12 md:mx-2">
-                        <div
-                            className={`rounded-sm p-3 outline outline-2 ${filteredType === 3 ? "outline-green-500 opacity-90" : "outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500"
-                                }`}
-                            onClick={() => setFilteredType(filteredType === 3 ? null : 3)}
-                        >
-                            <div className="w-6 h-6 img-bus hover:cursor-pointer"></div>
-                        </div>
-                        <div
-                            className={`rounded-sm p-3 outline outline-2 ${filteredType === 0 ? "outline-green-500 opacity-90" : "outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500"
-                                }`}
-                            onClick={() => setFilteredType(filteredType === 0 ? null : 0)}
-                        >
-                            <div className="w-6 h-6 img-tram hover:cursor-pointer"></div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {selectedCategory === "Ridesharing" && (
-                <div className="grid grid-cols-2 gap-12 mx-2">
-                    <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
-                        <div className="w-6 h-6 img-scooter hover:cursor-pointer" onClick={toggleScooters}></div>
-                    </div>
-                    <div className="rounded-sm p-3 outline outline-2 outline-gray-500 opacity-60 hover:opacity-90 hover:outline-green-500">
-                        <div className="w-6 h-6 img-ridesharing hover:cursor-pointer" onClick={toggleCars}></div>
-                    </div>
+                    
                 </div>
             )}
         </>
     );
 };
 
-const PollutionMainModalComponent = ({ selectedCategory,setSelectedCategory ,toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, isOptionSelected, clearShape, direction, handleDirection, onClear, selected_route_id }) => {
+const PollutionMainModalComponent = ({ selectedCategory, setSelectedCategory ,toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, isOptionSelected, clearShape, direction, handleDirection, onClear, selected_route_id }) => {
     const [filteredType, setFilteredType] = useState(null);
     const [routeSaved, setRouteSaved] = useState(false);
 
@@ -191,35 +144,7 @@ const PollutionMainModalComponent = ({ selectedCategory,setSelectedCategory ,tog
                 direction={direction} handleDirection={handleDirection} onClear={onClear}
                 filteredType={filteredType} setFilteredType={setFilteredType} handleSaveRoute={handleSaveRoute} routeSaved={routeSaved}
             />
-            <div className="flex justify-center h-[32rem] gap-4 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-2 md:p-4 mt-10 md:mt-0">
-            <p className="text-[1rem] text-gray-300">Mod poluare:</p>
             <PollutionTypeSelect handleCategoryChange={setSelectedCategory} clearAllData={onClear} />
-
-                <p className="text-[1rem] text-gray-300">Plecare:</p>
-                <SearchableStation
-                    stations={stations}
-                    onSelect={setFirstStop}
-                    onClear={handleClearFirstStop}
-                />
-
-                <p className="text-[1rem] text-gray-300">Sosire:</p>
-                <SearchableStation
-                    stations={stations}
-                    onSelect={setSecondStop}
-                    onClear={handleClearSecondStop}
-                />
-                <p className="text-[1rem] text-gray-300">Tip de transport:</p>
-                <TransportSelectWelcome
-                    handleCategoryChange={setSelectedCategory}
-                    clearAllData={onClear}
-                />
-                <button
-                    onClick={fetchRouteBetweenStops}
-                    className="bg-primary hover:bg-primary hover:bg-opacity-80 text-white font-semibold py-2 px-4 rounded my-6"
-                >
-                    Cauta rute
-                </button>
-            </div>
         </div>
     );
 };

@@ -1,15 +1,14 @@
 import React from 'react'
 import DashboardNavbar from "@/layouts/DashboardNavbar";
 import RecordNoise from './components/RecordNoise';
+import PollutionMainComponent from '../dashboard/Home/Components/PollutionMainComponent';
 
 const PollutionSection = () => {
   return (
-        <>
+        <div>
           <DashboardNavbar />
-          <div className="p-8 md:p-24 text-white space-y-8 bg-gray-900 min-h-screen">
-            <RecordNoise />
-          </div>
-        </>
+          <PollutionMainComponent/>
+        </div>
   )
 }
 

@@ -1,71 +1,170 @@
+// PollutionMapContent.jsx
 import { useEffect, useState } from "react";
-import { Marker, Popup, Circle, Polyline } from "react-leaflet";
+import { Circle, Popup } from "react-leaflet";
 import MapWrapper from "./MapWrapper";
 import UserMarker from "../Markers/UserMarker";
 import axios from "axios";
+import trafficSound from "./audio/traffic_loud.mp3";
 
+/* ---------- helpers ---------- */
 const getColorForAQI = (aqi) => {
   if (aqi <= 7) return "green";
   if (aqi <= 20) return "yellow";
   return "red";
 };
 
+const getColorForDecibel = (dB) => {
+  if (dB <= 50) return "green";
+  if (dB <= 70) return "orange";
+  return "red";
+};
+
+/* ---------- child component: popup with toggleable audio ---------- */
+const NoisePopup = ({ zone }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioId = `audio-${zone.zone_id}`;
+
+  const toggleAudio = () => {
+    const audio = document.getElementById(audioId);
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+      audio.currentTime = 0;
+      setIsPlaying(false);
+    } else {
+      audio.play();
+      setIsPlaying(true);
+      audio.onended = () => setIsPlaying(false);
+    }
+  };
+
+  return (
+    <>
+      <strong>Noise Zone #{zone.zone_id}</strong>
+      <br />
+      Avg dB: {zone.avg_decibel}
+      <br />
+      Max dB: {zone.max_decibel}
+      <br />
+      Recorded: {new Date(zone.timestamp).toLocaleString()}
+      <br />
+      <audio id={audioId} src={trafficSound} />
+      <button
+        onClick={toggleAudio}
+        className="w-80 flex items-center rounded-md justify-center text-white text-md h-10 normal-case bg-primary hover:bg-secondary"
+      >
+        {isPlaying ? "⏹️ Stop Audio" : "▶️ Play Sample Noise"}
+      </button>
+    </>
+  );
+};
+
+/* ---------- main map content ---------- */
 const PollutionMapContent = ({
   position,
   userLocation,
   defaultIcon,
   selectedCategory,
 }) => {
-  const [pollutionData, setPollutionData] = useState([]);
+  const [airData, setAirData] = useState([]);
+  const [noiseData, setNoiseData] = useState([]);
   const token = localStorage.getItem("token");
 
+  /* fetch data once on mount */
   useEffect(() => {
-    const fetchPollutionData = async () => {
+    const fetchAirPollutionData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8003/api/v1/air_pollution/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        setPollutionData(response.data);
-      } catch (error) {
-        console.error("Error fetching pollution data:", error);
+        const { data } = await axios.get(
+          "http://127.0.0.1:8003/api/v1/air_pollution/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setAirData(data);
+      } catch (err) {
+        console.error("Error fetching air pollution data:", err);
       }
     };
 
-    fetchPollutionData();
-  }, []);
+    const fetchNoisePollutionData = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://127.0.0.1:8003/api/v1/noise/zones",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        setNoiseData(data);
+      } catch (err) {
+        console.error("Error fetching noise pollution data:", err);
+      }
+    };
+
+    fetchAirPollutionData();
+    fetchNoisePollutionData();
+  }, [token]);
 
   return (
     <MapWrapper center={position}>
+      {/* user location marker */}
       {userLocation.length > 0 && (
         <UserMarker userLocation={userLocation} icon={defaultIcon} />
       )}
 
+      {/* air-quality zones */}
       {selectedCategory === "Poluarea aerului" &&
-        pollutionData.map((zone) => {
+        airData.map((zone) => {
           const color = getColorForAQI(zone.aqi);
-          const position = [zone.location.lat, zone.location.lon];
+          const pos = [zone.location.lat, zone.location.lon];
+
           return (
-            <>
-              <Circle
-                key={zone.zone_id}
-                center={position}
-                radius={350}
-                pathOptions={{
-                  color,
-                  fillColor: color,
-                  fillOpacity: 0.4,
-                }}
-              >
-                <Popup>
-                  <strong>{zone.zone_name}</strong>
-                  <br />
-                  AQI: {zone.aqi}
-                </Popup>
-              </Circle>
-            </>
+            <Circle
+              key={`air-${zone.zone_id}`}
+              center={pos}
+              radius={350}
+              pathOptions={{
+                color,
+                fillColor: color,
+                fillOpacity: 0.4,
+              }}
+            >
+              <Popup>
+                <strong>{zone.zone_name}</strong>
+                <br />
+                AQI: {zone.aqi}
+              </Popup>
+            </Circle>
+          );
+        })}
+
+      {/* noise-pollution zones */}
+      {selectedCategory === "Poluarea fonică" &&
+        noiseData.map((zone) => {
+          const color = getColorForDecibel(zone.avg_decibel);
+          const pos = [zone.center_lat, zone.center_lon];
+
+          return (
+            <Circle
+              key={`noise-${zone.zone_id}`}
+              center={pos}
+              radius={350}
+              pathOptions={{
+                color,
+                fillColor: color,
+                fillOpacity: 0.4,
+              }}
+            >
+              <Popup>
+                <NoisePopup zone={zone} />
+              </Popup>
+            </Circle>
           );
         })}
     </MapWrapper>
