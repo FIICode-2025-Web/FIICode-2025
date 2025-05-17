@@ -13,6 +13,7 @@ from app.air_pollution.router import air_router
 from app.noise_record.router import noise_router
 from app.vector.router import vector_router
 from app.voice_action.router import voice_router
+from app.traffic_analyzer.router import traffic_router
 from app.database import engine, Base
 
 app = FastAPI(dependencies=[Depends(jwtBearer())])
@@ -38,6 +39,7 @@ app.include_router(air_router)
 app.include_router(noise_router)
 app.include_router(vector_router)
 app.include_router(voice_router)
+app.include_router(traffic_router)
 register_auth_exception_handlers(app)
 
 Base.metadata.create_all(bind=engine)
