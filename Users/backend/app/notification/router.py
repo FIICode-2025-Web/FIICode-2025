@@ -33,6 +33,8 @@ async def send_notification(db: db_dependency, type: str, message: str, user: st
         notification_service.add_notification_to_all_users(message, user, type, db)
     if type == 'badge':
         notification_service.add_notification_to_user(message, user, type, db)
+    if type == 'noise':
+        notification_service.add_notification_to_user(message, user, type, db)
 
     payload = {
         "type": type,

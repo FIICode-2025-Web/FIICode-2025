@@ -6,12 +6,12 @@ import TrafficOverview from './components/TrafficOverview';
 
 const PollutionSection = () => {
   return (
-        <div>
-          <DashboardNavbar />
-          <PollutionMainComponent/>
-          <TrafficOverview/>
-          <ImageAnalyzerSection/>
-        </div>
+    <div>
+      <DashboardNavbar />
+      <PollutionMainComponent />
+      <TrafficOverview />
+      <ImageAnalyzerSection />
+    </div>
   )
 }
 

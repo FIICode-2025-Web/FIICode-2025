@@ -92,7 +92,7 @@ export default function RecordNoise() {
 
     return (
         <Card className="bg-gray-900 flex display-center items-center p-6 rounded-2xl shadow-md">
-            <Typography variant="h5" className="text-white text-lg text-white text-opacity-80 mb-2">
+            <Typography variant="h5" className="text-white text-lg text-opacity-80 mb-2">
                 Înregistrare zgomot
             </Typography>
 
