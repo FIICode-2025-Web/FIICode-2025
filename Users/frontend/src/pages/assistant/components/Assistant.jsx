@@ -21,7 +21,7 @@ const RouteCard = ({ route }) => {
     const textToSpeak = `Plecare la ${dep}, sosire la ${arr}, durată ${route.duration_min} minute, distanță ${route.distance_km.toFixed(1)} kilometri, cost ${route.cost_ron} RON, AQI maxim ${route.max_aqi}, zgomot ${route.max_noise_db} decibeli.`;
 
     return (
-        <div className="relative flex flex-col bg-gray-700 text-white rounded-xl p-4 shadow-2xl w-full sm:max-w-[110px] lg:max-w-[200px]">
+        <div className="relative flex flex-col bg-gray-700 text-white rounded-xl p-4 shadow-2xl w-full sm:max-w-[calc(50%-0.5rem)] md:max-w-[200px]">
             <h3 className="text-base font-semibold mb-1 capitalize">{route.type}</h3>
             <p className="text-xs mb-1"><strong>➡️ Plecare:</strong> {dep}</p>
             <p className="text-xs mb-1"><strong>📍 Sosire:</strong> {arr}</p>
@@ -43,7 +43,7 @@ const RouteCard = ({ route }) => {
 };
 
 const RouteCards = ({ routes }) => (
-    <div className="flex flex-wrap gap-4 mt-3 justify-center lg:justify-start">
+    <div className="flex flex-wrap gap-4 mt-3 justify-center md:justify-start">
         {routes.map((r, i) => <RouteCard key={i} route={r} />)}
     </div>
 );
@@ -53,7 +53,7 @@ const RouteSummary = ({ data }) => {
     const dateLabel = new Date(events[0].time).toLocaleDateString("ro-RO");
 
     return (
-        <div className="prose prose-invert w-[40rem]">
+        <div className="prose prose-invert w-full max-w-full lg:max-w-[40rem]">
             <h2>📅 Planificarea ta pentru {dateLabel}</h2>
             {events.slice(0, -1).map((from, idx) => {
                 const to = events[idx + 1];
@@ -160,8 +160,8 @@ const Assistant = () => {
     };
 
     return (
-        <div className="bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl flex flex-col h-[85vh]">
-            <div ref={ref} className="flex-1 overflow-y-auto p-6 space-y-4 scroll-smooth">
+        <div className="bg-gray-800 bg-opacity-90 rounded-2xl shadow-xl flex flex-col h-[85vh] w-full max-w-full sm:max-w-[95%] mx-auto min-h-0">
+            <div ref={ref} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 scroll-smooth">
                 {history.map((m, i) => (
                     <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
                         <div className={`px-4 py-2 rounded-2xl text-sm max-w-[90%] relative ${m.from === "user" ? "bg-green-600" : "bg-gray-700"} text-white`}>
@@ -174,10 +174,10 @@ const Assistant = () => {
                                     <ReactMarkdown>{m.text}</ReactMarkdown>
                                     <button
                                         onClick={() => speak(m.text)}
-                                        className="absolute top-1 right-1 text-white hover:text-green-400"
+                                        className="absolute top-2 right-0 text-white hover:text-green-400"
                                         aria-label="Redă cu voce"
                                     >
-                                        <Megaphone className="w-4 h-4 ml-6" />
+                                        <Megaphone className="w-4 h-4" />
                                     </button>
                                 </>
                             ) : (m.from === "user" && m.text)}
@@ -186,7 +186,7 @@ const Assistant = () => {
                 ))}
             </div>
 
-            <div className="p-4 border-t border-gray-700 flex items-center gap-2">
+            <div className="p-4 border-t border-gray-700 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                 <button
                     onClick={startRecognition}
                     className={`p-2 rounded-xl transition ${isRecording ? "bg-red-600" : "bg-gray-600"} text-white`}
@@ -199,7 +199,7 @@ const Assistant = () => {
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && send()}
                     placeholder="Scrie un mesaj..."
-                    className="flex-1 bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none"
+                    className="flex-1 bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none w-full"
                 />
                 <button onClick={send} className="bg-green-600 p-2 rounded-xl hover:bg-green-700 transition" aria-label="Trimite">
                     <PaperPlaneIcon className="text-white" />
