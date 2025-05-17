@@ -8,6 +8,12 @@
   background-image: url('../img/mainbg.jpg');
 }
 
+.bg-main-blurry {
+  @apply bg-cover bg-center;
+  background-image: url('../img/mainbg.jpg'); 
+  filter: blur(20px);                        
+}
+
 .bg-main-reversed {
   @apply bg-cover bg-center;
   background-image: url('../img/mainbg-reversed.jpg');
