@@ -13,7 +13,6 @@ db_dependency = Annotated[Session, Depends(get_db)]
 air_pollution_service = AirPollutionService()
 
 
-# ------------------------------- Vehicles
 @air_router.get("/")
-def get_pollution_levels():
-    return air_pollution_service.get_air_pollution_levels()
+def get_pollution_levels(db: db_dependency):
+    return air_pollution_service.get_air_pollution_levels(db)
