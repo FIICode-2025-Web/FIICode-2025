@@ -68,6 +68,22 @@ class GamificationService:
             "condition_type": "daily_streak",
             "condition_value": 7,
             "description": "Ai avut un streak de {value} zile consecutive cu cel puțin o călătorie."
+        },
+        {
+            "name": "Low Emission Champion",
+            "identification_name": "low_emission",
+            "type": "general",
+            "condition_type": "pollution",
+            "condition_value": 10,
+            "description": "Ai realizat peste {value} curse în zone cu un nivel scăzut de poluare."
+        },
+        {
+            "name": "Noise Cartographer",
+            "identification_name": "noise",
+            "type": "general",
+            "condition_type": "noise",
+            "condition_value": 10,
+            "description": "Ai ajutat la identificarea nivelului de zgomot în peste {value} zone"
         }
     ]
 

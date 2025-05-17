@@ -1,6 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRadiation } from '@fortawesome/free-solid-svg-icons';
+import { Button } from "@material-tailwind/react";
+import axios from "axios";
+import { toast } from "react-toastify";
 const calculateDuration = (distance, speed) => {
   const durationInHours = distance / speed;
   return Math.round(durationInHours * 60);
@@ -36,6 +39,7 @@ const mockRouteData = (type, distanceKm) => {
 
 const RouteResults = ({ routes, distanceBetween, selectedCategory }) => {
   const [filter, setFilter] = useState("time");
+  const [selectedRoute, setSelectedRoute] = useState(null);
 
   const distanceKm = distanceBetween / 1000;
 
@@ -86,6 +90,7 @@ const RouteResults = ({ routes, distanceBetween, selectedCategory }) => {
 
     if (filter === "eco-friendly") {
       filtered = filtered.filter(route => route.type !== "ridesharing");
+      filtered.sort((a, b) => a.pollution - b.pollution);
     } else if (filter === "price") {
       filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
     } else if (filter === "time") {
@@ -94,6 +99,51 @@ const RouteResults = ({ routes, distanceBetween, selectedCategory }) => {
 
     return filtered;
   }, [allRoutes, filter, selectedCategory]);
+
+  const handleSelectRoute = (routeId) => {
+    setSelectedRoute(routeId);
+    console.log("Selected route:", selectedRoute);
+
+  }
+
+  const handleChooseRoute = async () => {
+    if (selectedRoute) {
+
+
+      const now = new Date();
+      const averageSpeed = 25;
+      const randomKmTravelled = parseFloat((Math.random() * (10 - 1) + 1).toFixed(2));
+      const durationInMinutes = parseFloat(((randomKmTravelled / averageSpeed) * 60).toFixed(2));
+      const endDate = new Date(now.getTime() + durationInMinutes * 60000);
+
+      const payload = {
+        type: "public_transport",
+        ride_id: selectedRoute,
+        km_travelled: randomKmTravelled,
+        duration: durationInMinutes,
+        cost: 4,
+        start_time: now.toISOString(),
+        end_time: endDate.toISOString()
+      };
+
+      try {
+        const token = localStorage.getItem("token");
+
+        await axios.post("http://127.0.0.1:8003/api/v1/ride-history/", payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+
+        toast.success(`Călătorie placută! Costul biletului este de 4 lei!`);
+
+      } catch (err) {
+        console.error("Saving public transport route failed:", err);
+      }
+    }
+    setSelectedRoute(null);
+  };
 
   if (!routes || routes.length === 0) return null;
 
@@ -112,6 +162,14 @@ const RouteResults = ({ routes, distanceBetween, selectedCategory }) => {
           <option value="price">Pret</option>
           <option value="time">Timp</option>
         </select>
+        {selectedRoute && (
+          <Button
+            className="ml-4 bg-green-600 text-white px-3 py-1 rounded-md text-sm"
+            onClick={() => handleChooseRoute()}
+          >
+            Alege ruta
+          </Button>
+        )}
       </div>
 
       <ul
@@ -123,7 +181,12 @@ const RouteResults = ({ routes, distanceBetween, selectedCategory }) => {
         {filteredRoutes.map((route, index) => (
           <li
             key={route.trip_id || `${route.type}-${index}`}
-            className="flex items-center gap-4 border border-gray-800 rounded-lg p-3 hover:bg-gray-800"
+            className={`flex items-center gap-4 border border-gray-800 rounded-lg p-3 hover:bg-gray-800 cursor-pointer
+            ${selectedRoute === (route.trip_id || `${route.type}-${index}`) ? 'bg-green-800' : ''}`}
+            onClick={() => {
+              handleSelectRoute(route.trip_id || `${route.type}-${index}`);
+            }
+            }
           >
             <div className="w-10 h-10 flex items-center justify-center bg-primary text-white font-bold text-sm rounded-md uppercase">
               {route.route_short_name || route.type.charAt(0)}
@@ -151,7 +214,7 @@ const RouteResults = ({ routes, distanceBetween, selectedCategory }) => {
                   <span className="text-gray-400 text-sm">{route.price} RON</span>
                 </div>
                 <div className="flex items-center justify-center gap-1">
-                  <FontAwesomeIcon icon={faRadiation} className="#5bcf72 w-4 h-4 text-red-500"/>
+                  <FontAwesomeIcon icon={faRadiation} className="#5bcf72 w-4 h-4 text-red-500" />
                   <span className="text-gray-400 text-sm">{route.pollution}</span>
                 </div>
               </div>
