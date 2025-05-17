@@ -38,7 +38,7 @@ export function DashboardNavbar() {
               <Button
                 variant="text"
                 color="blue-gray"
-                className="hidden items-center gap-1 text-primary px-4 xl:flex normal-case"
+                className="items-center gap-1 text-primary px-4 flex normal-case"
               >
                 <FontAwesomeIcon icon={faRadiation} className="#5bcf72 w-4 h-4"
                 />
