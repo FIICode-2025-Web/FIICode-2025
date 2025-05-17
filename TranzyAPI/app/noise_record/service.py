@@ -24,7 +24,7 @@ class NoiseRecordService:
             user_id=user_id,
             decibel=noiseRecord.decibel,
             latitude=noiseRecord.latitude,
-            longitude=noiseRecord.latitude,
+            longitude=noiseRecord.longitude,
             timestamp=datetime.utcnow(),
             file_name=noiseRecord.file_name
         )
