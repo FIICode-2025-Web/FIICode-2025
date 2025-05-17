@@ -12,10 +12,8 @@ export function Home() {
       <DashboardNavbar />
       <WelcomeSection />
       <MainComponent />
-      <PollutionMainComponent/>
       <FooterSection />
     </>
-
   )
 }
 
