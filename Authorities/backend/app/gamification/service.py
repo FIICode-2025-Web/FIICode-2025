@@ -11,7 +11,8 @@ class GamificationService:
             "type": "scooter",
             "condition_type": "km_total",
             "condition_value": 50,
-            "description": "Ai parcurs peste {value} km cu trotineta electrică."
+            "description": "Ai parcurs peste {value} km cu trotineta electrică.",
+            "value": 10
         },
         {
             "name": "Scooter Lover",
@@ -19,7 +20,8 @@ class GamificationService:
             "type": "scooter",
             "condition_type": "rides_count",
             "condition_value": 30,
-            "description": "Ai realizat peste {value} curse cu trotineta electrică."
+            "description": "Ai realizat peste {value} curse cu trotineta electrică.",
+            "value": 15
         },
         {
             "name": "Ridesharing Addict",
@@ -27,7 +29,8 @@ class GamificationService:
             "type": "ride_sharing",
             "condition_type": "km_total",
             "condition_value": 100,
-            "description": "Ai parcurs peste {value} km cu mașini de ridesharing."
+            "description": "Ai parcurs peste {value} km cu mașini de ridesharing.",
+            "value": 12
         },
         {
             "name": "Public Transport Fan",
@@ -35,7 +38,8 @@ class GamificationService:
             "type": "public_transport",
             "condition_type": "rides_count",
             "condition_value": 20,
-            "description": "Ai efectuat peste {value} curse în cadrul transportului public."
+            "description": "Ai efectuat peste {value} curse în cadrul transportului public.",
+            "value": 12
         },
         {
             "name": "All-Round Traveler",
@@ -43,7 +47,8 @@ class GamificationService:
             "type": "general",
             "condition_type": "badges_count",
             "condition_value": 4,
-            "description": "Ai obținut cel puțin {value} alte badge-uri diferite."
+            "description": "Ai obținut cel puțin {value} alte badge-uri diferite.",
+            "value": 12
         },
         {
             "name": "Early Bird",
@@ -51,7 +56,8 @@ class GamificationService:
             "type": "general",
             "condition_type": "morning_rides",
             "condition_value": 5,
-            "description": "Ai avut cel puțin {value} curse dimineața (06:00 - 11:59)."
+            "description": "Ai avut cel puțin {value} curse dimineața (06:00 - 11:59).",
+            "value": 12
         },
         {
             "name": "Night Rider",
@@ -59,7 +65,8 @@ class GamificationService:
             "type": "general",
             "condition_type": "night_rides",
             "condition_value": 5,
-            "description": "Ai avut cel puțin {value} curse seara (20:00 - 23:59)."
+            "description": "Ai avut cel puțin {value} curse seara (20:00 - 23:59).",
+            "value": 12
         },
         {
             "name": "Streak Master",
@@ -67,7 +74,8 @@ class GamificationService:
             "type": "general",
             "condition_type": "daily_streak",
             "condition_value": 7,
-            "description": "Ai avut un streak de {value} zile consecutive cu cel puțin o călătorie."
+            "description": "Ai avut un streak de {value} zile consecutive cu cel puțin o călătorie.",
+            "value": 12
         },
         {
             "name": "Low Emission Champion",
@@ -75,7 +83,8 @@ class GamificationService:
             "type": "general",
             "condition_type": "pollution",
             "condition_value": 10,
-            "description": "Ai realizat peste {value} curse în zone cu un nivel scăzut de poluare."
+            "description": "Ai realizat peste {value} curse în zone cu un nivel scăzut de poluare.",
+            "value": 12
         },
         {
             "name": "Noise Cartographer",
@@ -83,7 +92,8 @@ class GamificationService:
             "type": "general",
             "condition_type": "noise",
             "condition_value": 10,
-            "description": "Ai ajutat la identificarea nivelului de zgomot în peste {value} zone"
+            "description": "Ai ajutat la identificarea nivelului de zgomot în peste {value} zone",
+            "value": 12
         }
     ]
 

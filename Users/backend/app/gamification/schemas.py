@@ -9,6 +9,7 @@ class BadgeSchema(BaseModel):
     condition_type:str = Field(str)
     condition_value: int = Field(int)
     description: str = Field(str)
+    value: int = Field(int)
 
 class GetBadgeSchema(BaseModel):
     user_id: int = Field(int)

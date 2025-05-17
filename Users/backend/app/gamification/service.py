@@ -41,7 +41,8 @@ class GamificationService:
                     condition_type=badge_info.condition_type,
                     condition_value=badge_info.condition_value,
                     description=badge_info.description
-                    .replace("{value}", str(badge_info.condition_value))
+                    .replace("{value}", str(badge_info.condition_value)),
+                    value=badge_info.value
                 ),
             )
             badges_list.append(badge_schema)
@@ -68,6 +69,24 @@ class GamificationService:
                 )
                 inactive_badges.append(badge_schema)
         return inactive_badges
+
+    def get_leaderboard(self, db: Session):
+        users = db.query(Users).all()
+        user_list = []
+        for user in users:
+            user_score = 0
+            badges_numbers = 0
+            badges = db.query(UserBadges).filter(UserBadges.user_id == user.id).all()
+            for badge in badges:
+                badge_info = db.query(Badges).filter(Badges.id == badge.badge_id).first()
+                user_score += badge_info.value
+                badges_numbers += 1
+            user_list.append({
+                "username": user.username,
+                "user_score": user_score,
+                "total_badges": badges_numbers
+            })
+        return user_list
 
     def generate_inactive_description(self, badge: Badges):
         if badge.condition_type == "km_total":

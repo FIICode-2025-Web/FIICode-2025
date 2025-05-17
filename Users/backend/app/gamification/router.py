@@ -22,6 +22,12 @@ def add_badges(user_id: int, badge_id: int, db: db_dependency):
 def get_badges_by_user(token: Annotated[str, Depends(jwtBearer())], db: db_dependency):
     return gamification_service.get_badges_by_user(token, db)
 
+
 @gamification_router.get("/inactive")
 def get_inactive_badges_by_user(token: Annotated[str, Depends(jwtBearer())], db: db_dependency):
     return gamification_service.get_inactive_badges_by_user(token, db)
+
+
+@gamification_router.get("/leaderboard")
+def get_leaderboard(db: db_dependency):
+    return gamification_service.get_leaderboard(db)
