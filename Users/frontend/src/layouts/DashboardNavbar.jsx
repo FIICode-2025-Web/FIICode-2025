@@ -6,6 +6,7 @@ import NotificationDropdown from "./NotificationDropdown";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRadiation } from '@fortawesome/free-solid-svg-icons';
 import { faHatWizard } from "@fortawesome/free-solid-svg-icons";
+import { faTrophy } from "@fortawesome/free-solid-svg-icons";
 import Tooltip from '@mui/material/Tooltip';
 
 
@@ -54,6 +55,18 @@ export function DashboardNavbar() {
                 className="items-center gap-1 text-primary px-4 flex normal-case"
               >
                 <FontAwesomeIcon icon={faRadiation} className="#5bcf72 w-4 h-4"
+                />
+              </Button>
+            </Tooltip>
+          </Link>
+          <Link to="/dashboard/leaderboard">
+            <Tooltip title={"Vizualizare clasament"}>
+              <Button
+                variant="text"
+                color="blue-gray"
+                className="items-center gap-1 text-primary px-4 flex normal-case"
+              >
+                <FontAwesomeIcon icon={faTrophy} className="#5bcf72 w-4 h-4"
                 />
               </Button>
             </Tooltip>

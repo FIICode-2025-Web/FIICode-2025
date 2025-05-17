@@ -13,6 +13,7 @@ import { Home } from "./pages/dashboard/index";
 import ProfilePage from "./pages/profile/ProfilePage";
 import PollutionSection from "./pages/pollution/PollutionSection";
 import AssistantPage from "./pages/assistant/AssistantPage";
+import LeaderboardPage from "./pages/leaderboard/LeaderboardPage";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -50,19 +51,25 @@ export const routes = [
         icon: <TableCellsIcon {...icon} />,
         name: "pollution",
         path: "/pollution",
-        element: <PollutionSection/>
+        element: <PollutionSection />
       },
       {
         icon: <TableCellsIcon {...icon} />,
         name: "profile",
         path: "/profile",
-        element: <ProfilePage/>
+        element: <ProfilePage />
       },
-            {
+      {
         icon: <TableCellsIcon {...icon} />,
         name: "assistant",
         path: "/assistant",
-        element: <AssistantPage/>
+        element: <AssistantPage />
+      },
+      {
+        icon: <TableCellsIcon {...icon} />,
+        name: "leaderboard",
+        path: "/leaderboard",
+        element: <LeaderboardPage />
       },
     ],
   },
