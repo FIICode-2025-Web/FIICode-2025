@@ -64,7 +64,8 @@ class GamificationService:
                         type=badge.type,
                         condition_type=badge.condition_type,
                         condition_value=badge.condition_value,
-                        description=self.generate_inactive_description(badge)
+                        description=self.generate_inactive_description(badge),
+                        value = badge.value
                     ),
                 )
                 inactive_badges.append(badge_schema)

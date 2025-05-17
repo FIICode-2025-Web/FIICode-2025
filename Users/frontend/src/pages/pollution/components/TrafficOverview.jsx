@@ -70,6 +70,7 @@ const TrafficOverview = () => {
     );
 
   return (
+    <div className="w-screen bg-gray-900 p-16" >
     <Card className="bg-gray-900 p-6 rounded-2xl shadow-xl max-w-4xl mx-auto space-y-6">
       <Typography variant="h5" className="text-white text-center mb-4">
         Overview Trafic & Aglomerare
@@ -116,6 +117,7 @@ const TrafficOverview = () => {
         ))}
       </div>
     </Card>
+    </div>
   );
 };
 
