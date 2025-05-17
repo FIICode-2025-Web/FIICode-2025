@@ -58,11 +58,55 @@ const Assistant = () => {
         { from: "assistant", text: "Salut! Eu voi fi asistentul tau pentru a-ți găsi ruta potrivită. Spune-mi planul tău!" }
     ]);
     const [input, setInput] = useState("");
+    const [isListening, setIsListening] = useState(false);
     const ref = useRef(null);
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = SpeechRecognition ? new SpeechRecognition() : null;
 
     useEffect(() => {
         if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;
     }, [history]);
+
+    useEffect(() => {
+        if (!recognition) return;
+
+        recognition.lang = "ro-RO";
+        recognition.interimResults = false;
+
+        recognition.onresult = (event) => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join('');
+            setInput(transcript);
+            setIsListening(false);
+            send(transcript); // trimitere automată
+        };
+
+        recognition.onerror = (e) => {
+            console.error("Eroare recunoaștere vocală:", e);
+            setIsListening(false);
+        };
+
+        recognition.onend = () => {
+            setIsListening(false);
+        };
+    }, []);
+
+    const toggleListening = () => {
+        if (!recognition) {
+            alert("Browserul tău nu suportă recunoașterea vocală.");
+            return;
+        }
+
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+
+        setIsListening(!isListening);
+    };
 
     const pushTypewriter = (jsxContent) => {
         const html = renderToString(jsxContent);
@@ -86,27 +130,25 @@ const Assistant = () => {
         }, 20);
     };
 
-    const send = async () => {
-        if (!input.trim()) return;
+    const send = async (textOverride = null) => {
+        const text = textOverride ?? input;
+        if (!text.trim()) return;
 
-        setHistory(h => [...h, { from: "user", text: input }]);
+        setHistory(h => [...h, { from: "user", text }]);
         setInput("");
         setHistory(h => [...h, { from: "assistant", loading: true }]);
         const token = localStorage.getItem("token");
         try {
-            const res = await axios.post("http://127.0.0.1:8003/api/v1/vector/route-tasks", { text: input }, {
+            const res = await axios.post("http://127.0.0.1:8003/api/v1/vector/route-tasks", { text }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"
                 }
             });
 
-            // 🔥 Afișează direct componentele frumos formate
             const jsx = <RouteSummary data={res.data} />;
             setHistory(h => [...h.slice(0, -1), { from: "assistant", temp: true, html: "" }]);
             pushTypewriter(jsx);
-
-
 
         } catch (err) {
             console.error(err);
@@ -128,8 +170,17 @@ const Assistant = () => {
                 ))}
             </div>
             <div className="p-4 border-t border-gray-700 flex items-center gap-2">
-                <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && send()} placeholder="Scrie un mesaj..." className="flex-1 bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none" />
-                <button onClick={send} className="bg-green-600 p-2 rounded-xl hover:bg-green-700 transition" aria-label="Trimite">
+                <button onClick={toggleListening} className={`p-2 rounded-xl ${isListening ? "bg-red-600" : "bg-gray-600"} hover:bg-gray-700 transition`} aria-label="Voice input">
+                    🎤
+                </button>
+                <input
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && send()}
+                    placeholder="Scrie un mesaj sau folosește vocea..."
+                    className="flex-1 bg-gray-700 text-white rounded-xl px-4 py-2 focus:outline-none"
+                />
+                <button onClick={() => send()} className="bg-green-600 p-2 rounded-xl hover:bg-green-700 transition" aria-label="Trimite">
                     <PaperPlaneIcon className="text-white" />
                 </button>
             </div>
