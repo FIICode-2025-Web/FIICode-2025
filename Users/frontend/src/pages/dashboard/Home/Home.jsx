@@ -3,6 +3,7 @@ import MainComponent from '../Home/Components/MainComponent'
 import DashboardNavbar from '@/layouts/DashboardNavbar'
 import WelcomeSection from './Components/WelcomeSection'
 import FooterSection from './Components/FooterSection'
+import PollutionMainComponent from './Components/PollutionMainComponent'
 
 export function Home() {
 
@@ -11,6 +12,7 @@ export function Home() {
       <DashboardNavbar />
       <WelcomeSection />
       <MainComponent />
+      <PollutionMainComponent/>
       <FooterSection />
     </>
 
