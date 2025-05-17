@@ -26,3 +26,6 @@ class NoiseZone(BaseModel):
     max_file_name: str
     record_count: int
     timestamp: datetime
+
+class CoverageResponse(BaseModel):
+    covered: bool

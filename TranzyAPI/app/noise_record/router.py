@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.auth.jwt.jwt_bearer import jwtBearer
 from app.database import get_db
-from app.noise_record.schemas import NoiseRecordRead, NoiseRecordCreate, NoiseZone
+from app.noise_record.schemas import NoiseRecordRead, NoiseRecordCreate, NoiseZone, CoverageResponse
 from app.noise_record.service import NoiseRecordService
 
 noise_router = APIRouter(prefix="/api/v1/noise", tags=["noise_record"])
@@ -41,3 +41,19 @@ def get_noise_zones(
         db: db_dependency,
 ):
     return service.list_noise_zones_global(db)
+
+
+@noise_router.get(
+    "/zones/check",
+    response_model=CoverageResponse,
+    summary="Verifică dacă o locație e acoperită de o înregistrare de zgomot"
+)
+def check_zone(
+        db: db_dependency,
+        token: Annotated[str, Depends(jwtBearer())],
+        lat: float,
+        lon: float,
+        radius_m: float = 100.0,
+):
+    covered = service.is_location_covered(db, token, lat, lon, radius_m)
+    return {"covered": covered}

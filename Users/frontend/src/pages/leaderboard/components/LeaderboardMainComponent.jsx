@@ -16,7 +16,8 @@ const LeaderboardMainComponent = () => {
             "http://127.0.0.1:8002/api/v1/gamification/leaderboard",
             { headers: { Authorization: `Bearer ${token}` } }
         );
-        setLeaderboard(data);
+        data.sort((a, b) => b.user_score - a.user_score);
++       setLeaderboard(data);
         setLoading(false);
     };
 

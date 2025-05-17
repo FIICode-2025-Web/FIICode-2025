@@ -1,16 +1,17 @@
 import React from 'react'
 import DashboardNavbar from "@/layouts/DashboardNavbar";
-import RecordNoise from './components/RecordNoise';
 import PollutionMainComponent from '../dashboard/Home/Components/PollutionMainComponent';
 import ImageAnalyzerSection from './components/ImageAnalyzerSection';
+import TrafficOverview from './components/TrafficOverview';
 
 const PollutionSection = () => {
   return (
-        <div>
-          <DashboardNavbar />
-          <PollutionMainComponent/>
-          <ImageAnalyzerSection/>
-        </div>
+    <div>
+      <DashboardNavbar />
+      <PollutionMainComponent />
+      <TrafficOverview />
+      <ImageAnalyzerSection />
+    </div>
   )
 }
 
