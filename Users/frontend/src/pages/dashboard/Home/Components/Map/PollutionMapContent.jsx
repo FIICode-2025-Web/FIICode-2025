@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Marker, Popup, Circle } from "react-leaflet";
+import { Marker, Popup, Circle, Polyline } from "react-leaflet";
 import MapWrapper from "./MapWrapper";
 import UserMarker from "../Markers/UserMarker";
 import axios from "axios";
@@ -14,6 +14,7 @@ const PollutionMapContent = ({
   position,
   userLocation,
   defaultIcon,
+  selectedCategory,
 }) => {
   const [pollutionData, setPollutionData] = useState([]);
   const token = localStorage.getItem("token");
@@ -42,27 +43,31 @@ const PollutionMapContent = ({
         <UserMarker userLocation={userLocation} icon={defaultIcon} />
       )}
 
-      {pollutionData.map((zone) => {
-        const color = getColorForAQI(zone.aqi);
-        const position = [zone.location.lat, zone.location.lon];
-        return (
-          <Circle
-            key={zone.zone_id}
-            center={position}
-            radius={350} // adjust as needed
-            pathOptions={{
-              color,
-              fillColor: color,
-              fillOpacity: 0.4,
-            }}
-          >
-            <Popup>
-              <strong>{zone.zone_name}</strong><br />
-              AQI: {zone.aqi}
-            </Popup>
-          </Circle>
-        );
-      })}
+      {selectedCategory === "Poluarea aerului" &&
+        pollutionData.map((zone) => {
+          const color = getColorForAQI(zone.aqi);
+          const position = [zone.location.lat, zone.location.lon];
+          return (
+            <>
+              <Circle
+                key={zone.zone_id}
+                center={position}
+                radius={350}
+                pathOptions={{
+                  color,
+                  fillColor: color,
+                  fillOpacity: 0.4,
+                }}
+              >
+                <Popup>
+                  <strong>{zone.zone_name}</strong>
+                  <br />
+                  AQI: {zone.aqi}
+                </Popup>
+              </Circle>
+            </>
+          );
+        })}
     </MapWrapper>
   );
 };

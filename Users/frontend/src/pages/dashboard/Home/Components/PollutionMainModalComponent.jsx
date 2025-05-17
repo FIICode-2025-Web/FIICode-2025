@@ -71,8 +71,7 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
     );
 };
 
-const PollutionMainModalComponent = ({ toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, isOptionSelected, clearShape, direction, handleDirection, onClear, selected_route_id }) => {
-    const [selectedCategory, setSelectedCategory] = useState("");
+const PollutionMainModalComponent = ({ selectedCategory,setSelectedCategory ,toggleScooters, toggleCars, routes, selectedRoute, handleRouteChange, isOptionSelected, clearShape, direction, handleDirection, onClear, selected_route_id }) => {
     const [filteredType, setFilteredType] = useState(null);
     const [routeSaved, setRouteSaved] = useState(false);
 
@@ -81,6 +80,7 @@ const PollutionMainModalComponent = ({ toggleScooters, toggleCars, routes, selec
     const [secondStop, setSecondStop] = useState(null);
     const [routeData, setRouteData] = useState(null);
     const [distance, setDistance] = useState(null);
+    
     useEffect(() => {
         const fetchStations = async () => {
             const token = localStorage.getItem("token");

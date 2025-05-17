@@ -44,6 +44,7 @@ export function PollutionMainComponent() {
   const [showScooters, setShowScooters] = useState(false);
   const [showCars, setShowCars] = useState(false);
   const [isOptionSelected, setIsOptionSelected] = useState(false);
+  const [selectedPollutionCategory, setSelectedPollutionCategory] = useState("");
 
 
   const handleCloseRouteUserScooter = () => {
@@ -228,11 +229,13 @@ export function PollutionMainComponent() {
             handleDirection={handleDirection}
             onClear={clearAll}
             selected_route_id={selectedRouteId}
+            setSelectedCategory={setSelectedPollutionCategory}
           />
           <PollutionMapContent
             position={position}
             userLocation={userLocation}
             defaultIcon={defaultIcon}
+            selectedCategory={selectedPollutionCategory} 
           />
         </div>
         <div className="flex items-center justify-center gap-4 mt-4">
