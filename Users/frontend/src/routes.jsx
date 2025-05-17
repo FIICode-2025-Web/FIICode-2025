@@ -11,6 +11,7 @@ import { Dashboard } from "@mui/icons-material";
 import LoginRequired from "./context/LoginRequired";
 import { Home } from "./pages/dashboard/index";
 import ProfilePage from "./pages/profile/ProfilePage";
+import PollutionSection from "./pages/pollution/PollutionSection";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -43,6 +44,12 @@ export const routes = [
         name: "dashboard",
         path: "/home",
         element: <Home />,
+      },
+      {
+        icon: <TableCellsIcon {...icon} />,
+        name: "pollution",
+        path: "/pollution",
+        element: <PollutionSection/>
       },
       {
         icon: <TableCellsIcon {...icon} />,
