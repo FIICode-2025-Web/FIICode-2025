@@ -9,6 +9,7 @@ from app.ridesharing.router import ridesharing_router
 from app.tranzy.router import tranzy_router
 from app.scooter.router import scooter_router
 from app.ride_history.router import history
+from app.air_pollution.router import air_router
 from app.database import engine, Base
 
 app = FastAPI(dependencies=[Depends(jwtBearer())])
@@ -30,6 +31,7 @@ app.include_router(tranzy_router)
 app.include_router(scooter_router)
 app.include_router(ridesharing_router)
 app.include_router(history)
+app.include_router(air_router)
 register_auth_exception_handlers(app)
 
 Base.metadata.create_all(bind=engine)
