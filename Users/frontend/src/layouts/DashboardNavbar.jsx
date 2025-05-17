@@ -3,6 +3,10 @@ import { Navbar, Typography, Button, IconButton, Breadcrumbs } from "@material-t
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import { useUser } from "../context/LoginRequired";
 import NotificationDropdown from "./NotificationDropdown";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRadiation } from '@fortawesome/free-solid-svg-icons';
+import Tooltip from '@mui/material/Tooltip';
+
 
 export function DashboardNavbar() {
   const { userId, username, email } = useUser();
@@ -29,6 +33,18 @@ export function DashboardNavbar() {
         </div>
 
         <div className="flex items-center">
+          <Link to="/dashboard/pollution">
+            <Tooltip title={"Vizualizare poluare"}>
+              <Button
+                variant="text"
+                color="blue-gray"
+                className="items-center gap-1 text-primary px-4 flex normal-case"
+              >
+                <FontAwesomeIcon icon={faRadiation} className="#5bcf72 w-4 h-4"
+                />
+              </Button>
+            </Tooltip>
+          </Link>
           <NotificationDropdown />
           <Link to="/dashboard/profile">
             <Button
@@ -39,7 +55,7 @@ export function DashboardNavbar() {
               <UserCircleIcon className="h-5 w-5 text-primary" />
               {email ? `${email}` : "Hello, Guest"}
             </Button>
-            
+
             <IconButton variant="text" color="blue-gray" className="grid xl:hidden">
               <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
             </IconButton>
