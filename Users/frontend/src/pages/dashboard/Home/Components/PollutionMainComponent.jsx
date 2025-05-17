@@ -214,11 +214,11 @@ export function PollutionMainComponent() {
   };
 
   return (
-    <div className="bg-main flex items-center justify-center flex-col">
-       
+    <div className="bg-main flex items-center justify-center flex-col min-h-screen">
       <div className="flex items-center justify-center flex-row">
         <div className="flex justify-center items-center w-screen md:p-28 flex-col md:flex-row">
           <PollutionMainModalComponent
+            selectedCategory={selectedPollutionCategory}
             toggleCars={handleToggleCars}
             toggleScooters={handleToggleScooters}
             selectedRoute={selectedRoute}
@@ -240,9 +240,6 @@ export function PollutionMainComponent() {
           />
         </div>
       </div>
-      {selectedPollutionCategory === "Poluarea fonică" && (
-      <RecordNoise/>
-    )}
     </div >
   );
 }

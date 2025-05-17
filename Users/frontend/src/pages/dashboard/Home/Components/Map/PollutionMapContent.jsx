@@ -1,12 +1,10 @@
-// PollutionMapContent.jsx
 import { useEffect, useState } from "react";
 import { Circle, Popup } from "react-leaflet";
 import MapWrapper from "./MapWrapper";
 import UserMarker from "../Markers/UserMarker";
 import axios from "axios";
-import trafficSound from "./audio/traffic_loud.mp3";
 
-/* ---------- helpers ---------- */
+/* ---------- existing helper color functions ---------- */
 const getColorForAQI = (aqi) => {
   if (aqi <= 7) return "green";
   if (aqi <= 20) return "yellow";
@@ -19,48 +17,13 @@ const getColorForDecibel = (dB) => {
   return "red";
 };
 
-/* ---------- child component: popup with toggleable audio ---------- */
-const NoisePopup = ({ zone }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioId = `audio-${zone.zone_id}`;
-
-  const toggleAudio = () => {
-    const audio = document.getElementById(audioId);
-    if (!audio) return;
-
-    if (isPlaying) {
-      audio.pause();
-      audio.currentTime = 0;
-      setIsPlaying(false);
-    } else {
-      audio.play();
-      setIsPlaying(true);
-      audio.onended = () => setIsPlaying(false);
-    }
-  };
-
-  return (
-    <>
-      <strong>Noise Zone #{zone.zone_id}</strong>
-      <br />
-      Avg dB: {zone.avg_decibel}
-      <br />
-      Max dB: {zone.max_decibel}
-      <br />
-      Recorded: {new Date(zone.timestamp).toLocaleString()}
-      <br />
-      <audio id={audioId} src={trafficSound} />
-      <button
-        onClick={toggleAudio}
-        className="w-80 flex items-center rounded-md justify-center text-white text-md h-10 normal-case bg-primary hover:bg-secondary"
-      >
-        {isPlaying ? "⏹️ Stop Audio" : "▶️ Play Sample Noise"}
-      </button>
-    </>
-  );
+/* New helper for traffic congestion colors */
+const getColorForCongestion = (level) => {
+  if (level === "low") return "green";
+  if (level === "high") return "red";
+  return "gray"; // fallback if unknown
 };
 
-/* ---------- main map content ---------- */
 const PollutionMapContent = ({
   position,
   userLocation,
@@ -69,19 +32,17 @@ const PollutionMapContent = ({
 }) => {
   const [airData, setAirData] = useState([]);
   const [noiseData, setNoiseData] = useState([]);
+  const [trafficData, setTrafficData] = useState([]);
   const token = localStorage.getItem("token");
 
-  /* fetch data once on mount */
   useEffect(() => {
+    // Fetch air data
     const fetchAirPollutionData = async () => {
       try {
         const { data } = await axios.get(
           "http://127.0.0.1:8003/api/v1/air_pollution/",
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
         setAirData(data);
@@ -90,15 +51,13 @@ const PollutionMapContent = ({
       }
     };
 
+    // Fetch noise data
     const fetchNoisePollutionData = async () => {
       try {
         const { data } = await axios.get(
           "http://127.0.0.1:8003/api/v1/noise/zones",
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
         setNoiseData(data);
@@ -107,18 +66,38 @@ const PollutionMapContent = ({
       }
     };
 
-    fetchAirPollutionData();
-    fetchNoisePollutionData();
-  }, [token]);
+    // Fetch traffic congestion snapshots
+    const fetchTrafficSnapshots = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://127.0.0.1:8003/api/v1/traffic/snapshots",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setTrafficData(data);
+      } catch (err) {
+        console.error("Error fetching traffic snapshots:", err);
+      }
+    };
+
+    if (selectedCategory === "Poluarea aerului") {
+      fetchAirPollutionData();
+    } else if (selectedCategory === "Poluarea fonică") {
+      fetchNoisePollutionData();
+    } else if (selectedCategory === "Aglomerație") {
+      fetchTrafficSnapshots();
+    }
+  }, [selectedCategory, token]);
 
   return (
     <MapWrapper center={position}>
-      {/* user location marker */}
+      {/* User location */}
       {userLocation.length > 0 && (
         <UserMarker userLocation={userLocation} icon={defaultIcon} />
       )}
 
-      {/* air-quality zones */}
+      {/* Air pollution zones */}
       {selectedCategory === "Poluarea aerului" &&
         airData.map((zone) => {
           const color = getColorForAQI(zone.aqi);
@@ -129,11 +108,7 @@ const PollutionMapContent = ({
               key={`air-${zone.zone_id}`}
               center={pos}
               radius={350}
-              pathOptions={{
-                color,
-                fillColor: color,
-                fillOpacity: 0.4,
-              }}
+              pathOptions={{ color, fillColor: color, fillOpacity: 0.4 }}
             >
               <Popup>
                 <strong>{zone.zone_name}</strong>
@@ -144,7 +119,7 @@ const PollutionMapContent = ({
           );
         })}
 
-      {/* noise-pollution zones */}
+      {/* Noise pollution zones */}
       {selectedCategory === "Poluarea fonică" &&
         noiseData.map((zone) => {
           const color = getColorForDecibel(zone.avg_decibel);
@@ -155,14 +130,43 @@ const PollutionMapContent = ({
               key={`noise-${zone.zone_id}`}
               center={pos}
               radius={350}
-              pathOptions={{
-                color,
-                fillColor: color,
-                fillOpacity: 0.4,
-              }}
+              pathOptions={{ color, fillColor: color, fillOpacity: 0.4 }}
             >
               <Popup>
-                <NoisePopup zone={zone} />
+                {/* You can reuse your NoisePopup component here */}
+                <strong>Noise Zone #{zone.zone_id}</strong>
+                <br />
+                Avg dB: {zone.avg_decibel}
+                <br />
+                Max dB: {zone.max_decibel}
+                <br />
+                Recorded: {new Date(zone.timestamp).toLocaleString()}
+              </Popup>
+            </Circle>
+          );
+        })}
+
+      {/* Traffic congestion zones */}
+      {selectedCategory === "Aglomerație" &&
+        trafficData.map((snap) => {
+          const color = getColorForCongestion(snap.veh_level);
+          const pos = [snap.lat, snap.lon];
+
+          return (
+            <Circle
+              key={`traffic-${snap.id}`}
+              center={pos}
+              radius={300}
+              pathOptions={{ color, fillColor: color, fillOpacity: 0.4 }}
+            >
+              <Popup>
+                <strong>Snapshot ID: {snap.id}</strong>
+                <br />
+                Vehicule: {snap.vehicle_count} ({snap.veh_level})
+                <br />
+                Pietoni: {snap.person_count} ({snap.ped_level})
+                <br />
+                Timestamp: {new Date(snap.timestamp).toLocaleString()}
               </Popup>
             </Circle>
           );

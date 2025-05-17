@@ -15,9 +15,9 @@ const ImageDisplay = ({ selectedCategory, toggleScooters, toggleCars, routes, se
     handleSaveRoute, routeSaved }) => {
     return (
         <>
-            {selectedCategory === "Poluare fonica" && (
+            {selectedCategory === "Poluarea fonică" && (
                 <div className="flex items-center justify-center md:gap-4 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md">
-                    
+                   
                 </div>
             )}
         </>
@@ -135,7 +135,7 @@ const PollutionMainModalComponent = ({ selectedCategory, setSelectedCategory ,to
     return (
         <div className="flex items-center justify-center min-h-[10rem] md:min-h-fit md:h-[35rem] mt-4 gap-4 md:mr-6 flex-col bg-gray-900 bg-opacity-95 rounded-md shadow-md p-8 md:p-12 mb-12 md:mb-0">
             <span className="text-[1.6rem] md:text-[2.5rem] font-semibold mt-6 text-gray-300">
-                Harta poluarii
+                Harta poluării
             </span>
             <ImageDisplay selectedCategory={selectedCategory} toggleCars={toggleCars} toggleScooters={toggleScooters} routes={routes}
                 selectedRoute={selectedRoute}
@@ -145,6 +145,8 @@ const PollutionMainModalComponent = ({ selectedCategory, setSelectedCategory ,to
                 filteredType={filteredType} setFilteredType={setFilteredType} handleSaveRoute={handleSaveRoute} routeSaved={routeSaved}
             />
             <PollutionTypeSelect handleCategoryChange={setSelectedCategory} clearAllData={onClear} />
+            {selectedCategory === "Poluarea fonică" && (
+            <RecordNoise/>)}
         </div>
     );
 };
